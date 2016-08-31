@@ -44,7 +44,6 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 while true; do
@@ -156,7 +155,7 @@ while true; do
     * ) echo 'Please answer yes or no.';;
    esac
 done
-####################### Setup for Ubuntu server #######################################
+####################### Setup for Ubuntu 14 server #######################################
 
 }
 ubuntuserver14(){
@@ -185,7 +184,6 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%$NetBios"'\\'"$Group ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo rm -R pbis-open-8.0.1.2029.linux.x86_64*
@@ -253,9 +251,7 @@ sudo apt-get install libsss-sudo -y
 echo "Please enter new user without @mydomain"
 read newuser
 echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$newuser"'@'"$DOMAIN"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
-
 
 while true; do
    read -p 'Do you want to Reboot now? (y/n)?' yn
@@ -269,6 +265,13 @@ while true; do
    esac
 done
 
+}
+Reauthenticate14(){
+echo "Type domain"
+read DOMAIN
+echo "Type Adminuser"
+read user
+sudo domainjoin-cli join $DOMAIN ${user}
 }
 
 readmes(){
@@ -285,6 +288,7 @@ echo "${INTRO_TEXT}AD Group to join:"${RED_TEXT}Example:${RED_TEXT}""     ${NUMB
 echo "${RED_TEXT}   user and compoter must Exist in AD before Join        ${RED_TEXT}"
 echo "${INTRO_TEXT}                                                       ${INTRO_TEXT}"
 echo "${NUMBER}Remember to Check Hostname and att to AD                   ${NUMBER}"
+echo "${INTRO_TEXT} Reauthenticate is a fix for Ubuntu 14 likewise issues ${INTRO_TEXT}"
 sleep 90
 echo -e "\033[0m"
 /usr/bin/clear
@@ -300,7 +304,8 @@ clear
 	echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 16 Client     ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} README with examples             ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -329,8 +334,12 @@ while [ opt != '' ]
 		   echo "Installing on Debian Jessie client"
 		   debianclient
          ;;
+		5) clear;
+		   echo "Reauthenticate Ubuntu 14"
+		   Reauthenticate14
+         ;;
 
-     	 5) clear;
+     	 6) clear;
      	   echo "READ ME"
 		   readmes
          ;;
