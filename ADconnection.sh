@@ -99,8 +99,6 @@ echo "please enter Your domain’s NetBios name"
 read NetBios
 echo "type domain admin user"
 read user
-echo $DOMAIN ${user}
-sleep 10
 sudo domainjoin-cli join $DOMAIN ${user}
 sudo /opt/pbis/bin/config UserDomainPrefix $DOMAIN
 sudo /opt/pbis/bin/config AssumeDefaultDomain true
@@ -272,26 +270,28 @@ read DOMAIN
 echo "Type Adminuser"
 read user
 sudo domainjoin-cli join $DOMAIN ${user}
+exit
 }
 
 readmes(){
 clear
-echo "${INTRO_TEXT}    Active directory connection tool                   ${INTRO_TEXT}"
-echo "${INTRO_TEXT}              Examples                                 ${INTRO_TEXT}"
-echo "${INTRO_TEXT}domain to join:"${RED_TEXT}Example:${RED_TEXT}""       ${NUMBER} mydomain.intra${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                       ${INTRO_TEXT}"
-echo "${INTRO_TEXT}domain’s NetBios name:"${RED_TEXT}Example:${RED_TEXT}""${NUMBER} mydomain${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                       ${INTRO_TEXT}"
-echo "${INTRO_TEXT}Domain username:"${RED_TEXT}Example:${RED_TEXT}""      ${NUMBER} mrsmithADadmin${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                       ${INTRO_TEXT}"
-echo "${INTRO_TEXT}AD Group to join:"${RED_TEXT}Example:${RED_TEXT}""     ${NUMBER} Sudoers.global${NUMBER}"${INTRO_TEXT}"
-echo "${RED_TEXT}   user and compoter must Exist in AD before Join        ${RED_TEXT}"
-echo "${INTRO_TEXT}                                                       ${INTRO_TEXT}"
-echo "${NUMBER}Remember to Check Hostname and att to AD                   ${NUMBER}"
-echo "${INTRO_TEXT} Reauthenticate is a fix for Ubuntu 14 likewise issues ${INTRO_TEXT}"
-sleep 90
-echo -e "\033[0m"
-/usr/bin/clear
+echo "${INTRO_TEXT}              Active directory connection tool                        ${INTRO_TEXT}"
+echo "${INTRO_TEXT}                          Examples                                      ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     Domain to join:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain.intra${NUMBER}"${INTRO_TEXT}"
+echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     Domain’s NetBios name:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain${NUMBER}"${INTRO_TEXT}"
+echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     Domain username:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}ADadmin${NUMBER}"${INTRO_TEXT}"
+echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     AD Group to join:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}Sudoers.global${NUMBER}"${INTRO_TEXT}"
+echo "${RED_TEXT}     User and computer must Exist in AD before Join             ${RED_TEXT}"
+echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     Script will use hostname and add sudoer to it to sudoers "${RED_TEXT}Example:${RED_TEXT}""${NUMBER} myhostsudoer${NUMBER}"${INTRO_TEXT}"
+echo "${INTRO_TEXT}     It is important that the computerobject "${RED_TEXT}Ex:${RED_TEXT}" myhost exists in AD ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     and that the group "${RED_TEXT}Ex:${RED_TEXT}" myhostsudoes exists                      ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     Script will also add domain admin group to sudoes                     ${INTRO_TEXT}"
+echo "${NUMBER}     Remember to Check Hostname and add it to AD before running the ADjoin${NUMBER}"
+echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
 exit
 }
 clear
