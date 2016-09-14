@@ -20,9 +20,9 @@ sudo
 ubuntuclient16(){
 export HOSTNAME
 myhost=$( hostname )
-sudo aptitude install realmd adcli sssd
-sudo aptitude install ntp
-
+sudo apt-get install realmd adcli sssd -y
+sudo apt-get install ntp -y
+clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "please enter Your domain’s NetBios name"
