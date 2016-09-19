@@ -42,7 +42,7 @@ sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.
 sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "administrator" >> /etc/sudoers
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
