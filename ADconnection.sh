@@ -29,6 +29,8 @@ echo "please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
+echo "Please enter user to add"
+read UseR
 
 discovery=$(realm discover $DOMAIN | grep domain-name)
 echo "Realm= $discovery"
@@ -50,6 +52,7 @@ sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "$user"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 
 while true; do
