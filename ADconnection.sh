@@ -29,7 +29,7 @@ echo "please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
-echo "Please enter user to add"
+echo "Please enter user to add (user@domain)"
 read UseR
 
 discovery=$(realm discover $DOMAIN | grep domain-name)
