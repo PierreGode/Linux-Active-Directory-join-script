@@ -29,6 +29,9 @@ echo "please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
+
+discovery=$(realm discover $DOMAIN | grep domain-name)
+echo "Realm= $discovery"
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
