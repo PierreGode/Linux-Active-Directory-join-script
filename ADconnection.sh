@@ -1,4 +1,13 @@
 #!/bin/bash
+#####################################################################################################################
+#                                                                                                                   #
+#                              This script is written by Pierre Goude                                               #
+#  This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public  #
+#                                                                                                                   #
+#                                                                                                                   #
+#####################################################################################################################
+
+
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
