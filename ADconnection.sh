@@ -35,11 +35,11 @@ clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "please enter Your domain’s NetBios name"
+echo "Please enter user to add (user     without @server.server)"
+read UseR
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
-echo "Please enter user to add (user@domain)"
-read UseR
 
 discovery=$(realm discover $DOMAIN | grep domain-name)
 echo "Realm= $discovery"
@@ -48,6 +48,8 @@ if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
+sudo su
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sudo systemctl enable sssd
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
