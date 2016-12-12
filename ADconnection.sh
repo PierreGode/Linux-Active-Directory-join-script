@@ -51,7 +51,6 @@ sudo su
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sudo systemctl enable sssd
 sudo systemctl start sssd
-exit
 clear
 sudo echo "Configuratig files" 
 #echo "Please enter user to add (user     without @server.server)"
