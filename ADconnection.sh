@@ -50,10 +50,11 @@ fi
 echo "Please enter user to add (user     without @server.server)"
 read UseR
 sudo echo "Configuratig files" 
-sudo su
+echo 'sudo su
 sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-su administrator
+exit' > tmp.sh
+xterm -e "sudo sh tmp.sh"
 sudo systemctl enable sssd
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
