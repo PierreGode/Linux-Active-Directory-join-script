@@ -52,6 +52,8 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sudo systemctl enable sssd
 sudo systemctl start sssd
 exit
+clear
+sudo echo "Configuratig files" 
 #echo "Please enter user to add (user     without @server.server)"
 #read UseR
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
