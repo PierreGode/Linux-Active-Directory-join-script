@@ -40,7 +40,7 @@ echo "Please enter a domain admin login to use: "
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
-echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sleep 1
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
