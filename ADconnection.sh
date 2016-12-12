@@ -47,11 +47,6 @@ if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
-sudo su
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sudo systemctl enable sssd
-sudo systemctl start sssd
-clear
 sudo echo "Configuratig files" 
 #echo "Please enter user to add (user     without @server.server)"
 #read UseR
@@ -94,6 +89,12 @@ echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 sudo cat /etc/ssh/login.group.allowed | grep $Group
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
+sudo su
+sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sudo systemctl enable sssd
+sudo systemctl start sssd
+clear
 while true; do
    read -p 'Do you want to Reboot now? (y/n)?' yn
    case $yn in
