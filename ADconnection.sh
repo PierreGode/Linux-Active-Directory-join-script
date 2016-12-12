@@ -47,9 +47,15 @@ if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
+echo "Please enter user to add (user     without @server.server)"
+read UseR
 sudo echo "Configuratig files" 
-#echo "Please enter user to add (user     without @server.server)"
-#read UseR
+sudo su
+sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sudo systemctl enable sssd
+sudo systemctl start sssd
+su administrator
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
 sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
@@ -57,13 +63,13 @@ sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubu
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-#sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
-#sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
+sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 
 while true; do
@@ -89,13 +95,6 @@ echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 sudo cat /etc/ssh/login.group.allowed | grep $Group
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
-sudo su
-sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sudo systemctl enable sssd
-sudo systemctl start sssd
-su administrator
-clear
 while true; do
    read -p 'Do you want to Reboot now? (y/n)?' yn
    case $yn in
