@@ -36,12 +36,12 @@ echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "please enter Your domain’s NetBios name"
 read NetBios
-echo "Please enter user to add (user     without @server.server)"
-read UseR
 echo "Please enter a domain admin login to use: "
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
+clear
 echo "Realm= $discovery"
+sleep 1
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
@@ -51,6 +51,8 @@ sudo su
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sudo systemctl enable sssd
 sudo systemctl start sssd
+echo "Please enter user to add (user     without @server.server)"
+read UseR
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
 sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
