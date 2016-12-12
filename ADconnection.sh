@@ -40,7 +40,7 @@ echo "Please enter a domain admin login to use: "
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
-echo "Realm= $discovery"
+echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sleep 1
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
@@ -60,6 +60,7 @@ sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.
 sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 #sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
