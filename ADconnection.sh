@@ -94,6 +94,7 @@ sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sudo systemctl enable sssd
 sudo systemctl start sssd
+su administrator
 clear
 while true; do
    read -p 'Do you want to Reboot now? (y/n)?' yn
