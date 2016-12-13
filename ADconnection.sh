@@ -92,17 +92,6 @@ echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 sudo cat /etc/ssh/login.group.allowed | grep $Group
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
-while true; do
-   read -p 'Do you want to Reboot now? (y/n)?' yn
-   case $yn in
-    [Yy]* ) sudo reboot
-            break;;
-    [Nn]* ) echo "plese remember to reboot"
-            sleep 1        
-            exit ;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-done
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
