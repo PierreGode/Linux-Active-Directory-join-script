@@ -79,7 +79,7 @@ while true; do
 			;;
     [Nn]* ) echo "plese remember to reboot"
             sleep 1        
-            exit ;;
+            ;;
     * ) echo 'Please answer yes or no.';;
    esac
 done
