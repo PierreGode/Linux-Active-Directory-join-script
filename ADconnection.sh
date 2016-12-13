@@ -68,7 +68,6 @@ sudo echo "$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-
 while true; do
    read -p '$myhost is added to sudoers group, would you like to let additional group to have access (y/n)?' yn
    case $yn in
@@ -77,7 +76,7 @@ while true; do
 			sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
 			sudo echo "%$NetBios"'\\'"$Group"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
 			echo "$Group has been added and will have access"
-            break;;
+			;;
     [Nn]* ) echo "plese remember to reboot"
             sleep 1        
             exit ;;
