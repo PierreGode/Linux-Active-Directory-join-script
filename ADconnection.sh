@@ -47,6 +47,7 @@ if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
+clear
 echo "Please enter user to add (user     without @server.server)"
 read UseR
 sudo echo "Configuratig files" 
@@ -74,7 +75,6 @@ sudo cat /etc/sudoers | grep $myhost
 sudo cat /etc/sudoers | grep $Group
 echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
-sudo cat /etc/ssh/login.group.allowed | grep $Group
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
