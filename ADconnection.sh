@@ -50,10 +50,6 @@ fi
 echo "Please enter user to add (user     without @server.server)"
 read UseR
 sudo echo "Configuratig files" 
-exec sudo -u root /bin/sh - <<eof
-sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-eof
 sudo systemctl enable sssd
 sudo systemctl start sssd
 sudo rm tmp.sh
@@ -107,6 +103,10 @@ while true; do
     * ) echo 'Please answer yes or no.';;
    esac
 done
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+eof
 }
 ####################### Setup for Ubuntu14 client #######################################
 ubuntuclient14(){
