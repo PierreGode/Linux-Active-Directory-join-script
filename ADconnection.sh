@@ -77,6 +77,7 @@ echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/#NAME_REGEX="^[a-z][-a-z0-9_]*\$"/NAME_REGEX="^[a-z][-a-z0-9_]*\$"/g' /etc/adduser.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 eof
 }
