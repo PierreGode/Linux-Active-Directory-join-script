@@ -78,8 +78,9 @@ echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
-echo "default-home = /home/%U" >> /etc/sssd/sssd.conf
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 ####################### Setup for Ubuntu14 client #######################################
