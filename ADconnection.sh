@@ -50,12 +50,10 @@ fi
 echo "Please enter user to add (user     without @server.server)"
 read UseR
 sudo echo "Configuratig files" 
-echo 'sudo su
+exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/GROUPHOMES=no/GROUPHOMES=yes/g' /etc/adduser.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-exit
-exit' > tmp.sh
-xterm -e "sudo sh tmp.sh"
+eof
 sudo systemctl enable sssd
 sudo systemctl start sssd
 sudo rm tmp.sh
