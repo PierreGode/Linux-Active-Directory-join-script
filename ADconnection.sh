@@ -264,7 +264,6 @@ clear
 echo "Remember to recreate AD computer Object!"
 sleep 3
 echo "Please enter the domain you wish to join: "
-echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "please enter Your domain’s NetBios name"
 read NetBios
