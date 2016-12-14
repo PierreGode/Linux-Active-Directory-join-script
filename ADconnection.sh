@@ -257,6 +257,8 @@ done
 Realmdupdate(){
 export HOSTNAME
 myhost=$( hostname )
+echo "This will delete your homefolder and replace it. Please do a BACKUP"
+sleep 5
 sudo apt-get update
 clear
 echo "Remember to recreate AD computer Object!"
