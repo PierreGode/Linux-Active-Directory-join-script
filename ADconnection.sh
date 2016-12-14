@@ -252,8 +252,55 @@ while true; do
     * ) echo 'Please answer yes or no.';;
    esac
 done
-############################### Reauth ##########################################
 }
+############################### Update to Realmd from likewise ##################
+Realmdupdate(){
+export HOSTNAME
+myhost=$( hostname )
+sudo apt-get update
+clear
+echo "Remember to recreate AD computer Object!"
+sleep 3
+echo "Please enter the domain you wish to join: "
+DOMAIN=$(echo "tobii.intra")
+echo "please enter Your domain’s NetBios name"
+NetBios=$(echo "tobii")
+echo "type domain admin user"
+user=$(echo "pgeadmin")
+sudo domainjoin-cli leave
+sleep 2
+sudo echo "Installing necessary pakages...."
+sudo apt-get install realmd adcli sssd -y
+sudo apt-get install ntp -y
+sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
+discovery=$(realm discover $DOMAIN | grep domain-name)
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sleep 1
+sudo realm join -v -U $user $DOMAIN --install=/
+echo "Please enter user to add (user WITHOUT the @server.server)"
+read UseR
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
+sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+cho "Check that the group is correct"
+echo "in Sudoers file..."
+sudo cat /etc/sudoers | grep $myhost
+sudo cat /etc/sudoers | grep $UseR
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%d\/%u/#fallback_homedir = \/home\/%d\/%u/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+eof
+}
+
+
+############################### Reauth ##########################################
+
 Reauthenticate14(){
 echo "Type domain"
 read DOMAIN
@@ -295,7 +342,8 @@ clear
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
 	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} README with examples             ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -330,6 +378,11 @@ while [ opt != '' ]
          ;;
 
      	 6) clear;
+     	   echo "Update from Likewise to Realmd"
+		   Realmdupdate
+         ;;
+	 
+     	 7) clear;
      	   echo "READ ME"
 		   readmes
          ;;
