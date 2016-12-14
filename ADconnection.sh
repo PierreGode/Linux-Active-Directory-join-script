@@ -49,7 +49,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 clear
-echo "Please enter user to add (user     without @server.server)"
+echo "Please enter user to add (user WITHOUT the @server.server)"
 read UseR
 sudo echo "Configuratig files" 
 sudo systemctl enable sssd
