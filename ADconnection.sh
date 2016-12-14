@@ -144,7 +144,6 @@ eof
 
 ####################### Setup for Ubuntu 14 server #######################################
 
-}
 ubuntuserver14(){
 sudo wget http://download.beyondtrust.com/PBISO/8.0.1/linux.deb.x64/pbis-open-8.0.1.2029.linux.x86_64.deb.sh
 sudo chmod 777 pbis-open-8.0.1.2029.linux.x86_64.deb.sh
