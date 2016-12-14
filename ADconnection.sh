@@ -264,11 +264,12 @@ clear
 echo "Remember to recreate AD computer Object!"
 sleep 3
 echo "Please enter the domain you wish to join: "
-DOMAIN=$(echo "tobii.intra")
+echo "Please enter the domain you wish to join: "
+read DOMAIN
 echo "please enter Your domain’s NetBios name"
-NetBios=$(echo "tobii")
-echo "type domain admin user"
-user=$(echo "pgeadmin")
+read NetBios
+echo "Please enter a domain admin login to use: "
+read ADMIN
 sudo domainjoin-cli leave
 sleep 2
 sudo echo "Installing necessary pakages...."
@@ -280,7 +281,9 @@ clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 sleep 1
-sudo realm join -v -U $user $DOMAIN --install=/
+echo "Next step sometime fails due no awnser from AD please reboot and run script again"
+sleep 2
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
 echo "Please enter user to add (user WITHOUT the @server.server)"
 read UseR
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
