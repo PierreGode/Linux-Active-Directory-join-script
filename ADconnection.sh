@@ -86,7 +86,7 @@ eof
 ubuntuclient14(){
 export HOSTNAME
 myhost=$( hostname )
-sudo update
+sudo apt-get update
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
