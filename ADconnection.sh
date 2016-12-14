@@ -48,6 +48,7 @@ if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
+sleep 1
 clear
 echo "Please enter user to add (user WITHOUT the @server.server)"
 read UseR
