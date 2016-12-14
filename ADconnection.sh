@@ -86,75 +86,62 @@ eof
 ubuntuclient14(){
 export HOSTNAME
 myhost=$( hostname )
-
-sudo apt-get update
-sudo apt-get install openssh-server -y
-#sudo apt-get install sssd -y
-sudo wget http://download.beyondtrust.com/PBISO/8.0.1/linux.deb.x64/pbis-open-8.0.1.2029.linux.x86_64.deb.sh
-
-sudo chmod 777 pbis-open-8.0.1.2029.linux.x86_64.deb.sh
-yes| sudo ./pbis-open-8.0.1.2029.linux.x86_64.deb.sh
+sudo update
+sudo apt-get install realmd adcli sssd -y
+sudo apt-get install ntp -y
+sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "please enter Your domain’s NetBios name"
 read NetBios
-echo "type domain admin user"
-read user
-sudo domainjoin-cli join $DOMAIN ${user}
-sudo /opt/pbis/bin/config UserDomainPrefix $DOMAIN
-sudo /opt/pbis/bin/config AssumeDefaultDomain true
-sudo /opt/pbis/bin/config LoginShellTemplate /bin/bash
-sudo /opt/pbis/bin/update-dns
-sudo /opt/pbis/bin/ad-cache --delete-all
-sudo sed -i '30s/.*/session [success=ok default=ignore] pam_lsass.so/' /etc/pam.d/common-session
-sudo sh -c "sed -i 's|ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|' /etc/ssh/sshd_config"
-sudo sh -c "echo 'auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed' >> /etc/pam.d/common-auth"
-sudo touch /etc/ssh/login.group.allowed
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+echo "Please enter a domain admin login to use: "
+read ADMIN
+discovery=$(realm discover $DOMAIN | grep domain-name)
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sleep 1
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+if [ $? -ne 0 ]; then
+    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
+    exit 1
+fi
+clear
+echo "Please enter user to add (user WITHOUT the @server.server)"
+read UseR
+sudo echo "Configuratig files" 
+sudo systemctl enable sssd
+sudo systemctl start sssd
+sudo rm tmp.sh
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
 sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo touch /etc/ssh/login.group.allowed
+sudo echo "administrator" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "%$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo rm -rf pbis-open-8.0.1.2029.linux.x86_64.deb*
-sudo sed -i '30s/.*/session [success=ok default=ignore] pam_lsass.so/' /etc/pam.d/common-session
-while true; do
-   read -p '$myhost is added to sudoers group, would you like to let additional group to have access (y/n)?' yn
-   case $yn in
-    [Yy]* ) echo "type domain group"
-			read Group
-			sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
-			sudo echo "%$NetBios"'\\'"$Group"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
-			echo "$Group has been added and will have access"
-            break;;
-    [Nn]* ) echo "plese remember to reboot"
-            sleep 1        
-            ;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-done
+sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
+sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "in Sudoers file..."
 sudo cat /etc/sudoers | grep $myhost
-sudo cat /etc/sudoers | grep $Group
 echo "in SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
-sudo cat /etc/ssh/login.group.allowed | grep $Group
 echo " if this is wrong DO NOT REBOOT and contact sysadmin"
-while true; do
-   read -p 'Do you want to Reboot now? (y/n)?' yn
-   case $yn in
-    [Yy]* ) sudo reboot
-            break;;
-    [Nn]* ) echo "plese remember to reboot"
-            sleep 1        
-            exit ;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-done
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+eof
+}
+
 ####################### Setup for Ubuntu 14 server #######################################
 
 }
