@@ -220,6 +220,7 @@ export HOSTNAME
 myhost=$( hostname )
 
 sudo apt-get update
+sudo apt-get install libsss-sudo -y
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 sudo mkdir -p /var/lib/samba/private
@@ -247,7 +248,7 @@ sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
  
 # configure sudo
-sudo apt-get install libsss-sudo -y
+
 echo "Please enter new user without @mydomain"
 read newuser
 echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
@@ -264,7 +265,7 @@ while true; do
     * ) echo 'Please answer yes or no.';;
    esac
 done
-
+############################### Reauth ##########################################
 }
 Reauthenticate14(){
 echo "Type domain"
@@ -274,7 +275,7 @@ read user
 sudo domainjoin-cli join $DOMAIN ${user}
 exit
 }
-
+########################################### Menu #######################################
 readmes(){
 clear
 echo "${INTRO_TEXT}              Active directory connection tool                        ${INTRO_TEXT}"
