@@ -34,7 +34,7 @@ sudo apt-get install ntp -y
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
-echo "please enter Your domain’s NetBios name"
+echo "Please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
@@ -72,11 +72,11 @@ sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
-echo "in Sudoers file..."
+echo "In Sudoers file..."
 sudo cat /etc/sudoers | grep $myhost
-echo "in SSH allow file..."
+echo "In SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
-echo " if this is wrong DO NOT REBOOT and contact sysadmin"
+echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
@@ -94,7 +94,7 @@ sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
-echo "please enter Your domain’s NetBios name"
+echo "Please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
@@ -131,11 +131,11 @@ sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
-echo "in Sudoers file..."
+echo "In Sudoers file..."
 sudo cat /etc/sudoers | grep $myhost
-echo "in SSH allow file..."
+echo "In SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
-echo " if this is wrong DO NOT REBOOT and contact sysadmin"
+echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
@@ -152,7 +152,7 @@ yes| sudo ./pbis-open-8.0.1.2029.linux.x86_64.deb.sh
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
-echo "please enter Your domain’s NetBios name"
+echo "Please enter Your domain’s NetBios name"
 read NetBios
 echo "Domain username:"
 read user
@@ -177,24 +177,24 @@ sudo rm -R pbis-open-8.0.1.2029.linux.x86_64*
 while true; do
    read -p '$Group is added to sudoers group, would you like to let additional group to have access (y/n)?' yn
    case $yn in
-    [Yy]* ) echo "type domain group"
+    [Yy]* ) echo "Type domain group"
 			read Group
 			sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
 			sudo echo "%$NetBios"'\\'"$Group"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
 			echo "$Group has been added and will have access"
             break;;
-    [Nn]* ) echo "plese remember to reboot"
+    [Nn]* ) echo "Plese remember to reboot"
             sleep 1        
             exit ;;
     * ) echo 'Please answer yes or no.';;
    esac
 done
 echo "Check that the group is correct"
-echo "in Sudoers file..."
+echo "In Sudoers file..."
 sudo cat /etc/sudoers | grep $Group
-echo "in SSH allow file..."
+echo "In SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $Group
-echo " if this is wrong DO NOT REBOOT and contact sysadmin"
+echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 
 }
 
@@ -216,7 +216,7 @@ clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
 
-echo "please enter Your domain’s NetBios name"
+echo "Please enter Your domain’s NetBios name"
 read NetBios
  
 echo "Please enter a domain admin login to use: "
@@ -265,7 +265,7 @@ echo "Remember to recreate AD computer Object!"
 sleep 3
 echo "Please enter the domain you wish to join: "
 read DOMAIN
-echo "please enter Your domain’s NetBios name"
+echo "Please enter Your domain’s NetBios name"
 read NetBios
 echo "Please enter a domain admin login to use: "
 read ADMIN
@@ -292,7 +292,7 @@ sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 cho "Check that the group is correct"
-echo "in Sudoers file..."
+echo "In Sudoers file..."
 sudo cat /etc/sudoers | grep $myhost
 sudo cat /etc/sudoers | grep $UseR
 exec sudo -u root /bin/sh - <<eof
