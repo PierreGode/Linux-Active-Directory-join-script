@@ -306,6 +306,7 @@ eof
 ############################### Reauth ##########################################
 
 Reauthenticate14(){
+echo "Reauth for Likewise only!"
 echo "Type domain"
 read DOMAIN
 echo "Type Adminuser"
@@ -313,10 +314,10 @@ read user
 sudo domainjoin-cli join $DOMAIN ${user}
 exit
 }
-########################################### Menu #######################################
+########################################### info #######################################
 readmes(){
 clear
-echo "${INTRO_TEXT}              Active directory connection tool                        ${INTRO_TEXT}"
+echo "${INTRO_TEXT}              Active directory connection tool   Realmd                     ${INTRO_TEXT}"
 echo "${INTRO_TEXT}                          Examples                                      ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Domain to join:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain.intra${NUMBER}"${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
@@ -329,12 +330,16 @@ echo "${RED_TEXT}     User and computer must Exist in AD before Join            
 echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Script will use hostname and add sudoer to it to sudoers "${RED_TEXT}Example:${RED_TEXT}""${NUMBER} myhostsudoer${NUMBER}"${INTRO_TEXT}"
 echo "${INTRO_TEXT}     It is important that the computerobject "${RED_TEXT}Ex:${RED_TEXT}" myhost exists in AD ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     and that the group "${RED_TEXT}Ex:${RED_TEXT}" myhostsudoes exists                      ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     and that the group "${RED_TEXT}Ex:${RED_TEXT}" myhostsudoes exists, sudoers must be added or edit this script to remove sudoers from name${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Script will also add domain admin group to sudoes                     ${INTRO_TEXT}"
 echo "${NUMBER}     Remember to Check Hostname and add it to AD before running the ADjoin${NUMBER}"
 echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
+echo "${INTRO_TEXT}                                                                                                ${INTRO_TEXT}"
+echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${INTRO_TEXT}"
+echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
 exit
 }
+########################################### Menu #######################################
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
     echo "${INTRO_TEXT}       Created by Pierre Goude                  ${INTRO_TEXT}"
