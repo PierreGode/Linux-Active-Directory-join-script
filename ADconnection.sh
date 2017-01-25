@@ -42,14 +42,11 @@ discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-sleep 1
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
-sleep 1
-clear
 sudo echo "Configuratig files" 
 sudo systemctl enable sssd
 sudo systemctl start sssd
@@ -99,13 +96,11 @@ discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-sleep 1
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
 fi
-clear
 sudo echo "Configuratig files" 
 sudo systemctl enable sssd
 sudo systemctl start sssd
