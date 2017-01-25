@@ -50,8 +50,6 @@ if [ $? -ne 0 ]; then
 fi
 sleep 1
 clear
-echo "Please enter user to add (user WITHOUT the @server.server)"
-read UseR
 sudo echo "Configuratig files" 
 sudo systemctl enable sssd
 sudo systemctl start sssd
@@ -67,9 +65,8 @@ sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
+sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "%$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "In Sudoers file..."
@@ -109,8 +106,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 clear
-echo "Please enter user to add (user WITHOUT the @server.server)"
-read UseR
 sudo echo "Configuratig files" 
 sudo systemctl enable sssd
 sudo systemctl start sssd
@@ -127,8 +122,8 @@ sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
+sudo echo "%$NetBios"'\\'"$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "%$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers 
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "In Sudoers file..."
