@@ -45,10 +45,15 @@ var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "Detecting Ubuntu 14"
-echo "installing additional dep"
+echo "Installing additional dependencies"
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sleep 1
+clear
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 else
 if [ "$var" -eq "16" ]
