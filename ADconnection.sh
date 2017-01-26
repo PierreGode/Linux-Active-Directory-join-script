@@ -44,10 +44,12 @@ sudo echo "${NORMAL}${NORMAL}"
 var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
+echo "Detecting Ubuntu 14"
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 else
 if [ "$var" -eq "16" ]
 then
+echo "Detecting Ubuntu 16"
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 else
 echo "Having issuers to detect your Ubuntu version"
