@@ -33,8 +33,7 @@ sudo apt-get install ntp -y
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
-echo "Please enter Your domain’s NetBios name"
-read NetBios
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "Please enter a domain admin login to use: "
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
