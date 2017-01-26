@@ -271,12 +271,14 @@ eof
 }
 ############################### Reauth ##########################################
 Reauthenticate14(){
-echo "Reauth for Likewise only!"
+echo "Reauth for Realmd ubuntu 14 only!"
 echo "Type domain"
 read DOMAIN
 echo "Type Adminuser"
-read user
-sudo domainjoin-cli join $DOMAIN ${user}
+read ADMIN
+discover=$(realm discover | grep domain-name: | cut -d ':' -f2)
+realm leave $discover
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
 exit
 }
 ########################################### info #######################################
