@@ -87,7 +87,7 @@ sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "In Sudoers file..."
-sudo cat /etc/sudoers.d/users | grep $myhost
+sudo cat /etc/sudoers.d/users | grep sudoers
 echo "In SSH allow file..."
 sudo cat /etc/ssh/login.group.allowed | grep $myhost
 echo "If this is wrong DO NOT REBOOT and contact sysadmin"
