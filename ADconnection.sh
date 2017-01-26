@@ -274,12 +274,11 @@ clear
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
-	echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Client     ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} README with examples             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
+	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -295,30 +294,25 @@ while [ opt != '' ]
         ;;
 
         2) clear;
-            echo "Installing on Ubuntu 14 Client";
-            ubuntuclient14;
-            ;;
-
-        3) clear;
             echo "Installing on Ubuntu 14 Server";
             ubuntuserver14
             ;;
 			
-		4) clear;
+		3) clear;
 		   echo "Installing on Debian Jessie client"
 		   debianclient
          ;;
-		5) clear;
-		   echo "Reauthenticate Ubuntu 14"
+		4) clear;
+		   echo "Reauthenticate realmd for Ubuntu 14"
 		   Reauthenticate14
          ;;
 
-     	 6) clear;
+     	 5) clear;
      	   echo "Update from Likewise to Realmd"
 		   Realmdupdate
          ;;
 	 
-     	 7) clear;
+     	 6) clear;
      	   echo "READ ME"
 		   readmes
          ;;
