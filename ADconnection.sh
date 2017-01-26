@@ -132,54 +132,51 @@ eof
 }
 ####################### Setup for Ubuntu 14 server #######################################
 ubuntuserver14(){
-sudo wget http://download.beyondtrust.com/PBISO/8.0.1/linux.deb.x64/pbis-open-8.0.1.2029.linux.x86_64.deb.sh
-sudo chmod 777 pbis-open-8.0.1.2029.linux.x86_64.deb.sh
-yes| sudo ./pbis-open-8.0.1.2029.linux.x86_64.deb.sh
+export HOSTNAME
+myhost=$( hostname )
+sudo apt-get update
+sudo apt-get install realmd adcli sssd -y
+sudo apt-get install ntp -y
+sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "Please enter the domain you wish to join: "
 read DOMAIN
 echo "Please enter Your domain’s NetBios name"
 read NetBios
-echo "Domain username:"
-read user
-echo "AD Group you wish to join"
-read Group
-sudo domainjoin-cli join $DOMAIN ${user}
-sudo /opt/pbis/bin/config UserDomainPrefix $DOMAIN
-sudo /opt/pbis/bin/config AssumeDefaultDomain true
-sudo /opt/pbis/bin/config LoginShellTemplate /bin/bash
-sudo /opt/pbis/bin/update-dns
-sudo /opt/pbis/bin/ad-cache --delete-all
+echo "Please enter a domain admin login to use: "
+read ADMIN
+discovery=$(realm discover $DOMAIN | grep domain-name)
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+if [ $? -ne 0 ]; then
+    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
+    exit 1
+fi
+sudo echo "Configuratig files" 
+sudo systemctl enable sssd
+sudo systemctl start sssd
+sudo rm tmp.sh
 sudo sed -i '30s/.*/session [success=ok default=ignore] pam_lsass.so/' /etc/pam.d/common-session
 sudo sh -c "sed -i 's|ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|' /etc/ssh/sshd_config"
 sudo sh -c "echo 'auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed' >> /etc/pam.d/common-auth"
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "%$NetBios"'\\'"domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "%$NetBios"'\\'"$Group ALL=(ALL:ALL) ALL" >> /etc/sudoers
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
+sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 sudo rm -R pbis-open-8.0.1.2029.linux.x86_64*
-while true; do
-   read -p '$Group is added to sudoers group, would you like to let additional group to have access (y/n)?' yn
-   case $yn in
-    [Yy]* ) echo "Type domain group"
-			read Group
-			sudo echo "$NetBios"'\'"$Group" >> /etc/ssh/login.group.allowed
-			sudo echo "%$NetBios"'\\'"$Group"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
-			echo "$Group has been added and will have access"
-            break;;
-    [Nn]* ) echo "Plese remember to reboot"
-            sleep 1        
-            exit ;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-done
 echo "Check that the group is correct"
 echo "In Sudoers file..."
-sudo cat /etc/sudoers | grep $Group
+sudo cat /etc/sudoers.d/admins | grep sudoers
 echo "In SSH allow file..."
-sudo cat /etc/ssh/login.group.allowed | grep $Group
+sudo cat /etc/ssh/login.group.allowed | grep sudoers
 echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 }
 ####################### Setup for Debian client #######################################
