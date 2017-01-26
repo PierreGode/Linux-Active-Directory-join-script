@@ -9,7 +9,7 @@ Complete steps
 3. set hostname on you computer to linuxcomputer (hostname and hosts files) and reboot
 4. git clone this script and run.
 
-execute the script with sudo sh scriptexmple.sh, then choose if client or server.
+execute the script with sudo sh ADconnection.sh, then choose if client or server.
 then type yot doamin at promt ex: myad.intra, next your netbios at promt ex: myad
 after that authorise with a admin user.
 make sure to read carefully and also read built in help in the script.
