@@ -23,9 +23,9 @@
     END=`echo "\033[0m"`
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 sudo 
-####################### Setup for Ubuntu16 client #######################################
+####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 
-ubuntuclient16(){
+ubuntuclient(){
 export HOSTNAME
 myhost=$( hostname )
 sudo apt-get install realmd adcli sssd -y
@@ -41,7 +41,19 @@ discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
+var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
+if [ "$var" -eq "14" ]
+then
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+else
+if [ "$var" -eq "16" ]
+then
 sudo realm join --verbose --user=$ADMIN $DOMAIN
+else
+echo "Having issuers to detect your Ubuntu version"
+exit
+fi
+fi
 if [ $? -ne 0 ]; then
     echo "AD join failed.  Please run 'journalctl -xn' to determine why."
     exit 1
@@ -313,8 +325,8 @@ clear
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${INTRO_TEXT}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu 14 Client     ${NORMAL}"
-	echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 16 Client     ${NORMAL}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
+	echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Client     ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
 	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
@@ -330,13 +342,13 @@ while [ opt != '' ]
     else
         case $opt in
         1) clear;
-        echo "Installing on Ubuntu 14 Client";
-        ubuntuclient14;
+        echo "Installing on Ubuntu Client";
+        ubuntuclient;
         ;;
 
         2) clear;
-            echo "Installing on Ubuntu 16 Client";
-            ubuntuclient16;
+            echo "Installing on Ubuntu 14 Client";
+            ubuntuclient14;
             ;;
 
         3) clear;
