@@ -58,11 +58,11 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
+sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "In Sudoers file..."
@@ -112,11 +112,11 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/users
+sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 echo "Check that the group is correct"
 echo "In Sudoers file..."
