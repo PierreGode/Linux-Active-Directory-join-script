@@ -46,9 +46,7 @@ if [ "$var" -eq "14" ]
 then
 echo "Detecting Ubuntu 14"
 echo "Installing additional dependencies"
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
-sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get install -y realmd sssd sssd-tools samba-common krb5-user
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
