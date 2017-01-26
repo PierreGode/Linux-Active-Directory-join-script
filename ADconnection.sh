@@ -90,60 +90,6 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
-####################### Setup for Ubuntu14 client #######################################
-ubuntuclient14(){
-export HOSTNAME
-myhost=$( hostname )
-sudo apt-get update
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
-sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
-clear
-echo "Please enter the domain you wish to join: "
-read DOMAIN
-echo "Please enter Your domain’s NetBios name"
-read NetBios
-echo "Please enter a domain admin login to use: "
-read ADMIN
-discovery=$(realm discover $DOMAIN | grep domain-name)
-clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
-if [ $? -ne 0 ]; then
-    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
-    exit 1
-fi
-sudo echo "Configuratig files" 
-sudo systemctl enable sssd
-sudo systemctl start sssd
-sudo rm tmp.sh
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
-sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo touch /etc/ssh/login.group.allowed
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-echo "Check that the group is correct"
-echo "In Sudoers file..."
-sudo cat /etc/sudoers.d/users | grep $myhost
-echo "In SSH allow file..."
-sudo cat /etc/ssh/login.group.allowed | grep $myhost
-echo "If this is wrong DO NOT REBOOT and contact sysadmin"
-exec sudo -u root /bin/sh - <<eof
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
-eof
-}
 ####################### Setup for Ubuntu 14 server #######################################
 ubuntuserver14(){
 export HOSTNAME
