@@ -6,7 +6,6 @@
 #                                                                                                                   #
 #                                                                                                                   #
 #####################################################################################################################
-
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
@@ -24,7 +23,6 @@
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 sudo 
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
-
 ubuntuclient(){
 export HOSTNAME
 myhost=$( hostname )
