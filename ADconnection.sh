@@ -66,6 +66,7 @@ then
 echo "Detecting Ubuntu 16"
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 else
+clear
 echo "Having issuers to detect your Ubuntu version"
 exit
 fi
