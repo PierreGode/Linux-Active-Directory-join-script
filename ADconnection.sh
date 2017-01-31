@@ -29,8 +29,16 @@ myhost=$( hostname )
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 clear
-echo "Please enter the domain you wish to join: "
-read DOMAIN
+
+DOMAIN=$(realm discover | grep -i domain.name | cut -d ':' -f2)
+read -p "I seached for an available domain and found $DOMAIN : do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo 'yes!';;
+
+    [Nn]* ) echo "Please enter the domain you wish to join: "
+read DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "Please enter a domain admin login to use: "
 read ADMIN
