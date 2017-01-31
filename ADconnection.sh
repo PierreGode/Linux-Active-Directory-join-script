@@ -31,7 +31,8 @@ sudo apt-get install ntp -y
 clear
 
 DOMAIN=$(realm discover | grep -i domain.name | cut -d ':' -f2)
-echo "${NUMBER}I seached for an available domain and found $DOMAIN ${NUMBER}"
+echo "${NUMBER}I seached for an available domain and found $DOMAIN ${END}"
+
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
