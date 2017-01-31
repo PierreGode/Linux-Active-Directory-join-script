@@ -30,7 +30,7 @@ sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 clear
 
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2)
+DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I seached for an available domain and found >>> $DOMAIN  <<< ${END}"
 
 read -p "Do you wish to use it (y/n)?" yn
