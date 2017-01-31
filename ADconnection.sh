@@ -31,7 +31,7 @@ sudo apt-get install ntp -y
 clear
 
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2)
-echo "${NUMBER}I seached for an available domain and found >>> $DOMAIN <<< ${END}"
+echo "${NUMBER}I seached for an available domain and found >>> $DOMAIN  <<< ${END}"
 
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
