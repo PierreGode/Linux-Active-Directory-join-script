@@ -42,6 +42,7 @@ read -p "Do you wish to use it (y/n)?" yn
     * ) echo 'Please answer yes or no.';;
    esac
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+echo "${INTRO_TEXT}"Please type Admin user"${END}"
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
