@@ -35,14 +35,13 @@ echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${E
 
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-echo"${INTRO_TEXT}"Please enter a domain admin login to use:"${END}"
 read ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
