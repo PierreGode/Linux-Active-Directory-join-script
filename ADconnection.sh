@@ -25,7 +25,15 @@ sudo
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 export HOSTNAME
+#variables
 myhost=$( hostname )
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+discovery=$(realm discover $DOMAIN | grep domain-name)
+var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
+guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+#
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 clear
@@ -40,14 +48,11 @@ read -p "Do you wish to use it (y/n)?" yn
 	read DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "${INTRO_TEXT}"Please type Admin user"${END}"
 read ADMIN
-discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
@@ -93,8 +98,6 @@ sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -104,7 +107,6 @@ fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
