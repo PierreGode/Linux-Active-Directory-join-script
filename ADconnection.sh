@@ -44,6 +44,7 @@ read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
+var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
@@ -118,7 +119,7 @@ fi
 myhost=$( hostname )
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 discovery=$(realm discover $DOMAIN | grep domain-name)
-var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
+
 guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
