@@ -70,7 +70,7 @@ exit
 fi
 fi
 if [ $? -ne 0 ]; then
-    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit 1
 fi
 sudo echo "############################"
