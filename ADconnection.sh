@@ -25,12 +25,14 @@ sudo
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 export HOSTNAME
+myhost=$( hostname )
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 clear
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
-
+discovery=$(realm discover $DOMAIN | grep domain-name)
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
@@ -115,15 +117,11 @@ echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-#variables
-myhost=$( hostname )
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-discovery=$(realm discover $DOMAIN | grep domain-name)
 
 guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-#
+
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
