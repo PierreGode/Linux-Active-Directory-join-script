@@ -29,7 +29,6 @@ myhost=$( hostname )
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 clear
-
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
 
@@ -102,7 +101,6 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
