@@ -167,11 +167,34 @@ sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 sudo rm -R pbis-open-8.0.1.2029.linux.x86_64*
-echo "Check that the group is correct"
-echo "In Sudoers file..."
-sudo cat /etc/sudoers.d/admins | grep sudoers
-echo "In SSH allow file..."
-sudo cat /etc/ssh/login.group.allowed | grep sudoers
+therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ $therealm = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ $grouPs = "$myhost""sudoers" ]
+then 
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
+if [ $guest = false ]
+then
+echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
 echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 }
 ####################### Setup for Debian client #######################################
@@ -207,6 +230,34 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 # configure sudo
 echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 sudo echo "%""$hostname""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ $therealm = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ $grouPs = "$myhost""sudoers" ]
+then 
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
+if [ $guest = false ]
+then
+echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
