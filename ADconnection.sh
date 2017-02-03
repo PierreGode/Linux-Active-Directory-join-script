@@ -305,6 +305,37 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
+############################### Fail check ####################################
+therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ $therealm = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ $grouPs = "$myhost""sudoers" ]
+then 
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
+if [ $guest = false ]
+then
+echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+
+
 ############################### Reauth ##########################################
 Reauthenticate14(){
 echo "Reauth for Realmd ubuntu 14 only!"
@@ -352,9 +383,10 @@ clear
     echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} README with examples             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors                 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -378,17 +410,22 @@ while [ opt != '' ]
 		   echo "Installing on Debian Jessie client"
 		   debianclient
          ;;
-		4) clear;
+	 		3) clear;
+		   echo "Check for errors"
+		   failcheck
+         ;;
+	 
+		5) clear;
 		   echo "Reauthenticate realmd for Ubuntu 14"
 		   Reauthenticate14
          ;;
 
-     	 5) clear;
+     	 6) clear;
      	   echo "Update from Likewise to Realmd"
 		   Realmdupdate
          ;;
 	 
-     	 6) clear;
+     	 7) clear;
      	   echo "READ ME"
 		   readmes
          ;;
