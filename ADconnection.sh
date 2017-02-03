@@ -10,15 +10,8 @@
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
     NUMBER=`echo "\033[33m"` #yellow
-    FGRED=`echo "\033[41m"`
     RED_TEXT=`echo "\033[31m"` #Red
-    ENTER_LINE=`echo "\033[33m"`
     INTRO_TEXT=`echo "\033[32m"` #green and white text
-    INFOS=`echo "\033[103;30m"` #yellow bg
-    SUCCESS=`echo "\033[102;30m"` #green bg
-    WARNING=`echo "\033[101;30m"` #red bg
-    WARP=`echo "\033[106;30m"` #lightblue bg
-    BLACK=`echo "\033[109;30m"` #SPACE bg
     END=`echo "\033[0m"`
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 sudo 
