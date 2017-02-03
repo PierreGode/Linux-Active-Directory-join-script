@@ -3,9 +3,10 @@
 #                                                                                                                   #
 #                              This script is written by Pierre Goude                                               #
 #  This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public  #
-#                                                                                                                   #
+#                     This is an normal bash script and can be executed with sh                                     #
 #                                                                                                                   #
 #####################################################################################################################
+#known bugs: none
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
@@ -14,7 +15,6 @@
     INTRO_TEXT=`echo "\033[32m"` #green and white text
     END=`echo "\033[0m"`
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-sudo 
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 export HOSTNAME
