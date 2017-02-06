@@ -95,6 +95,9 @@ fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
@@ -102,19 +105,15 @@ echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ "$homedir" = 0022 ]
+if [ $homedir = 0022 ]
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ "$cauth" = allow ]
+if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -184,6 +183,9 @@ fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
@@ -191,19 +193,15 @@ echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ "$homedir" = 0022 ]
+if [ $homedir = 0022 ]
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ "$cauth" = allow ]
+if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -217,6 +215,11 @@ else
 echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 echo "If this is wrong DO NOT REBOOT and contact sysadmin"
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+eof
 }
 ####################### Setup for Debian client #######################################
 # This script should join Debian Jessie (8) to an Active Directory domain.
@@ -261,6 +264,9 @@ fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
@@ -268,19 +274,15 @@ echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ "$homedir" = 0022 ]
+if [ $homedir = 0022 ]
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ "$cauth" = allow ]
+if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -337,10 +339,47 @@ sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-cho "Check that the group is correct"
-echo "In Sudoers file..."
-sudo cat /etc/sudoers | grep $myhost
-sudo cat /etc/sudoers | grep $UseR
+therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ $therealm = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ $grouPs = "$myhost""sudoers" ]
+then 
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+if [ $cauth = allow ]
+then
+echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
+if [ "$guest" = false ]
+then
+echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%d\/%u/#fallback_homedir = \/home\/%d\/%u/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
