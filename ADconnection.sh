@@ -306,6 +306,7 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 ############################### Fail check ####################################
+failcheck(){
 therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -334,7 +335,7 @@ echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-
+}
 
 ############################### Reauth ##########################################
 Reauthenticate14(){
