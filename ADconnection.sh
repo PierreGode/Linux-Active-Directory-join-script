@@ -107,7 +107,7 @@ echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
 guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ $guest = false ]
+if [ "$guest" = false ]
 then
 echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -182,7 +182,7 @@ echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
 guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ $guest = false ]
+if [ "$guest" = false ]
 then
 echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -328,8 +328,22 @@ else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ "$homedir" = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+if [ "$cauth" = allow ]
+then
+echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
 guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ $guest = false ]
+if [ "$guest" = false ]
 then
 echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
