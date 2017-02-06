@@ -397,38 +397,39 @@ while [ opt != '' ]
     else
         case $opt in
         1) clear;
-        echo "Installing on Ubuntu Client";
-        ubuntuclient;
-        ;;
+            echo "Installing on Ubuntu Client";
+            ubuntuclient;
+            ;;
 
         2) clear;
             echo "Installing on Ubuntu 14 Server";
             ubuntuserver14
             ;;
 			
-		3) clear;
-		   echo "Installing on Debian Jessie client"
-		   debianclient
-         ;;
-	 		3) clear;
-		   echo "Check for errors"
-		   failcheck
-         ;;
+	3) clear;
+	    echo "Installing on Debian Jessie client"
+	    debianclient
+            ;;
+	    
+	 4) clear;
+	     echo "Check for errors"
+	     failcheck
+             ;;
 	 
-		5) clear;
-		   echo "Reauthenticate realmd for Ubuntu 14"
-		   Reauthenticate14
-         ;;
+	5) clear;
+	    echo "Reauthenticate realmd for Ubuntu 14"
+	    Reauthenticate14
+            ;;
 
      	 6) clear;
      	   echo "Update from Likewise to Realmd"
-		   Realmdupdate
-         ;;
+ 	   Realmdupdate
+           ;;
 	 
      	 7) clear;
      	   echo "READ ME"
-		   readmes
-         ;;
+	   readmes
+           ;;
 		 
         x)exit;
         ;;
