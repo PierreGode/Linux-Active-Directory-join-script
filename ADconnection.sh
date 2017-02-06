@@ -335,6 +335,7 @@ echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
+exit
 }
 
 ############################### Reauth ##########################################
