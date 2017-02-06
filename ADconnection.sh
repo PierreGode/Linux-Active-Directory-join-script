@@ -349,6 +349,8 @@ eof
 }
 ############################### Fail check ####################################
 failcheck(){
+export HOSTNAME
+myhost=$( hostname )
 therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
