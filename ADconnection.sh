@@ -19,8 +19,8 @@
 ubuntuclient(){
 export HOSTNAME
 myhost=$( hostname )
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
+sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install ntp -y
 clear
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
@@ -44,7 +44,7 @@ if [ "$var" -eq "14" ]
 then
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 echo "Installing additional dependencies"
-sudo apt-get install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
