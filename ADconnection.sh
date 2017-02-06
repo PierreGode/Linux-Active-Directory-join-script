@@ -372,14 +372,14 @@ else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ "$homedir" = 0022 ]
+if [ $homedir = 0022 ]
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ "$cauth" = allow ]
+if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
