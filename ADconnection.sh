@@ -17,6 +17,15 @@
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
+desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
+if [ $desktop = desktop ]
+then
+echo ""
+else
+echo " this seems to be a server, swithching to server mode"
+sleep 2
+ubuntuserver14
+fi
 export HOSTNAME
 myhost=$( hostname )
 sudo apt-get -qq install realmd adcli sssd -y
