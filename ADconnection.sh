@@ -179,13 +179,13 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/sudoers ]
+if [ -f /etc/sudoers.d/admins ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
@@ -205,13 +205,6 @@ then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ "$guest" = false ]
-then
-echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 echo "If this is wrong DO NOT REBOOT and contact sysadmin"
 exec sudo -u root /bin/sh - <<eof
