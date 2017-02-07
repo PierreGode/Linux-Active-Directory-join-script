@@ -18,7 +18,7 @@
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
-if [ $desktop = desktop ]
+if [ $? = 0 ]
 then
 echo ""
 else
