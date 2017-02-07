@@ -99,13 +99,13 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/admins ]
+if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
