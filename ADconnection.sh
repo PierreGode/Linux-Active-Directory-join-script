@@ -78,10 +78,8 @@ sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubu
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
@@ -165,10 +163,8 @@ sudo sh -c "echo 'auth required pam_listfile.so onerr=fail item=group sense=allo
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
