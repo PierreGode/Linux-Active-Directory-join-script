@@ -92,25 +92,25 @@ sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/sudoers ]
+if [ -f /etc/sudoers.d/admins ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ]
@@ -125,13 +125,6 @@ then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ "$guest" = false ]
-then
-echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
@@ -385,22 +378,31 @@ eof
 }
 ############################### Fail check ####################################
 failcheck(){
+clear
 export HOSTNAME
 myhost=$( hostname )
-therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+find=$( realm discover )
+if [ $? = 1 ]
+then
+echo "Sorry I am having issues finding your domain.. please type it"
+read DOMAIN
+else
+echo ""
+fi
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/sudoers ]
+if [ -f /etc/sudoers.d/admins ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
@@ -420,13 +422,6 @@ then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ "$guest" = false ]
-then
-echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 exit
 }
