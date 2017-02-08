@@ -6,7 +6,7 @@
 #                     This is an normal bash script and can be executed with sh                                     #
 #                                                                                                                   #
 #####################################################################################################################
-#known bugs: none
+#known bugs: see line 453-454
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
@@ -448,6 +448,14 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 exit
+}
+################################ fix errors # funktion not called ################
+fixerrors(){
+#this funktion is not called in the script
+#This funktion install additional pakages due to known issues with Joining and the join hangs after the admin login
+sudo add-apt-repository ppa:xtrusia/packagekit-fix
+sudo apt-get update
+sudo apt-get install packagekit
 }
 
 ############################### Reauth ##########################################
