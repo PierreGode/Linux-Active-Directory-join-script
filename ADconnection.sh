@@ -4,10 +4,10 @@
 #                              This script is written by Pierre Goude                                               #
 #  This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public  #
 #                     This is an normal bash script and can be executed with sh                                     #
-#                                                                                                                   #
+# Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname  #
 #####################################################################################################################
 
-#known bugs: see line 462-463
+#known bugs: see line 23-24
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
@@ -17,6 +17,16 @@
     INTRO_TEXT=`echo "\033[32m"` #green and white text
     END=`echo "\033[0m"`
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
+
+################################ fix errors # funktion not called ################
+fixerrors(){
+#this funktion is not called in the script : to activate, uncomment line line 508 #fixerrors
+#This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin login
+sudo add-apt-repository ppa:xtrusia/packagekit-fix
+sudo apt-get update
+sudo apt-get install packagekit
+}
+
 
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
@@ -43,7 +53,7 @@ read -p "Do you wish to use it (y/n)?" yn
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
-	read DOMAIN;;
+	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
 echo "${INTRO_TEXT}"Please type Admin user"${END}"
@@ -146,10 +156,10 @@ sudo apt-get install ntp -y
 sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "Please enter the domain you wish to join: "
-read DOMAIN
+read -r DOMAIN
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "Please enter a domain admin login to use: "
-read ADMIN
+read -r ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
@@ -249,7 +259,7 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "Please enter a domain admin login to use: "
-read ADMIN
+read -r ADMIN
 discovery=$(realm discover $DOMAIN | grep domain-name)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
@@ -404,7 +414,7 @@ find=$( realm discover )
 if [ $? = 1 ]
 then
 echo "Sorry I am having issues finding your domain.. please type it"
-read DOMAIN
+read -r DOMAIN
 else
 echo ""
 fi
@@ -457,22 +467,13 @@ fi
 exit
 }
 
-################################ fix errors # funktion not called ################
-fixerrors(){
-#this funktion is not called in the script : to activate uncommen line line 508 #fixerrors
-#This funktion install additional pakages due to known issues with Joining and the join hangs after the admin login
-sudo add-apt-repository ppa:xtrusia/packagekit-fix
-sudo apt-get update
-sudo apt-get install packagekit
-}
-
 ############################### Reauth ##########################################
 Reauthenticate14(){
 echo "Reauth for Realmd ubuntu 14 only!"
 echo "Type domain"
-read DOMAIN
+read -r DOMAIN
 echo "Type Adminuser"
-read ADMIN
+read -r ADMIN
 discover=$(realm discover | grep domain-name: | cut -d ':' -f2)
 realm leave $discover
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
