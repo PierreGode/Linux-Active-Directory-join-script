@@ -6,7 +6,9 @@
 #                     This is an normal bash script and can be executed with sh                                     #
 #                                                                                                                   #
 #####################################################################################################################
-#known bugs: see line 453-454
+
+#known bugs: see line 462-463
+
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=`echo "\033[m"`
     MENU=`echo "\033[36m"` #Blue
@@ -15,6 +17,7 @@
     INTRO_TEXT=`echo "\033[32m"` #green and white text
     END=`echo "\033[0m"`
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
+
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
@@ -132,6 +135,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
+
 ####################### Setup for Ubuntu 14 server #######################################
 ubuntuserver14(){
 export HOSTNAME
@@ -223,6 +227,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
+
 ####################### Setup for Debian client #######################################
 # This script should join Debian Jessie (8) to an Active Directory domain.
 debianclient(){
@@ -303,6 +308,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
+
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
 export HOSTNAME
@@ -388,6 +394,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
+
 ############################### Fail check ####################################
 failcheck(){
 clear
@@ -449,9 +456,10 @@ echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 exit
 }
+
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script
+#this funktion is not called in the script : to activate uncommen line line 508 #fixerrors
 #This funktion install additional pakages due to known issues with Joining and the join hangs after the admin login
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
@@ -470,6 +478,7 @@ realm leave $discover
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 exit
 }
+
 ########################################### info #######################################
 readmes(){
 clear
@@ -495,6 +504,8 @@ echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in
 echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
 exit
 }
+
+#fixerrors
 ########################################### Menu #######################################
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
