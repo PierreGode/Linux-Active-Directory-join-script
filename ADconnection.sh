@@ -27,7 +27,6 @@ sudo apt-get update
 sudo apt-get install packagekit
 }
 
-
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
