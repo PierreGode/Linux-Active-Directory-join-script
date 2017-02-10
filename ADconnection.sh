@@ -40,6 +40,8 @@ ubuntuserver14
 fi
 export HOSTNAME
 myhost=$( hostname )
+clear
+sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo dpkg -l | grep realmd
