@@ -44,8 +44,8 @@ clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
-sudo dpkg -l | grep realmd
 clear
+sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then 
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
