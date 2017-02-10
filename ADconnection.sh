@@ -43,7 +43,16 @@ export HOSTNAME
 myhost=$( hostname )
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo dpkg -l | grep realmd
 clear
+if [ $? = 0 ]
+then 
+sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+else
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connectio and dpkg and try again."${INTRO_TEXT}"
+exit
+fi
+sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
 discovery=$(realm discover $DOMAIN | grep domain-name)
