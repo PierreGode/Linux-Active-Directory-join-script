@@ -47,9 +47,11 @@ sudo apt-get -qq install ntp -y
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
-then 
+then
+clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
+clear
 sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection and dpkg and try again."${INTRO_TEXT}"
 exit
 fi
