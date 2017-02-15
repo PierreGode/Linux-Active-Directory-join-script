@@ -18,3 +18,6 @@ this will make the cleanest setup possible. no @ in names or in home folder
 home folder will be /home/myad.intra/you
 User name will be only set as "you" without /myad/you or you@myad.intra. just clean. this is to prevent complications for developers when building code
 after reboot just login with you AD acoount "you" and password... again.. no @ or / is needed, just "user"
+
+For best security. I restricted ssh to domain and administrator users.
+also clients will only allow login from assigned group ( hostnamesudoers )
