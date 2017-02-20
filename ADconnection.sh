@@ -482,9 +482,15 @@ exit
 
 ############################### Reauth ##########################################
 Reauthenticate14(){
-echo "Reauth for Realmd ubuntu 14 only!"
-echo "Type domain"
-read -r DOMAIN
+DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
 echo "Type Adminuser"
 read -r ADMIN
 discover=$(realm discover | grep domain-name: | cut -d ':' -f2)
