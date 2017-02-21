@@ -186,7 +186,6 @@ sudo echo "Configuratig files"
 sudo systemctl enable sssd
 sudo systemctl start sssd
 sudo echo "#########################"
-sudo sed -i '30s/.*/session [success=ok default=ignore] pam_lsass.so/' /etc/pam.d/common-session
 sudo sh -c "sed -i 's|ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|' /etc/ssh/sshd_config"
 sudo sh -c "echo 'auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed' >> /etc/pam.d/common-auth"
 sudo touch /etc/ssh/login.group.allowed
