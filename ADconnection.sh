@@ -163,127 +163,78 @@ eof
 ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
-sudo apt-get update
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
-sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
 clear
-echo "Please enter the domain you wish to join: "
-read -r DOMAIN
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-echo "Please enter a domain admin login to use: "
-read -r ADMIN
-discovery=$(realm discover $DOMAIN | grep domain-name)
+sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install ntp -y
 clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
-if [ $? -ne 0 ]; then
-    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
-    exit 1
-fi
-sudo echo "Configuratig files" 
-sudo systemctl enable sssd
-sudo systemctl start sssd
-sudo echo "#########################"
-sudo sh -c "sed -i 's|ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|' /etc/ssh/sshd_config"
-sudo sh -c "echo 'auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed' >> /etc/pam.d/common-auth"
-sudo touch /etc/ssh/login.group.allowed
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admins
-sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-if [ $therealm = no ]
+sudo dpkg -l | grep realmd
+if [ $? = 0 ]
 then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ -f /etc/sudoers.d/admins ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
-         then
-         echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-         else
-         echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-         fi
-else
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs1 = "$myhost""sudoers" ]
-         then
-         echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-         else
-         echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-         fi
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-echo "If this is wrong DO NOT REBOOT and contact sysadmin"
-exec sudo -u root /bin/sh - <<eof
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
-eof
-}
-
-####################### Setup for Debian client #######################################
-# This script should join Debian Jessie (8) to an Active Directory domain.
-debianclient(){
-export HOSTNAME
-myhost=$( hostname )
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
 clear
+sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+else
+clear
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection and dpkg and try again."${INTRO_TEXT}"
+exit
+fi
+sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
-
+discovery=$(realm discover $DOMAIN | grep domain-name)
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
-	read DOMAIN;;
+	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-echo "Please enter a domain admin login to use: "
-read -r ADMIN
-discovery=$(realm discover $DOMAIN | grep domain-name)
+echo "${INTRO_TEXT}"Please type Admin user"${END}"
+read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
+var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
+if [ "$var" -eq "14" ]
+then
+echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+echo "Installing additional dependencies"
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sleep 1
+clear
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+else
+if [ "$var" -eq "16" ]
+then
+echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 sudo realm join --verbose --user=$ADMIN $DOMAIN
+else
+clear
+echo "Having issuers to detect your Ubuntu version"
+exit
+fi
+fi
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit 1
+fi
+sudo echo "############################"
+sudo echo "Configuratig files.."
+sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-# configure sudo
-echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-sudo echo "%""$hostname""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -316,13 +267,6 @@ then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ "$guest" = false ]
-then
-echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
