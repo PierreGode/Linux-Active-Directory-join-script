@@ -159,7 +159,7 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 
-####################### Setup for Ubuntu 14 server #######################################
+####################### Setup for Ubuntu server #######################################
 ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
@@ -167,6 +167,7 @@ clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo apt-get -qq install -y sssd-tools samba-common krb5-user
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
@@ -196,29 +197,7 @@ read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
-if [ "$var" -eq "14" ]
-then
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-echo "Installing additional dependencies"
-sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
-clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
-sleep 1
-clear
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
-else
-if [ "$var" -eq "16" ]
-then
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN
-else
-clear
-echo "Having issuers to detect your Ubuntu version"
-exit
-fi
-fi
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit 1
