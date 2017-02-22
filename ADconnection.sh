@@ -239,8 +239,8 @@ echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-echo "${INTRO_TEXT}Please not the it can take up to 5 minutes until AD sincronizes and you can log in..${INTRO_TEXT}"
-echo "${INTRO_TEXT}If you sudoers grou in not hostname but a custom group pleace replace hostname with correct groupname in /et/sudoers.d/sudores${INTRO_TEXT}"
+echo "${INTRO_TEXT}It can take up to 5 minutes until AD sincronizes and you can log in..${INTRO_TEXT}"
+echo "${INTRO_TEXT}If you sudoers group in not hostname but a custom group, pleace replace hostname with correct groupname in /etc/sudoers.d/sudores${INTRO_TEXT}"
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
