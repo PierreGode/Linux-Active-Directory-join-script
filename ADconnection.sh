@@ -20,13 +20,13 @@
 
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 459 #fixerrors
+#this funktion is not called in the script : to activate, uncomment line line 29 #fixerrors
 #This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin auth
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
 sudo apt-get install packagekit
 }
-
+#fixerrors
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
@@ -455,8 +455,6 @@ echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in
 echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
 exit
 }
-
-#fixerrors
 ########################################### Menu #######################################
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
