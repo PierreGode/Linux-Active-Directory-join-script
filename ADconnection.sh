@@ -20,7 +20,7 @@
 
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 508 #fixerrors
+#this funktion is not called in the script : to activate, uncomment line line 459 #fixerrors
 #This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin login
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
