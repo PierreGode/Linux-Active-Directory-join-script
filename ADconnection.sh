@@ -74,9 +74,9 @@ else
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
+fi
 discovery=$(realm discover $DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-
 echo "${INTRO_TEXT}"Please type Admin user"${END}"
 read ADMIN
 clear
