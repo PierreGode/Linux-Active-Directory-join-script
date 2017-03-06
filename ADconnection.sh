@@ -57,9 +57,11 @@ exit
 fi
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+ping -c 1 $DOMAIN
+if [ $? = 0 ]
+then
+clear
 echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
-discovery=$(realm discover $DOMAIN | grep domain-name)
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
@@ -68,6 +70,13 @@ read -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
+else
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+discovery=$(realm discover $DOMAIN | grep domain-name)
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+
 echo "${INTRO_TEXT}"Please type Admin user"${END}"
 read ADMIN
 clear
