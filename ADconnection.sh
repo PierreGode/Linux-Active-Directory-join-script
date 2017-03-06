@@ -470,7 +470,7 @@ clear
 	read opt
 while [ opt != '' ]
     do
-    if [[ $opt = "" ]]; then 
+    if [ $opt = "" ]; then 
             exit;
     else
         case $opt in
