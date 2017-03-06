@@ -71,6 +71,7 @@ read -p "Do you wish to use it (y/n)?" yn
     * ) echo 'Please answer yes or no.';;
    esac
 else
+clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
@@ -204,6 +205,7 @@ read -p "Do you wish to use it (y/n)?" yn
     * ) echo 'Please answer yes or no.';;
    esac
 else
+clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
