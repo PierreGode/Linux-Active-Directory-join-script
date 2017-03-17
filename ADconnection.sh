@@ -102,7 +102,7 @@ echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 sudo realm join --verbose --user=$ADMIN $DOMAIN
 else
 clear
-echo "Having issuers to detect your Ubuntu version"
+sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
 exit
 fi
 fi
