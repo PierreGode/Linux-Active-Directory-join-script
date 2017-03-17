@@ -209,6 +209,8 @@ clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
 echo "Please enter the domain you wish to join:"
 read DOMAIN
+echo "${NUMBER}I Please enter AD admin user ${END}"
+read ADMIN
 fi
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
