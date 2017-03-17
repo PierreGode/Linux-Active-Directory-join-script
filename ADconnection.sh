@@ -10,12 +10,12 @@
 #known bugs: see line 23-24
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-    NORMAL=$(echo "\033[m")
-    MENU=$(echo "\033[36m") #Blue
-    NUMBER=$(echo "\033[33m") #yellow
-    RED_TEXT=$(echo "\033[31m") #Red
-    INTRO_TEXT=$(echo "\033[32m") #green and white text
-    END=$(echo "\033[0m")
+    NORMAL=$("\033[m")
+    MENU=$("\033[36m") #Blue
+    NUMBER=$("\033[33m") #yellow
+    RED_TEXT=$("\033[31m") #Red
+    INTRO_TEXT=$("\033[32m") #green and white text
+    END=$("\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
 ################################ fix errors # funktion not called ################
