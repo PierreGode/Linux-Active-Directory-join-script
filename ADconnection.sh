@@ -125,7 +125,7 @@ sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain"'^'"users" >> /etc/sudoers.d/sudoers
+sudo echo "%domain^users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
