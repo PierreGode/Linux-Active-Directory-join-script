@@ -124,10 +124,9 @@ sudo echo "administrator" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain^users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+sudo echo "%domain'\ 'users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN'\ 'admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
@@ -226,10 +225,13 @@ sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
+sudo echo "administrator" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
 sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain^admins ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+sudo echo "%domain'\ 'users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN'\ 'admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
