@@ -268,6 +268,11 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 
+CentOS(){
+# Not ready
+}
+
+
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
 export HOSTNAME
@@ -470,10 +475,11 @@ clear
     echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors                 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} README with examples             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian CentoOS ${NORMAL}"
+    echo "${MENU}*${NUMBER} 5)${MENU} Check for errors                 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 8)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -498,22 +504,27 @@ while [ opt != '' ]
 	    debianclient
             ;;
 	    
-	 4) clear;
+	4) clear;
+	    echo "Installing on Debian Cent OS"
+	    CentoOS
+            ;;
+	    
+	 5) clear;
 	     echo "Check for errors"
 	     failcheck
              ;;
 	 
-	5) clear;
+	6) clear;
 	    echo "Reauthenticate realmd for Ubuntu 14"
 	    Reauthenticate14
             ;;
 
-     	 6) clear;
+     	 7) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
 	 
-     	 7) clear;
+     	 8) clear;
      	   echo "READ ME"
 	   readmes
            ;;
