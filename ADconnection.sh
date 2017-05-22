@@ -270,6 +270,7 @@ eof
 
 CentOS(){
 # Not ready
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common
 }
 
 
