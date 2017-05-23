@@ -268,6 +268,7 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 
+####################################### Cent OS #########################################
 CentOS(){
 # Not ready
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
@@ -294,6 +295,9 @@ read -r DOMAIN
 echo "${NUMBER}I Please enter AD admin user ${END}"
 read -r ADMIN
 fi
+clear
+sudo echo "Please enter AD admin user"
+read -r ADMIN
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
