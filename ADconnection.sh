@@ -536,7 +536,7 @@ while [ opt != '' ]
 	    
 	4) clear;
 	    echo "Installing on Debian Cent OS"
-	    CentoOS
+	    CentOS
             ;;
 	    
 	 5) clear;
