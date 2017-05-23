@@ -270,7 +270,7 @@ eof
 
 CentOS(){
 # Not ready
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 ping -c 1 $DOMAIN
