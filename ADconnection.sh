@@ -271,8 +271,37 @@ eof
 CentOS(){
 # Not ready
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common
-}
+sleep 1
+DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+ping -c 1 $DOMAIN
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
 
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+echo "${NUMBER}I Please enter AD admin user ${END}"
+read -r ADMIN
+fi
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit 1
+fi
+}
 
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
