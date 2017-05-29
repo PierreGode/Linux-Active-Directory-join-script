@@ -101,10 +101,7 @@ else
    echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
    sudo realm join --verbose --user=$ADMIN $DOMAIN
    else
-   clear
-   echo $var
-   sleep 5
-       if ["$var" -eq "17" ]
+       if [ "$var" -eq "17" ]
        then
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
        sudo realm join --verbose --user=$ADMIN $DOMAIN
