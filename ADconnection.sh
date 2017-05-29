@@ -96,25 +96,25 @@ sleep 1
 clear
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 else
-if [ "$var" -eq "16" ]
-then
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN
-else
-if ["$var" -eq "17" ]
-then
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN
-else
-clear
-sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
-exit
-fi
-fi
+   if [ "$var" -eq "16" ]
+   then
+   echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+   sudo realm join --verbose --user=$ADMIN $DOMAIN
+   else
+       if ["$var" -eq "17" ]
+       then
+       echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+       sudo realm join --verbose --user=$ADMIN $DOMAIN
+       else
+       clear
+      sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
+     exit
+     fi
+  fi
 fi
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
-    exit 1
+    exit
 fi
 sudo echo "############################"
 sudo echo "Configuratig files.."
