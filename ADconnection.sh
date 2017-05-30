@@ -275,8 +275,8 @@ eof
 }
 
 ####################################### Cent OS #########################################
+# Functional but ugly
 CentOS(){
-# Not ready
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
