@@ -277,8 +277,9 @@ eof
 ####################################### Cent OS #########################################
 CentOS(){
 # Not ready
+export HOSTNAME
+myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
-sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 ping -c 1 $DOMAIN
 if [ $? = 0 ]
@@ -312,6 +313,56 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 }
+sudo echo "############################"
+sudo echo "Configuratig files.."
+sudo echo "Verifying the setup"
+sudo systemctl enable sssd
+sudo systemctl start sssd
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
+sudo echo "administrator" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+sudo echo "127.0.1.1 $myhost" >> /etc/hosts
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ $therealm = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ $grouPs = "$myhost""sudoers" ]
+then 
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+echo "${INTRO_TEXT}It can take up to 5 minutes until AD sincronizes and you can log in..${INTRO_TEXT}"
+echo "${INTRO_TEXT}If you sudoers group in not hostname but a custom group, pleace replace hostname with correct groupname in /etc/sudoers.d/sudores${INTRO_TEXT}"
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+eof
+}
+
 
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
