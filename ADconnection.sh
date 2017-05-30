@@ -312,7 +312,6 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit 1
 fi
-}
 sudo echo "############################"
 sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
@@ -330,29 +329,29 @@ sudo echo "127.0.1.1 $myhost" >> /etc/hosts
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+echo Realm configured?.. FAIL"
 else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+echo Realm configured?.. OK}"
 fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+echo Checking sudoers file.. OK}"
 else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo checking sudoers file.. FAIL"
 fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
+if [ $grouPs -eq "$myhost""sudoers" ]
 then 
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+echo Checking sudoers users.. OK"
 else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+echo Checking sudoers users.. FAIL"
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
+if [ $homedir -eq 0022 ]
 then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+echo Checking PAM configuration.. OK"
 else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+echo Checking PAM configuration.. FAIL"
 fi
 echo "${INTRO_TEXT}It can take up to 5 minutes until AD sincronizes and you can log in..${INTRO_TEXT}"
 echo "${INTRO_TEXT}If you sudoers group in not hostname but a custom group, pleace replace hostname with correct groupname in /etc/sudoers.d/sudores${INTRO_TEXT}"
