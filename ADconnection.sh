@@ -175,9 +175,9 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
 if [ $? = 0 ]
 then
-echo  "sssd config = OK"
+echo  "Checking sssd config.. OK"
 else
-echo "sssd config = FAIL"
+echo "Checking sssd config.. FAIL"
 fi
 eof
 }
