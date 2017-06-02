@@ -172,6 +172,13 @@ exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+if [ $? = 0 ]
+then
+echo  "sssd config = OK"
+else
+echo "sssd config = FAIL"
+fi
 eof
 }
 
