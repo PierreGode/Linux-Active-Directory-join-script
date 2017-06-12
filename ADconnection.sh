@@ -371,6 +371,8 @@ eof
 
 ############################### Raspberry Pi ###################################
 raspberry(){
+export HOSTNAME
+myhost=$( hostname )
 rasp=$(uname -a | grep -i raspberry | cut -d 'x' -f1 | cut -d 'y' -f2)
 if [ $rasp -eq raspberr ]
 then
@@ -383,6 +385,23 @@ echo "Lets get this bad boy Joined!"
 else 
 echo "Something is wrong.." 
 fi
+sudo aptitude install realmd
+sudo aptitude install ntp adcli sssd
+sudo mkdir -p /var/lib/samba/private
+sudo aptitude install libsss-sudo
+sudo systemctl enable sssd
+DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+echo "please type Domain admin"
+read -r ADMIN
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+sudo systemctl start sssd
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+eof
 }
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
