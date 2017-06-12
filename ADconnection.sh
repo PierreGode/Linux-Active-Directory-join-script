@@ -369,7 +369,21 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 
-
+############################### Raspberry Pi ###################################
+raspberry(){
+rasp=$(uname -a | grep -i raspberry | cut -d 'x' -f1 | cut -d 'y' -f2)
+if [ $rasp -eq raspberr ]
+then
+echo "OMG do i sense a Raspberry! you sir are awesome" 
+sleep 2
+echo "Hold on... let me download a picture for you"
+wget http://weknowmemes.com/generator/uploads/generated/g1410567650251917439.jpg
+sleep 2
+echo "Lets get this bad boy Joined!"
+else 
+echo "Something is wrong.." 
+fi
+}
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
 export HOSTNAME
