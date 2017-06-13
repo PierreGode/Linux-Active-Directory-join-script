@@ -121,18 +121,18 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
-sudo sh -c "echo 'greeter-show-manual-login=true' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo sh -c "echo 'allow-guest=false' >> /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo touch /etc/ssh/login.group.allowed
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
@@ -171,7 +171,7 @@ fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
 if [ $? = 0 ]
 then
@@ -237,14 +237,14 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL"  | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -324,15 +324,15 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
-sudo echo "administrator" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" >> /etc/ssh/login.group.allowed
-sudo echo "administrator ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-sudo echo "127.0.1.1 $myhost" >> /etc/hosts
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "administrator ALL=(ALL:ALL) ALL"  | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+sudo echo "127.0.1.1 $myhost" | sudo tee -a /etc/hosts
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -435,11 +435,11 @@ sleep 2
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 echo "Please enter user to add (user WITHOUT the @server.server)"
 read UseR
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" >> /etc/pam.d/common-session
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" >> /etc/pam.d/common-auth
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
 sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" >> /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
 therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
