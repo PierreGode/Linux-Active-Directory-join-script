@@ -128,7 +128,7 @@ sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.co
 sudo echo "Cheking if there is any previous configuration"
 if [ -f /etc/ssh/login.group.allowed ]
 then
-echo "Files seems already to be modified.. skipping...."
+echo "Files seems already to be modified, skipping..."
 else
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
@@ -137,7 +137,7 @@ sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowe
 fi
 if [ -f /etc/sudoers.d/sudoers ]
 then
-echo "Sudoersfile seems already to be modified.. skipping...."
+echo "Sudoersfile seems already to be modified, skipping..."
 else
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
