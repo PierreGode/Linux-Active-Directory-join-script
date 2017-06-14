@@ -135,6 +135,7 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
     [Nn]* ) echo "disabled SSH allow";;
