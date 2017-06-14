@@ -129,8 +129,8 @@ sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudoersfile=$(cat /etc/sudoers.d/sudoes | grep $myhost)
-if [ "$sudoesfile" -eq "$myhost" ]
+sudoersfile=$(cat /etc/sudoers.d/sudoers | grep $myhost)
+if [ "$sudoesfile" = "$myhost" ]
 then
 echo "Sudoersfile seems already to be modified.. skipping...."
 else
