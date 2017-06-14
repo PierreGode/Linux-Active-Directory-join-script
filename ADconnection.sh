@@ -57,7 +57,7 @@ exit
 fi
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-ping -c 1 $DOMAIN
+ping -c 2 $DOMAIN
 if [ $? = 0 ]
 then
 clear
@@ -121,23 +121,29 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-sleep 4
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo echo "Cheking if there is any previous configuration"
-if [ -f /etc/ssh/login.group.allowed ]
+clear
+read -p "Do you wish to enable SSH allow/disble protection (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+	if [ -f /etc/ssh/login.group.allowed ]
 then
 echo "Files seems already to be modified, skipping..."
 else
+echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 sudo touch /etc/ssh/login.group.allowed
 sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-fi
-if [ -f /etc/sudoers.d/sudoers ]
+echo "enabled SSH-allow"
+fi;;
+    [Nn]* ) echo "disabled SSH allow";;
+    * ) echo "Please answer yes or no.";;
+   esac
+read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/sudoers.d/sudoers ]
 then
 echo "Sudoersfile seems already to be modified, skipping..."
 else
@@ -146,7 +152,14 @@ sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sud
 sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
-fi
+fi;;
+    [Nn]* ) echo "disabled sudo rights for users on this machine";;
+    * ) echo 'Please answer yes or no.';;
+   esac
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -186,6 +199,7 @@ sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
+sudo service sssd restart
 if [ $? = 0 ]
 then
 echo  "Checking sssd config.. OK"
