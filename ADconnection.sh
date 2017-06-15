@@ -695,6 +695,7 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
+realm discover
 exit
 }
 
