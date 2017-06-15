@@ -753,7 +753,7 @@ clear
     echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian CentoOS ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian CentOS ${NORMAL}"
     echo "${MENU}*${NUMBER} 5)${MENU} Check for errors                 ${NORMAL}"
 	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
 	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
