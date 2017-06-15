@@ -138,7 +138,7 @@ read -p "Is your current administrator = "$admins" ? (y/n)?" yn
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
 read -p MYADMIN
-sudo echo "$MYADMIN"  | sudo tee -a /etc/ssh/login.group.allowed;;
+sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
