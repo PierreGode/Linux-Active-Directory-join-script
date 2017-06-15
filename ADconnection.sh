@@ -678,7 +678,7 @@ grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d
          echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
          fi
 else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+echo Checking sudoers file.. "${RED_TEXT}"FAIL not configured"${END}"
 fi
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
@@ -693,7 +693,7 @@ if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
 realm discover
 exit
