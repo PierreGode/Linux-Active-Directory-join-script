@@ -122,7 +122,7 @@ sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
 clear
-read -p "Do you wish to enable SSH allow/disble protection (y/n)?" yn
+read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
