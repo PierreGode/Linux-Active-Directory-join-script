@@ -216,6 +216,7 @@ else
 echo "Checking sssd config.. FAIL"
 fi
 realm discover
+echo "${INTRO_TEXT}Please reboot your machine${INTRO_TEXT}"
 eof
 }
 
