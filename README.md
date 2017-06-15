@@ -1,5 +1,5 @@
 # Linux-Active-Directory-join-script
-This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, Raspberry Pi Raspbian with realmd.
+This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, and Raspberry Pi Raspbian with realmd.
 
 Complete steps
 
