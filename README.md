@@ -32,7 +32,8 @@ after reboot just login with you AD acoount "you" and password... again.. no @ o
 For best security. I restricted ssh to domain and administrator users.
 also clients will only allow login from assigned group ( hostnamesudoers )
 
-How do i update my password ( changed password but Linux is still on old password ) 
+How do i update my password?
+( changed password but Linux is still on old password ) 
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
 to update, open a terminal and execute sudo service sssd restart.
 
