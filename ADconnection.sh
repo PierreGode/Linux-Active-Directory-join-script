@@ -133,7 +133,7 @@ else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 sudo touch /etc/ssh/login.group.allowed
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-echo "Is your current administrator = "$admins" ?"
+read -p "Is your current administrator = "$admins" ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
