@@ -132,7 +132,15 @@ echo "Files seems already to be modified, skipping..."
 else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 sudo touch /etc/ssh/login.group.allowed
-sudo echo "administrator"  | sudo tee -a /etc/ssh/login.group.allowed
+admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo "Is your current administrator = "$admins" ?"
+   case $yn in
+    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
+    [Nn]* ) echo "please type name of current administrator"
+read -p MYADMIN
+sudo echo "$MYADMIN"  | sudo tee -a /etc/ssh/login.group.allowed;;
+    * ) echo "Please answer yes or no.";;
+   esac
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
