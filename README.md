@@ -35,3 +35,16 @@ also clients will only allow login from assigned group ( hostnamesudoers )
 How do i update my password ( changed password but Linux is still on old password ) 
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
 to update, open a terminal and execute sudo service sssd restart.
+
+I have issues!
+
+1. After reboot I cant log in at all.  "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
+
+2. I rebooted the computer but i till can not login with the AD user!   "did you wait 3 to 5 min for AD to sync? 
+Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id youADusername, if you can see the user then it works.
+
+3. Damn i got the wrong hostname and its not a computerobject in AD   "Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  /etc/hosts
+then run sudo realm leave domain.domain reboot and rejoin executing realm join -v -U ADdamin domain.doamn
+reboot and wait 5 min before login
+
+
