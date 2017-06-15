@@ -334,7 +334,7 @@ if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
 fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
@@ -355,7 +355,7 @@ if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
@@ -476,7 +476,7 @@ if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
 fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
@@ -497,7 +497,7 @@ if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
