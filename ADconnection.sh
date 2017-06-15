@@ -209,6 +209,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
 sudo service sssd restart
+realm discover
 if [ $? = 0 ]
 then
 echo  "Checking sssd config.. OK"
