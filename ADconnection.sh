@@ -215,7 +215,7 @@ echo  "Checking sssd config.. OK"
 else
 echo "Checking sssd config.. FAIL"
 fi
-realm discover
+realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
 }
