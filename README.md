@@ -5,7 +5,7 @@ Complete steps
 
 
 1. create computer object in AD lets say the name is= linuxcomputer as example
-2. create a group name LINUXCOMPUTERsudoers ( if you wish to remove sudoers you must edit script )
+2. create a group name LINUXCOMPUTERsudoers in AD ( if you wish to remove sudoers you must edit script )
 3. set hostname on you computer to linuxcomputer (hostname and hosts files) and reboot
 4. git clone this script and run.
 
