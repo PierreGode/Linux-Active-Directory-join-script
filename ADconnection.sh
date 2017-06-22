@@ -708,7 +708,8 @@ exit
 ldaplook(){
 export HOSTNAME
 myhost=$( hostname )
-if [ -f /etc/ldap/ldap.conf ]
+ldaptools=$ ( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
+if [ $ldaptools = dap-uti ]
 then 
 echo "ldap tool installed.. verifying setup"
 sudo ldapsearch | grep -i $myhost
