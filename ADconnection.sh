@@ -697,6 +697,8 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
+echo ""
+echo "-------------------------------------------------------------------------------------"
 realm discover
 echo "-------------------------------------------------------------------------------------"
 realm list
