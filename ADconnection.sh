@@ -784,7 +784,7 @@ clear
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Ubuntu Client or Server    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on Debian CentOS  ${NORMAL}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
     echo "${MENU}*${NUMBER} 5)${MENU} Search with ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
