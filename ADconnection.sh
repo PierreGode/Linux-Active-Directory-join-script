@@ -709,13 +709,14 @@ ldaplook(){
 export HOSTNAME
 myhost=$( hostname )
 ldaptools=$( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
-echo "${NUMBER}You must be logged in with AD admin on the client/server to use this funktion${END}"
+echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server to use this funktion${END}"
 sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
 echo "ldap tool installed.. verifying setup"
-read own
 sudo ldapsearch | grep -i $myhost
+echo "Please type what you are looking for"
+read own
 sudo ldapsearch | grep -i $own
 exit
 else
@@ -783,7 +784,7 @@ clear
     echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Debian Jessie Client    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian CentOS  ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 5)${MENU} Chech in ldap              ${NORMAL}"
+    echo "${MENU}*${NUMBER} 5)${MENU} Check in ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
 	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
 	echo "${MENU}*${NUMBER} 8)${MENU} README with examples             ${NORMAL}"
