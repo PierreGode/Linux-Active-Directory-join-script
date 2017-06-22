@@ -709,6 +709,8 @@ ldaplook(){
 export HOSTNAME
 myhost=$( hostname )
 ldaptools=$( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
+echo "${NUMBER}You must be logged in with AD admin on the client/server to use this funktion${END}"
+sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
 echo "ldap tool installed.. verifying setup"
