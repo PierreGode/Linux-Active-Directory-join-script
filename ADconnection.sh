@@ -714,7 +714,7 @@ then
 echo "ldap tool installed.. verifying setup"
 sudo ldapsearch | grep -i $myhost
 else
-sudo apt-get install ldap-tools -y
+sudo apt-get install ldap-utils -y
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
 sudo nano /etc/ldap/ldap.conf
