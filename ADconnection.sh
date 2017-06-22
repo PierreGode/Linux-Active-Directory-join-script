@@ -714,13 +714,17 @@ sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
 echo "ldap tool installed.. verifying setup"
+read own
 sudo ldapsearch | grep -i $myhost
+sudo ldapsearch | grep -i $own
+exit
 else
 sudo apt-get install ldap-utils -y
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
 sudo nano /etc/ldap/ldap.conf
 sudo ldapsearch | grep -i $myhost
+exit
 fi
 }
 
