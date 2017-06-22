@@ -698,7 +698,26 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
 realm discover
+echo "-------------------------------------------------------------------------------------"
+realm list
 exit
+}
+
+
+#################################### ldapsearch #####################################################
+ldaplook(){
+export HOSTNAME
+myhost=$( hostname )
+if [ -f /etc/ldap/ldap.conf ]
+then 
+echo "ldap tool installed.. verifying setup"
+sudo ldapsearch | grep -i $myhost
+else
+sudo apt-get install ldap-tools -y
+echo "please edit ldap.conf"
+sudo nano /etc/ldap/ldap.conf
+sudo ldapsearch | grep -i $myhost
+fi
 }
 
 ############################### Reauth ##########################################
@@ -752,11 +771,11 @@ clear
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${INTRO_TEXT}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client     ${NORMAL}"
-    echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Ubuntu 14 Server     ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian Jessie Client ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Setup AD on Debian CentOS ${NORMAL}"
-    echo "${MENU}*${NUMBER} 5)${MENU} Check for errors                 ${NORMAL}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Setup AD on Ubuntu Client or Server    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 2)${MENU} Setup AD on Debian Jessie Client    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Setup AD on Debian CentOS  ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 5)${MENU} Chech in ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
 	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
 	echo "${MENU}*${NUMBER} 8)${MENU} README with examples             ${NORMAL}"
@@ -770,28 +789,28 @@ while [ opt != '' ]
     else
         case $opt in
         1) clear;
-            echo "Installing on Ubuntu Client";
+            echo "Installing on Ubuntu Client/Server";
             ubuntuclient;
             ;;
 
         2) clear;
-            echo "Installing on Ubuntu 14 Server";
-            ubuntuserver14
+            echo "Installing on Debian Jessie client";
+            debianclient
             ;;
 			
 	3) clear;
-	    echo "Installing on Debian Jessie client"
-	    debianclient
-            ;;
-	    
-	4) clear;
 	    echo "Installing on Debian Cent OS"
 	    CentOS
             ;;
 	    
-	 5) clear;
-	     echo "Check for errors"
+	4) clear;
+	    echo "Check for errors"
 	     failcheck
+            ;;
+	    
+	 5) clear;
+	     echo "Check in Ldap"
+	     ldaplook
              ;;
 	 
 	6) clear;
