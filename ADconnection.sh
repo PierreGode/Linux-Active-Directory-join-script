@@ -715,8 +715,8 @@ echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server
 sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
-echo "ldap tool installed.. verifying setup"
-sudo ldapsearch | grep -i $myhost
+echo "ldap tool installed.. trying to find this host"
+sudo ldapsearch cn=$myhost'*'
 echo "Please type what you are looking for"
 read own
 sudo ldapsearch | grep -i $own
