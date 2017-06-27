@@ -151,7 +151,11 @@ fi;;
     [Nn]* ) echo "disabled SSH allow";;
     * ) echo "Please answer yes or no.";;
    esac
+echo ""
+echo "-------------------------------------------------------------------------------------------"
+echo ""
 read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
+read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ]
@@ -171,6 +175,7 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 
+checkthis(){
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -220,6 +225,7 @@ fi
 realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
+}
 }
 
 ####################### Setup for Ubuntu server #######################################
