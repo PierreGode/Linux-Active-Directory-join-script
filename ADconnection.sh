@@ -121,8 +121,12 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-states=$( echo 0 )
-states1=$( echo 0 )
+states=$( echo null )
+states1=$( echo null )
+grouPs=$( echo null )
+homedir=$( echo null )
+therealm=$( echo null )
+cauth=$( echo null )
 clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
