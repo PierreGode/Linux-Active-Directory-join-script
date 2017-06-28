@@ -148,7 +148,8 @@ sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowe
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed";;
+    [Nn]* ) echo "Disabled SSH login.group.allowed"
+    states=$( echo 1 );;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -171,7 +172,8 @@ sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_ad
 fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
-	    echo "";;
+	    echo ""
+	    states=$( echo 12 );;
     * ) echo 'Please answer yes or no.';;
    esac
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
@@ -198,12 +200,17 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
+if [ $states ='12' ]
+then
+echo "Sudoers not configured... skipping"
+else
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ]
@@ -212,12 +219,17 @@ echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
+if [ $states = '1' ]
+then 
+echo "Disabled SSH login.group.allowed"
+else
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
 if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
 fi
 exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
