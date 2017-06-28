@@ -186,8 +186,13 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 fi
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+## temp test ####
+echo ""
+echo $states
+echo ""
+sleep 5
 
-checkthis(){
+
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
@@ -195,16 +200,16 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
+if [ $states = 12 ]
+then
+echo "Sudoers not configured... skipping"
+else
 if [ -f /etc/sudoers.d/sudoers ]
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-if [ $states =12 ]
-then
-echo "Sudoers not configured... skipping"
-else
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
@@ -248,8 +253,6 @@ realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
 exit
-}
-checkthis
 }
 
 ####################### Setup for Ubuntu server #######################################
