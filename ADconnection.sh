@@ -226,6 +226,7 @@ echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Director
 eof
 exit
 }
+checkthis
 }
 
 ####################### Setup for Ubuntu server #######################################
