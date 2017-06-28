@@ -125,12 +125,12 @@ clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 	if [ -f /etc/ssh/login.group.allowed ]
 then
 echo "Files seems already to be modified, skipping..."
 else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo touch /etc/ssh/login.group.allowed
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
 echo ""
@@ -159,7 +159,9 @@ read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ]
 then
+echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
+echo ""
 else
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
