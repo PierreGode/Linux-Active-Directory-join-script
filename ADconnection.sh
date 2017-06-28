@@ -148,7 +148,7 @@ sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowe
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
-    [Nn]* ) echo "disabled SSH allow";;
+    [Nn]* ) echo "Disabled SSH login.group.allowed";;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -167,7 +167,9 @@ sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoer
 sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 fi;;
-    [Nn]* ) echo "disabled sudo rights for users on this machine";;
+    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    	    echo ""
+	    echo "";;
     * ) echo 'Please answer yes or no.';;
    esac
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
