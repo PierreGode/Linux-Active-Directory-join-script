@@ -124,7 +124,6 @@ sudo systemctl start sssd
 states=$( echo null )
 states1=$( echo null )
 grouPs=$( echo null )
-homedir=$( echo 0 )
 therealm=$( echo null )
 cauth=$( echo null )
 clear
@@ -182,6 +181,7 @@ fi;;
 	    states=$( echo 12 );;
     * ) echo 'Please answer yes or no.';;
    esac
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
 if [ $homedir = 0022 ]
 then
