@@ -122,6 +122,7 @@ sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
 states=$( echo 0 )
+states1=$( echo 0 )
 clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
@@ -186,13 +187,6 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 fi
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-## temp test ####
-echo ""
-echo $states
-echo ""
-sleep 5
-
-
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ $therealm = no ]
 then
