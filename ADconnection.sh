@@ -200,7 +200,7 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-if [ $states ='12' ]
+if [ $states =12 ]
 then
 echo "Sudoers not configured... skipping"
 else
@@ -219,7 +219,7 @@ echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-if [ $states = '1' ]
+if [ $states = 1 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
