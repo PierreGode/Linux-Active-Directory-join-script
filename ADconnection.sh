@@ -154,7 +154,6 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
 read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
