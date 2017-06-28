@@ -150,7 +150,7 @@ sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
     [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states=$( echo 1 );;
+    states1=$( echo 12 );;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -225,7 +225,7 @@ echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-if [ $states = 1 ]
+if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
