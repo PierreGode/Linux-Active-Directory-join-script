@@ -52,7 +52,7 @@ clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection and dpkg and try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
 exit
 fi
 sleep 1
