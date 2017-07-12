@@ -56,7 +56,7 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg
 exit
 fi
 sleep 1
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN
 if [ $? = 0 ]
 then
@@ -83,7 +83,7 @@ read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-var=$(lsb_release -a | grep -i release: | cut -d ':' -f2 | cut -d '.' -f1)
+var=$(lsb_release -a | grep -i release | awk '{print $2}')
 if [ "$var" -eq "14" ]
 then
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
@@ -208,7 +208,7 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i sewspierre | cut -d '%' -f2 | awk '{print $1}')
 if [ $grouPs = "$myhost""sudoers" ]
 then 
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
@@ -227,7 +227,7 @@ if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
 if [ $cauth = allow ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
