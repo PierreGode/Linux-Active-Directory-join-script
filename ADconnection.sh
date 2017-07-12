@@ -83,7 +83,7 @@ read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-var=$(lsb_release -a | grep -i release | awk '{print $2}')
+var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
