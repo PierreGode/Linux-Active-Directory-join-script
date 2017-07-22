@@ -18,16 +18,16 @@ For security this script creates an ssh allow file so users that are not in the 
 NOTICE! if your user is not administrator you MUST edit annd add current user in the ssh-allow section.
 If you current local user is not in the SSH-ALLOW file it will be BANNED from the computer!
 
-WORK IN PROGRESS. : I will add the ability to choose if you want to dissable SSH-allow,
+Updated. : I will add the ability to choose if you want to dissable SSH-allow,
 note: users in other groups will be able to ssh to the client, but will not have sudo rights.
 
-WORK IN PROGRESS. :
+Updated. :
 also the ability to choose if clients should have sudo rights or not ( clients will be sudo by default )
 
 this will make the cleanest setup possible. no @ in names or in home folder
 home folder will be /home/myad.intra/you
 User name will be only set as "you" without /myad/you or you@myad.intra. just clean. this is to prevent complications for developers when building code
-after reboot just login with you AD acoount "you" and password... again.. no @ or / is needed, just "user"
+after reboot just login with you AD account "you" and password... again.. no @ or / is needed, just "user"
 
 For best security. I restricted ssh to domain and administrator users.
 also clients will only allow login from assigned group ( hostnamesudoers )
@@ -35,7 +35,7 @@ also clients will only allow login from assigned group ( hostnamesudoers )
 How do i update my password?
 ( changed password but Linux is still on old password ) 
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
-to update, open a terminal and execute sudo service sssd restart.
+to update the password, on office network.. open a terminal and execute sudo service sssd restart.
 
 I have issues!
 
