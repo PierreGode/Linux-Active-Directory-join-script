@@ -251,6 +251,7 @@ realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
 exit
+fi
 }
 
 ####################### Setup for Ubuntu server #######################################
