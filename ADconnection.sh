@@ -258,7 +258,7 @@ fi
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients debug mode ######################################
 ubuntuclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
-sudo gnome-terminal -e "bash -c \"!!; exec bash\"journalctl -fxe"
+gnome-terminal -e "bash -c \"journalctl -fxe; exec bash\""
 if [ $? = 0 ]
 then
 echo ""
