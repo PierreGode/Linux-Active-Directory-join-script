@@ -255,6 +255,233 @@ exit
 fi
 }
 
+####################### Setup for Ubuntu16 and Ubuntu 14 clients debug mode ######################################
+ubuntuclientdebug(){
+desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
+if [ $? = 0 ]
+then
+echo ""
+else
+echo " this seems to be a server, swithching to server mode"
+sleep 2
+ubuntuserver14
+fi
+export HOSTNAME
+myhost=$( hostname )
+clear
+sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install ntp -y
+clear
+sudo dpkg -l | grep realmd
+if [ $? = 0 ]
+then
+clear
+sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+else
+clear
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+exit
+fi
+sleep 1
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+ping -c 2 $DOMAIN
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+fi
+discovery=$(realm discover $DOMAIN | grep domain-name)
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+echo "${INTRO_TEXT}"Please type Admin user"${END}"
+read ADMIN
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
+if [ "$var" -eq "14" ]
+then
+echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+echo "Installing additional dependencies"
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sleep 1
+clear
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+else
+   if [ "$var" -eq "16" ]
+   then
+   echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+   sudo realm join --verbose --user=$ADMIN $DOMAIN
+   else
+       if [ "$var" -eq "17" ]
+       then
+       echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+       sudo realm join --verbose --user=$ADMIN $DOMAIN
+       else
+       clear
+      sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
+     exit
+     fi
+  fi
+fi
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit
+fi
+sudo echo "############################"
+sudo echo "Configuratig files.."
+sudo echo "Verifying the setup"
+sudo systemctl enable sssd
+sudo systemctl start sssd
+states=$( echo null )
+states1=$( echo null )
+grouPs=$( echo null )
+therealm=$( echo null )
+cauth=$( echo null )
+clear
+read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/ssh/login.group.allowed ]
+then
+echo "Files seems already to be modified, skipping..."
+else
+echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+sudo touch /etc/ssh/login.group.allowed
+admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo ""
+echo ""
+read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
+    [Nn]* ) echo "please type name of current administrator"
+read -p MYADMIN
+sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+    * ) echo "Please answer yes or no.";;
+   esac
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+echo "enabled SSH-allow"
+fi;;
+    [Nn]* ) echo "Disabled SSH login.group.allowed"
+    states1=$( echo 12 );;
+    * ) echo "Please answer yes or no.";;
+   esac
+echo ""
+echo "-------------------------------------------------------------------------------------------"
+echo ""
+read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/sudoers.d/sudoers ]
+then
+echo ""
+echo "Sudoersfile seems already to be modified, skipping..."
+echo ""
+else
+sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"
+fi;;
+    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    	    echo ""
+	    echo ""
+	    states=$( echo 12 );;
+    * ) echo 'Please answer yes or no.';;
+   esac
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
+if [ $homedir = 0022 ]
+then
+echo "pam_mkhomedir.so configured"
+else
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+fi
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ "$therealm" = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ $states = 12 ]
+then
+echo "Sudoers not configured... skipping"
+else
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
+if [ "$grouPs" = "$myhost""sudoers" ]
+then
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+if [ $states1 = 12 ]
+then 
+echo "Disabled SSH login.group.allowed"
+else
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+if [ $cauth = allow ]
+then
+echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+fi
+exec sudo -u root /bin/sh - <<eof
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo service sssd restart
+if [ $? = 0 ]
+then
+echo  "Checking sssd config.. OK"
+else
+echo "Checking sssd config.. FAIL"
+fi
+realm discover $DOMAIN
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
+eof
+exit
+fi
+}
+
 ####################### Setup for Ubuntu server #######################################
 ubuntuserver14(){
 export HOSTNAME
@@ -819,11 +1046,12 @@ clear
     echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Ubuntu Client or Server    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 5)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 8)${MENU} README with examples             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Join to AD on Ubuntu Client or Server in debug mode ${NORMAL}"
+    echo "${MENU}*${NUMBER} 5)${MENU} Check for errors    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 6)${MENU} Search with ldap              ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 8)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 9)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -849,26 +1077,30 @@ while [ opt != '' ]
             ;;
 	    
 	4) clear;
+	    echo "Join to AD on Ubuntu Client or Server in debug mode"
+	     ubuntuclientdebug
+            ;;
+	    
+	5) clear;
 	    echo "Check for errors"
 	     failcheck
             ;;
-	    
-	 5) clear;
+	 6) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
 	 
-	6) clear;
+	7) clear;
 	    echo "Reauthenticate realmd for Ubuntu 14"
 	    Reauthenticate14
             ;;
 
-     	 7) clear;
+     	 8) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
 	 
-     	 8) clear;
+     	 9) clear;
      	   echo "READ ME"
 	   readmes
            ;;
