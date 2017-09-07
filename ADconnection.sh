@@ -7,8 +7,8 @@
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-# till the script works
-#known bugs: see line 23-24
+# 1 2 times. if it still is not working see line 25-25
+#known bugs: see line 24-25
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
@@ -21,7 +21,7 @@
 
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 29 #fixerrors
+#this funktion is not called in the script : to activate, uncomment line line 30 #fixerrors
 #This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin auth
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
