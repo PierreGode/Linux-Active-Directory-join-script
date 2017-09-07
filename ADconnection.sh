@@ -258,6 +258,7 @@ fi
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients debug mode ######################################
 ubuntuclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
+sudo gnome-terminal -e "bash -c \"!!; exec bash\"journalctl -fxe"
 if [ $? = 0 ]
 then
 echo ""
@@ -284,7 +285,6 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg
 exit
 fi
 sleep 1
-gnome-terminal -e "bash -c \"!!; exec bash\"journalctl -fxe"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN
 if [ $? = 0 ]
