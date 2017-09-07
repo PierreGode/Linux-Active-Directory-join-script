@@ -6,7 +6,7 @@
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 ##################################################################################################################################
-#known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution isrunning the script again
+#known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # till the script works
 #known bugs: see line 23-24
 
