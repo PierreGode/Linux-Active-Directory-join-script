@@ -284,6 +284,7 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg
 exit
 fi
 sleep 1
+gnome-terminal -e "bash -c \"!!; exec bash\"journalctl -fxe"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN
 if [ $? = 0 ]
