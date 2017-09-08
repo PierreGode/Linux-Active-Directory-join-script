@@ -4,38 +4,47 @@ This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, an
 Complete steps
 
 
-1. create computer object in AD lets say the name is= linuxcomputer as example
-2. create a group name LINUXCOMPUTERsudoers in AD ( if you wish to remove sudoers you must edit script )
-3. set hostname on you computer to linuxcomputer (hostname and hosts files) and reboot
+1. create computer object in AD lets say the name is= "linuxcomputer" as example
+2. If you want to manage sudo users by a group then create a group name LINUXCOMPUTERsudoers in AD, the script will allow you to choose if you want users to be sudoesr or not.
+3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
 4. git clone this script and run.
 
-execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server.
-the script will find your domain name if existing
+execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16 or 17
+the script will find your domain name if existing, if now a promt will let you type the domain name. "domain.com"
 after that authorise with a admin user.
-make sure to read carefully and also read built in help in the script.
+make sure to read the questions carefully and also read built in help in the script.
 
-For security this script creates an ssh allow file so users that are not in the correct AD group can login,
-NOTICE! if your user is not administrator you MUST edit annd add current user in the ssh-allow section.
+For security this script creates an ssh allow file so users that are not in the correct AD group can't login,
+NOTICE! if your local user is not administrator you MUST edit and add current local user in the ssh-allow section.
 If you current local user is not in the SSH-ALLOW file it will be BANNED from the computer!
 
-Updated. : I will add the ability to choose if you want to dissable SSH-allow,
-note: users in other groups will be able to ssh to the client, but will not have sudo rights.
+Updated. :Added the ability to choose if you want to dissable SSH-allow,
+note: if ssh is disabled users in other groups will be able to ssh to the client, but will not have sudo rights.
 
 Updated. :
 also the ability to choose if clients should have sudo rights or not ( clients will be sudo by default )
+if you seclect no on this option there i no need for an AD group "LINUXCOMPUTERsudoers" in active directory, all domain users
+will have nonsudo  access. "notice this option can not be combined with the option YES on ssh-allow"
 
-this will make the cleanest setup possible. no @ in names or in home folder
-home folder will be /home/myad.intra/you
-User name will be only set as "you" without /myad/you or you@myad.intra. just clean. this is to prevent complications for developers when building code
-after reboot just login with you AD account "you" and password... again.. no @ or / is needed, just "user"
+Updates:
+added join to ubuntu clients with debug mode. 
+debugmode will open 2 terminals and will post information while you run the script.
+
+
+This will make the cleanest setup possible. no @ in names or in home folder
+home folder will be /home/domain.com/you
+User name will be only set as "you" without /myad/you or you@domain.com just clean. this is to prevent complications for developers when building code
+After reboot just login with you AD account "you" and password... again.. no @ or / is needed, just "user"
+to test access of a user execute in terminal from administrator account: id user
 
 For best security. I restricted ssh to domain and administrator users.
-also clients will only allow login from assigned group ( hostnamesudoers )
+also clients will only allow login from assigned group ( "LINUXCOMPUTERsudoers" )
+
 
 How do i update my password?
 ( changed password but Linux is still on old password ) 
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
-to update the password, on office network.. open a terminal and execute sudo service sssd restart.
+to update the password. On office network.. open a terminal and execute sudo service sssd restart, this will reload information.
 
 I have issues!
 
