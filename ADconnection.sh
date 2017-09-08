@@ -259,6 +259,7 @@ fi
 ubuntuclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
+gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe | grep -i -e closed -e Successfully -e 'Preauthentication failed' -e 'authenticate' -e 'Failed to join the domain'; exec bash\""
 if [ $? = 0 ]
 then
 echo ""
