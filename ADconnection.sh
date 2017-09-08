@@ -7,7 +7,7 @@
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-# 1 2 times. if it still is not working see line 25-25
+# 1 2 times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
@@ -28,7 +28,7 @@ sudo apt-get update
 sudo apt-get install packagekit
 }
 #fixerrors
-####################### Setup for Ubuntu16 and Ubuntu 14 clients #######################################
+####################### Setup for Ubuntu 14,16 and 17 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 if [ $? = 0 ]
