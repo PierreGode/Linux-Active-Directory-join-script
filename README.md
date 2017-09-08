@@ -54,7 +54,7 @@ I have issues!
 Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id youADusername, if you can see the user then it works.
 
 3. Damn i got the wrong hostname and its not a computerobject in AD   "Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  /etc/hosts
-then run sudo realm leave domain.domain reboot and rejoin executing realm join -v -U ADdamin domain.doamn
+then run sudo realm leave domain.domain reboot and rejoin executing realm join -v -U ADdamin domain.com
 reboot and wait 5 min before login
 
 
