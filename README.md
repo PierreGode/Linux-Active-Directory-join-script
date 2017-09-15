@@ -4,7 +4,7 @@ This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, an
 Complete steps
 
 
-1. create computer object in AD lets say the name is= "linuxcomputer" as example
+1. remembert to set a good hostname on the computer/server the AD will set computer object itself to the hostname = "linuxcomputer" as example
 2. If you want to manage sudo users by a group then create a group name LINUXCOMPUTERsudoers in AD, the script will allow you to choose if you want users to be sudoesr or not.
 3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
 4. git clone this script and run.
