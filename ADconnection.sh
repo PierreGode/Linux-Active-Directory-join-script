@@ -105,7 +105,7 @@ else
        if [ "$var" -eq "17" ]
        then
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-       sudo realm join --verbose --user=$ADMIN $DOMAIN
+       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
        else
        clear
       sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
