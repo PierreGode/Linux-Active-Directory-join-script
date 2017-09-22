@@ -539,24 +539,31 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
+states=$( echo null )
+states1=$( echo null )
+grouPs=$( echo null )
+therealm=$( echo null )
+cauth=$( echo null )
 clear
-read -p "Do you wish to enable SSH allow/disble protection (y/n)?" yn
+read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 	if [ -f /etc/ssh/login.group.allowed ]
 then
 echo "Files seems already to be modified, skipping..."
 else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo touch /etc/ssh/login.group.allowed
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo ""
+echo ""
 read -p "Is your current administrator = "$admins" ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
 read -p MYADMIN
-sudo echo "$MYADMIN"  | sudo tee -a /etc/ssh/login.group.allowed;;
+sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
@@ -564,15 +571,21 @@ sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowe
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
-    [Nn]* ) echo "disabled SSH allow";;
+    [Nn]* ) echo "Disabled SSH login.group.allowed"
+    states1=$( echo 12 );;
     * ) echo "Please answer yes or no.";;
    esac
-read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
+echo ""
+echo "-------------------------------------------------------------------------------------------"
+echo ""
+read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ]
 then
+echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
+echo ""
 else
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -580,7 +593,10 @@ sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoer
 sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 fi;;
-    [Nn]* ) echo "disabled sudo rights for users on this machine";;
+    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    	    echo ""
+	    echo ""
+	    states=$( echo 12 );;
     * ) echo 'Please answer yes or no.';;
    esac
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
