@@ -802,7 +802,7 @@ raspberry(){
 export HOSTNAME
 myhost=$( hostname )
 rasp=$(uname -a | grep -i raspberry | cut -d 'x' -f1 | cut -d 'y' -f2)
-if [ "$rasp" -eq raspberr ]
+if [ "$rasp" = "raspberr" ]
 then
 echo "OMG do i sense a Raspberry! you sir are awesome" 
 sleep 2
