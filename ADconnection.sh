@@ -56,6 +56,7 @@ clear
 sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
 exit
 fi
+echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN
