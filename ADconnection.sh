@@ -28,6 +28,7 @@ sudo apt-get update
 sudo apt-get install packagekit
 }
 #fixerrors
+
 ####################### Setup for Ubuntu 14,16 and 17 clients #######################################
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
@@ -257,6 +258,7 @@ fi
 }
 
 ####################### Setup for Ubuntu16 and Ubuntu 14 clients debug mode ######################################
+
 ubuntuclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
@@ -486,6 +488,7 @@ fi
 }
 
 ####################### Setup for Ubuntu server #######################################
+
 ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
@@ -657,6 +660,7 @@ eof
 }
 
 ####################################### Cent OS #########################################
+
 # Functional but ugly
 CentOS(){
 export HOSTNAME
@@ -799,6 +803,8 @@ eof
 }
 
 ############################### Raspberry Pi ###################################
+#not tested yet
+
 raspberry(){
 export HOSTNAME
 myhost=$( hostname )
@@ -833,6 +839,7 @@ echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
 eof
 }
 ############################### Update to Realmd from likewise ##################
+
 Realmdupdate(){
 export HOSTNAME
 myhost=$( hostname )
@@ -919,6 +926,7 @@ eof
 }
 
 ############################### Fail check ####################################
+
 failcheck(){
 clear
 export HOSTNAME
@@ -987,6 +995,7 @@ exit
 
 
 #################################### ldapsearch #####################################################
+
 ldaplook(){
 export HOSTNAME
 myhost=$( hostname )
@@ -1012,6 +1021,7 @@ fi
 }
 
 ############################### Reauth ##########################################
+
 Reauthenticate14(){
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 read -p "Do you wish to use it (y/n)?" yn
@@ -1031,6 +1041,7 @@ exit
 }
 
 ########################################### info #######################################
+
 readmes(){
 clear
 echo "${INTRO_TEXT}              Active directory connection tool   Realmd                     ${INTRO_TEXT}"
@@ -1055,7 +1066,9 @@ echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in
 echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
 exit
 }
+
 ########################################### Menu #######################################
+
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
     echo "${INTRO_TEXT}       Created by Pierre Goude                  ${INTRO_TEXT}"
