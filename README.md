@@ -4,8 +4,11 @@ This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, an
 Complete steps
 
 
-1. remembert to set a good hostname on the computer/server the AD will set computer object itself to the hostname = "linuxcomputer" as example
-2. If you want to manage sudo users by a group then create a group name LINUXCOMPUTERsudoers in AD, the script will allow you to choose if you want users to be sudoesr or not.
+1. remembert to set a good hostname on the computer/server the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+2. At this point you have 2 options. you already have a Group i AD example:"ADMINS" then you need to edit /etc/sudoers.d/sudoers
+and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
+
+O if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers (same as hostname) in AD, the script will allow you to choose if you want users to be sudoers or not.
 3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
 4. git clone this script and run.
 
