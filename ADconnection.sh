@@ -194,6 +194,32 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 fi
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+clear
+echo "If you have several domain controllers worldwide it is recomended to set your DC"
+echo ""
+read -p "Do you wish to set your DC in configuration (y/n)?" yn
+case $yn in
+[Yy]* )
+echo "Type DC"
+read dcs
+ldaps=$( cat /etc/sssd/sssd.conf | grep -i $dcs | cut -d '/' -f3 )
+echo ""
+if [ "$ldaps" = "$dcs" ]
+then echo "sssd seems already have $dcs configured.. skipping.."
+else
+echo
+var=$( echo "ldap_uri = ldap://$dcs" )
+sed -i '9i\'"$var"'' /etc/sssd/sssd.conf
+fi;;
+[Nn]* ) echo "skipping...";;
+* ) echo "Please awnser yes or No" ;;
+esac
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo service sssd restart
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = no ]
 then
@@ -237,33 +263,6 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
-exec sudo -u root /bin/sh - <<eof
-clear
-echo "If you have several domain controllers worldwide it is recomended to set your DC"
-echo ""
-read -p "Do you wish to set your DC in configuration (y/n)?" yn
-case $yn in
-[Yy]* )
-echo "Type DC"
-read dcs
-ldaps=$( cat /etc/sssd/sssd.conf | grep -i $dcs | cut -d '/' -f3 )
-echo ""
-if [ "$ldaps" = "$dcs" ]
-then echo "sssd seems already have $dcs configured.. skipping.."
-else
-echo
-var=$( echo "ldap_uri = ldap://$dcs" )
-sed -i '9i\'"$var"'' /etc/sssd/sssd.conf
-fi;;
-[Nn]* ) echo "skipping...";;
-* ) echo "Please awnser yes or No" ;;
-esac
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo service sssd restart
 if [ $? = 0 ]
 then
 echo  "Checking sssd config.. OK"
@@ -272,7 +271,6 @@ echo "Checking sssd config.. FAIL"
 fi
 realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-eof
 exit
 fi
 }
