@@ -238,6 +238,26 @@ echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
 exec sudo -u root /bin/sh - <<eof
+clear
+echo "If you have several domain controllers worldwide it is recomended to set your DC"
+echo ""
+read -p "Do you wish to set your DC in configuration (y/n)?" yn
+case $yn in
+[Yy]* )
+echo "Type DC"
+read dcs
+ldaps=$( cat /etc/sssd/sssd.conf | grep -i $dcs | cut -d '/' -f3 )
+echo ""
+if [ "$ldaps" = "$dcs" ]
+then echo "sssd seems already have $dcs configured.. skipping.."
+else
+echo
+var=$( echo "ldap_uri = ldap://$dcs" )
+sed -i '9i\'"$var"'' /etc/sssd/sssd.conf
+fi;;
+[Nn]* ) echo "skipping...";;
+* ) echo "Please awnser yes or No" ;;
+esac
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
