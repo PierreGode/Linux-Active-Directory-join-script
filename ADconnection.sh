@@ -220,6 +220,12 @@ sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.con
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
 sudo service sssd restart
+if [ $? = 0 ]
+then
+echo  "Checking sssd config.. OK"
+else
+echo "Checking sssd config.. FAIL"
+fi
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = no ]
 then
@@ -262,12 +268,6 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-fi
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
 fi
 realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
@@ -443,6 +443,20 @@ fi
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo service sssd restart
+if [ $? = 0 ]
+then
+echo  "Checking sssd config.. OK"
+else
+echo "Checking sssd config.. FAIL"
+fi
+realm discover $DOMAIN
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 if [ "$therealm" = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -485,22 +499,8 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
-exec sudo -u root /bin/sh - <<eof
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
 realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-eof
 exit
 fi
 }
