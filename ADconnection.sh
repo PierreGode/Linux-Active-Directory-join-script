@@ -35,6 +35,7 @@ desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d 
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe | grep -i -e closed -e Successfully -e 'Preauthentication failed' -e 'authenticate' -e 'Failed to join the domain'; exec bash\""
 ubuntuclient
+}
 ubuntuclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 if [ $? = 0 ]
@@ -279,7 +280,7 @@ echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Director
 exit
 fi
 }
-}
+
 ####################### Setup for Ubuntu server #######################################
 
 ubuntuserver14(){
