@@ -201,10 +201,10 @@ fi
 logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
 if [ "$logintrue" =  "greeter-show-manual-login=true" ]
 then
+echo "50-ubuntu.conf is alresdy configured.. skipping"
+else
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-else
-echo "50-ubuntu.conf is alresdy onfigured.. skipping"
 fi
 clear
 echo "If you have several domain controllers worldwide it is recomended to set your DC"
