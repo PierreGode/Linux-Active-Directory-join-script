@@ -190,7 +190,6 @@ fi;;
 	    states=$( echo 12 );;
     * ) echo 'Please answer yes or no.';;
    esac
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
 if [ $homedir = 0022 ]
 then
@@ -198,8 +197,14 @@ echo "pam_mkhomedir.so configured"
 else
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 fi
+logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+if [ "$logintrue" =  "greeter-show-manual-login=true" ]
+then
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+else
+echo "50-ubuntu.conf is alresdy onfigured.. skipping"
+fi
 clear
 echo "If you have several domain controllers worldwide it is recomended to set your DC"
 echo ""
