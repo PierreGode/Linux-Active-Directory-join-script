@@ -60,4 +60,5 @@ Login with your local account and execute in terminal " sudo sssd service restar
 then run sudo realm leave domain.domain reboot and rejoin executing realm join -v -U ADdamin domain.com
 reboot and wait 5 min before login
 
+If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal.
 
