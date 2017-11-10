@@ -232,6 +232,12 @@ sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.con
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 if [ $? = 0 ]
 then
