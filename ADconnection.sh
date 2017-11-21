@@ -455,21 +455,20 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
-exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-#sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
-realm discover
+realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
 }
@@ -600,20 +599,20 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
 fi
-exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
-realm discover
+realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 eof
 }
@@ -650,6 +649,7 @@ reconnection_retries = 3
 entry_cache_timeout = 300
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
+exit
 }
 ############################### Update to Realmd from likewise ##################
 
