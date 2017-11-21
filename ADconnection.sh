@@ -42,9 +42,16 @@ if [ $? = 0 ]
 then
 echo ""
 else
+rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+if [ "$rasp" -eq Raspbian ]
+then 
+echo "this seems to be a raspberry Pi"
+raspberry
+else
 echo " this seems to be a server, swithching to server mode"
 sleep 2
 ubuntuserver14
+fi
 fi
 export HOSTNAME
 myhost=$( hostname )
