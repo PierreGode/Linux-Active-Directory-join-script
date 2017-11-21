@@ -624,35 +624,32 @@ eof
 raspberry(){
 export HOSTNAME
 myhost=$( hostname )
-rasp=$(uname -a | grep -i raspberry | cut -d 'x' -f1 | cut -d 'y' -f2)
-if [ "$rasp" = "raspberr" ]
-then
-echo "OMG do i sense a Raspberry! you sir are awesome" 
-sleep 2
-echo "Hold on... let me download a picture for you"
-wget http://weknowmemes.com/generator/uploads/generated/g1410567650251917439.jpg
-sleep 2
-echo "Lets get this bad boy Joined!"
-else 
-echo "Something is wrong.." 
-fi
-sudo aptitude install realmd
 sudo aptitude install ntp adcli sssd
 sudo mkdir -p /var/lib/samba/private
 sudo aptitude install libsss-sudo
 sudo systemctl enable sssd
+clear
 DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+echo ""
 echo "please type Domain admin"
 read -r ADMIN
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-exec sudo -u root /bin/sh - <<eof
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
-eof
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sudo service sssd restart
 }
 ############################### Update to Realmd from likewise ##################
 
