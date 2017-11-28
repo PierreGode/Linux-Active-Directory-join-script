@@ -523,7 +523,7 @@ then
 ""
 else
 apt get install sudo -y
-echo "administrator ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin
+echo "administrator ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
@@ -552,7 +552,7 @@ ping -c 2 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+echo "${NUMBER}I searched for an available domain and found $DOMAIN  ${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
