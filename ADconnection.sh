@@ -127,7 +127,7 @@ else
     * ) echo 'Please answer yes or no.';;
    esac
 MyOU=$(echo $OU | cut -d '=' -f1)
-if [ "$MyOU" = CN ]
+if [ "$MyOU" = OU ]
 then
 echo "Setting OU = $OU"
 sudo realm join computer-ou = $OU --verbose --user=$ADMIN $DOMAIN
@@ -151,7 +151,7 @@ fi
     * ) echo 'Please answer yes or no.';;
    esac
 MyOU=$(echo $OU | cut -d '=' -f1)
-if [ "$MyOU" = CN ]
+if [ "$MyOU" = OU ]
 then
 echo "Setting OU = $OU"
 sudo realm join computer-ou = $OU --verbose --user=$ADMIN $DOMAIN --install=/
