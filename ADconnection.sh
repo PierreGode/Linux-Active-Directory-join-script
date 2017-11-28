@@ -478,42 +478,227 @@ eof
 debianclient(){
 export HOSTNAME
 myhost=$( hostname )
+clear
+sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get update
 sudo apt-get install libsss-sudo -y
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 sudo mkdir -p /var/lib/samba/private
-clear 
-echo "Please enter the domain you wish to join: "
-read DOMAIN
-echo "Please enter Your domain’s NetBios name"
-read NetBios
-echo "Please enter a domain admin login to use: "
-read ADMIN
-sudo realm join --user=$ADMIN $DOMAIN 
-if [ $? -ne 0 ]; then
-    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
-    exit 1
+sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install ntp -y
+clear
+sudo dpkg -l | grep realmd
+if [ $? = 0 ]
+then
+clear
+sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+else
+clear
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+exit
 fi
-sudo systemctl enable sssd
-sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-# configure sudo
-echo "Please enter new user without @mydomain"
-read newuser
-echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-sudo echo "$newuser"'@'"$DOMAIN"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
-while true; do
-   read -p 'Do you want to Reboot now? (y/n)?' yn
+echo "hostname is $myhost"
+sleep 1
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+ping -c 2 $DOMAIN
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) sudo reboot
-            break;;
-    [Nn]* ) echo "plese remember to reboot"
-            sleep 1
-            exit ;;
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-done
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+fi
+discovery=$(realm discover $DOMAIN | grep domain-name)
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+echo "${INTRO_TEXT}"Please type Admin user"${END}"
+read ADMIN
+clear
+sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sudo realm join --verbose --user=$ADMIN $DOMAIN
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit
+fi
+sudo echo "############################"
+sudo echo "Configuratig files.."
+sudo echo "Verifying the setup"
+sudo systemctl enable sssd
+sudo systemctl start sssd
+states=$( echo null )
+states1=$( echo null )
+grouPs=$( echo null )
+therealm=$( echo null )
+cauth=$( echo null )
+clear
+read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/ssh/login.group.allowed ]
+then
+echo "Files seems already to be modified, skipping..."
+else
+echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+sudo touch /etc/ssh/login.group.allowed
+admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo ""
+echo ""
+read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
+    [Nn]* ) echo "please type name of current administrator"
+read -p MYADMIN
+sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+    * ) echo "Please answer yes or no.";;
+   esac
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+echo "enabled SSH-allow"
+fi;;
+    [Nn]* ) echo "Disabled SSH login.group.allowed"
+    states1=$( echo 12 );;
+    * ) echo "Please answer yes or no.";;
+   esac
+echo ""
+echo "-------------------------------------------------------------------------------------------"
+echo ""
+read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/sudoers.d/sudoers ]
+then
+echo ""
+echo "Sudoersfile seems already to be modified, skipping..."
+echo ""
+else
+sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"
+fi;;
+    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    	    echo ""
+	    echo ""
+	    states=$( echo 12 );;
+    * ) echo 'Please answer yes or no.';;
+   esac
+homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
+if [ $homedir = 0022 ]
+then
+echo "pam_mkhomedir.so configured"
+sleep 1
+else
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+fi
+logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+if [ "$logintrue" =  "greeter-show-manual-login=true" ]
+then
+echo "50-ubuntu.conf is already configured.. skipping"
+else
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+fi
+clear
+#echo "If you have several domain controllers worldwide it is recomended to set your DC"
+#echo ""
+#read -p "Do you wish to set your DC in configuration (y/n)?" yn
+#case $yn in
+#[Yy]* )
+#echo "Type DC"
+#read dcs
+#ldaps=$( cat /etc/sssd/sssd.conf | grep -i $dcs | cut -d '/' -f3 )
+#echo ""
+#if [ "$ldaps" = "$dcs" ]
+#then echo "sssd seems already have $dcs configured.. skipping.."
+#else
+#echo
+#var=$( echo "ldap_uri = ldap://$dcs" )
+#sed -i '9i\'"$var"'' /etc/sssd/sssd.conf
+#fi;;
+#[Nn]* ) echo "skipping...";;
+#* ) echo "Please awnser yes or No" ;;
+#esac
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sudo service sssd restart
+if [ $? = 0 ]
+then
+echo  "Checking sssd config.. OK"
+else
+echo "Checking sssd config.. FAIL"
+fi
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ "$therealm" = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ $states = 12 ]
+then
+echo "Sudoers not configured... skipping"
+else
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
+if [ "$grouPs" = "$myhost""sudoers" ]
+then
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+if [ $states1 = 12 ]
+then 
+echo "Disabled SSH login.group.allowed"
+else
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+if [ $cauth = allow ]
+then
+echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+fi
+realm discover $DOMAIN
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
+exit
+fi
 }
 ####################################### Cent OS #########################################
 
@@ -956,8 +1141,7 @@ while [ opt != '' ]
 
         2) clear;
             echo "Installing on Debian Jessie client";
-            
-	   
+            debianclient
             ;;
 			
 	3) clear;
