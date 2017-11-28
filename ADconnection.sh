@@ -478,6 +478,14 @@ eof
 debianclient(){
 export HOSTNAME
 myhost=$( hostname )
+dkpg -l | grep sudo
+if [ $? = 0 ]
+then
+""
+else
+apt get install sudo -y
+echo "administrator ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin
+fi
 clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get update
@@ -585,7 +593,6 @@ echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
 echo ""
 else
-sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
