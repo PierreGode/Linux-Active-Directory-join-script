@@ -118,23 +118,23 @@ else
    echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
    sleep 1
    clear
-   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-                        read -r OU;;
-
-    [Nn]* ) echo "";;
-    * ) echo 'Please answer yes or no.';;
-   esac
-MyOU=$(echo $OU | cut -d '=' -f1)
-if [ "$MyOU" = OU ]
-then
-echo "Setting OU = $OU"
-sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN
-else
-echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
-exit
-fi
+#   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
+#   case $yn in
+#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
+#                        read -r OU;;
+#
+#    [Nn]* ) echo "";;
+#    * ) echo 'Please answer yes or no.';;
+#   esac
+#MyOU=$(echo $OU | cut -d '=' -f1)
+#if [ "$MyOU" = OU ]
+#then
+#echo "Setting OU = $OU"
+#sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN
+#else
+#echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
+#exit
+#fi
    sudo realm join --verbose --user=$ADMIN $DOMAIN
    else
        if [ "$var" -eq "17" ]
@@ -142,23 +142,23 @@ fi
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
           sleep 1
    clear
-   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-                        read -r OU;;
-
-    [Nn]* ) echo "";;
-    * ) echo 'Please answer yes or no.';;
-   esac
-MyOU=$(echo $OU | cut -d '=' -f1)
-if [ "$MyOU" = OU ]
-then
-echo "Setting OU = $OU"
-sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN --install=/
-else
-echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
-exit
-fi
+#   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
+#   case $yn in
+#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
+#                        read -r OU;;
+#
+#    [Nn]* ) echo "";;
+#    * ) echo 'Please answer yes or no.';;
+#   esac
+#MyOU=$(echo $OU | cut -d '=' -f1)
+#if [ "$MyOU" = OU ]
+#then
+#echo "Setting OU = $OU"
+#sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN --install=/
+#else
+#echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
+#exit
+#fi
        sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
        else
        clear
