@@ -130,7 +130,7 @@ MyOU=$(echo $OU | cut -d '=' -f1)
 if [ "$MyOU" = OU ]
 then
 echo "Setting OU = $OU"
-sudo realm join computer-ou = $OU --verbose --user=$ADMIN $DOMAIN
+sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN
 else
 echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
 exit
@@ -154,7 +154,7 @@ MyOU=$(echo $OU | cut -d '=' -f1)
 if [ "$MyOU" = OU ]
 then
 echo "Setting OU = $OU"
-sudo realm join computer-ou = $OU --verbose --user=$ADMIN $DOMAIN --install=/
+sudo realm join --computer-ou = $OU --verbose --user=$ADMIN $DOMAIN --install=/
 else
 echo "Something went wrong. please use this format ( CN=Computers,DC=domain,DC=com )"
 exit
