@@ -473,6 +473,48 @@ echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Director
 eof
 }
 
+####################################### Debian ##########################################
+
+debianclient(){
+export HOSTNAME
+myhost=$( hostname )
+sudo apt-get update
+sudo apt-get install libsss-sudo -y
+sudo apt-get install realmd adcli sssd -y
+sudo apt-get install ntp -y
+sudo mkdir -p /var/lib/samba/private
+clear 
+echo "Please enter the domain you wish to join: "
+read DOMAIN
+echo "Please enter Your domain’s NetBios name"
+read NetBios
+echo "Please enter a domain admin login to use: "
+read ADMIN
+sudo realm join --user=$ADMIN $DOMAIN 
+if [ $? -ne 0 ]; then
+    echo "AD join failed.  Please run 'journalctl -xn' to determine why."
+    exit 1
+fi
+sudo systemctl enable sssd
+sudo systemctl start sssd
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+# configure sudo
+echo "Please enter new user without @mydomain"
+read newuser
+echo "%domain\ admins@$DOMAIN ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+sudo echo "$newuser"'@'"$DOMAIN"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
+while true; do
+   read -p 'Do you want to Reboot now? (y/n)?' yn
+   case $yn in
+    [Yy]* ) sudo reboot
+            break;;
+    [Nn]* ) echo "plese remember to reboot"
+            sleep 1
+            exit ;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+done
+}
 ####################################### Cent OS #########################################
 
 # Functional but ugly
@@ -914,7 +956,8 @@ while [ opt != '' ]
 
         2) clear;
             echo "Installing on Debian Jessie client";
-            debianclient
+            
+	   
             ;;
 			
 	3) clear;
