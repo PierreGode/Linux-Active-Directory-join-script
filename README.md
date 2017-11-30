@@ -1,12 +1,13 @@
 # Linux-Active-Directory-join-script
 This is a script for Active Directory join for Ubuntu 14, 16, Debian, CentOS, and Raspberry Pi Raspbian with realmd.
+and is a result of al lot of small upgrades according as needs emerged.
 
 Complete steps
 
-
-1. remembert to set a good hostname on the computer/server the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+1. remember to set a hostname on the computer/server the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
 2. At this point you have 2 options. you already have a Group i AD example:"ADMINS" then you need to edit /etc/sudoers.d/sudoers
 and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
+and also /etc/ssh/login.allow if you have selected this option for security.
 
 Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers (same as hostname) in AD, the script will allow you to choose if you want users to be sudoers or not.
 3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
@@ -26,16 +27,18 @@ note: if ssh is disabled users in other groups will be able to ssh to the client
 
 Updated. :
 also the ability to choose if clients should have sudo rights or not ( clients will be sudo by default )
-if you seclect no on this option there i no need for an AD group "LINUXCOMPUTERsudoers" in active directory, all domain users
+if you seclect no on this option there is no need for an AD group "LINUXCOMPUTERsudoers" in active directory, all domain users
 will have nonsudo  access. "notice this option can not be combined with the option YES on ssh-allow"
 
 Updates:
 added join to ubuntu clients with debug mode. 
 debugmode will open 2 terminals and will post information while you run the script.
 
+Comming updates: the option to paste a path for a correct OU were the machine will me setup. ( the defoult OU is CN=Computers,DC=domain,DC=com )
+
 
 This will make the cleanest setup possible. no @ in names or in home folder
-home folder will be /home/domain.com/you
+home folder will be /home/domain.com/user
 User name will be only set as "you" without /myad/you or you@domain.com just clean. this is to prevent complications for developers when building code
 After reboot just login with you AD account "you" and password... again.. no @ or / is needed, just "user"
 to test access of a user execute in terminal from administrator account: id user
@@ -54,10 +57,11 @@ I have issues!
 1. After reboot I cant log in at all.  "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
 
 2. I rebooted the computer but i till can not login with the AD user!   "did you wait 3 to 5 min for AD to sync? 
-Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id youADusername, if you can see the user then it works.
+Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user then it works. if you have set up with an group then you can execute: 
+id yourADusername | grep -i LINUXCOMPUTERsudoers (the groupname or hostname depending on you setup)
 
 3. Damn i got the wrong hostname and its not a computerobject in AD   "Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  /etc/hosts
-then run sudo realm leave domain.domain reboot and rejoin executing realm join -v -U ADdamin domain.com
+then run sudo realm leave domain.com reboot and rejoin running the script again, the script will not override files if they have been configured before.
 reboot and wait 5 min before login
 
 If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal.
