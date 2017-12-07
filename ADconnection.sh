@@ -919,86 +919,14 @@ Realmdupdate(){
 export HOSTNAME
 myhost=$( hostname )
 echo "This will delete your homefolder and replace it. Please do a BACKUP"
+echo "Press ctrl C to cancel skript if you wish to make an backup first"
 sleep 5
 sudo apt-get update
 clear
-echo "Remember to recreate AD computer Object!"
+echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
 sleep 3
-echo "Please enter the domain you wish to join: "
-read DOMAIN
-echo "Please enter Your domain’s NetBios name"
-read NetBios
-echo "Please enter a domain admin login to use: "
-read ADMIN
 sudo domainjoin-cli leave
-sleep 2
-sudo echo "Installing necessary pakages...."
-sudo apt-get install realmd adcli sssd -y
-sudo apt-get install ntp -y
-sudo apt-get install realmd sssd sssd-tools samba-common krb5-user
-discovery=$(realm discover $DOMAIN | grep domain-name)
-clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
-sleep 1
-echo "Next step sometime fails due no awnser from AD please reboot and run script again"
-sleep 2
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
-echo "Please enter user to add (user WITHOUT the @server.server)"
-read UseR
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo echo "$UseR"" ALL=(ALL:ALL) ALL" >> /etc/sudoers
-sudo echo "$NetBios"'\'"$UseR" >> /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "%DOMAIN\ admins@$DOMAIN ALL=(ALL) ALL" >> /etc/sudoers.d/domain_admins
-therealm=$(realm discover | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-if [ $therealm = no ]
-then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
-then 
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-guest=$(cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i allow-guest | grep -i false | cut -d '=' -f2)
-if [ "$guest" = false ]
-then
-echo Checking login configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking login configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-exec sudo -u root /bin/sh - <<eof
-sed -i -e 's/fallback_homedir = \/home\/%d\/%u/#fallback_homedir = \/home\/%d\/%u/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
-echo "override_homedir = /home/%d/%u" >> /etc/sssd/sssd.conf
-eof
+ubuntuclient
 }
 
 ############################### Fail check ####################################
@@ -1098,22 +1026,8 @@ fi
 
 ############################### Reauth ##########################################
 
-Reauthenticate14(){
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-read -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-echo "Type Adminuser"
-read -r ADMIN
-discover=$(realm discover | grep domain-name: | cut -d ':' -f2)
-realm leave $discover
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
-exit
+Reauthenticate(){
+echo "NOT FINISHED"
 }
 
 ########################################### info #######################################
@@ -1199,8 +1113,8 @@ while [ opt != '' ]
              ;;
 	 
 	7) clear;
-	    echo "Reauthenticate realmd for Ubuntu 14"
-	    Reauthenticate14
+	    echo "Rejoin to AD"
+	    Reauthenticate
             ;;
 
      	 8) clear;
