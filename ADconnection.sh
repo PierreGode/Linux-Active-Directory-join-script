@@ -880,7 +880,6 @@ eof
 }
 
 ############################### Raspberry Pi ###################################
-#not tested yet
 
 raspberry(){
 export HOSTNAME
@@ -897,6 +896,7 @@ read -r ADMIN
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+sudo echo "pi ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
@@ -1027,7 +1027,18 @@ fi
 ############################### Reauth ##########################################
 
 Reauthenticate(){
-echo "NOT FINISHED"
+realmad=$(sudo cat /etc/sssd/sssd.conf | grep -i domain | grep -i ad  | awk '{print $3}' )
+read -p "Do you wish to keep previous cnfiguration (y/n)?" yn
+   case $yn in
+    [Yy]* )
+    #sudo realm leave $realmad
+    #do simple aut without conf
+    ;;
+    [Nn]* )
+    sudo realm leave $realmad
+    ubuntuclient
+    ;;
+   esac
 }
 
 ########################################### info #######################################
