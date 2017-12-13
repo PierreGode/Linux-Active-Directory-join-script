@@ -919,19 +919,19 @@ exit
 }
 ############################### Update to Realmd from likewise ##################
 
-Realmdupdate(){
-export HOSTNAME
-myhost=$( hostname )
-echo "This will delete your homefolder and replace it. Please do a BACKUP"
-echo "Press ctrl C to cancel skript if you wish to make an backup first"
-sleep 5
-sudo apt-get update
-clear
-echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
-sleep 3
-sudo domainjoin-cli leave
-ubuntuclient
-}
+#Realmdupdate1(){
+#export HOSTNAME
+#myhost=$( hostname )
+#echo "This will delete your homefolder and replace it. Please do a BACKUP"
+#echo "Press ctrl C to cancel skript if you wish to make an backup first"
+#sleep 5
+#sudo apt-get update
+#clear
+#echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
+#sleep 3
+#sudo domainjoin-cli leave
+#ubuntuclient
+#}
 
 ############################### Fail check ####################################
 
@@ -1032,7 +1032,7 @@ fi
 
 #Reauthenticate(){
 #realmad=$(sudo cat /etc/sssd/sssd.conf | grep -i domain | grep -i ad  | awk '{print $3}')
-#read -p "Do you wish to keep previous cnfiguration (y/n)?" yn
+
 #   case $yn in
 #    [Yy]* )
 #    #sudo realm leave $realmad
