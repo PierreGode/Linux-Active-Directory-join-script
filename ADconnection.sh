@@ -400,6 +400,8 @@ read -r DOMAIN
 echo "${NUMBER}I Please enter AD admin user ${END}"
 read -r ADMIN
 fi
+echo "${NUMBER}Please type groupname in ad for admins ${END}"
+read -r Mysrvgroup
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
@@ -439,6 +441,7 @@ read -p MYADMIN
 sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
+sudo echo "$Mysrvgroup" | sudo tee -a /etc/ssh/login.group.allowed  
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
@@ -461,6 +464,7 @@ echo "Sudoersfile seems already to be modified, skipping..."
 echo ""
 else
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$Mysrvgroup""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers 
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%domain\ users ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
