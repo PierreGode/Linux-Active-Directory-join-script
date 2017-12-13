@@ -1030,20 +1030,20 @@ fi
 
 ############################### Reauth ##########################################
 
-Reauthenticate(){
-realmad=$(sudo cat /etc/sssd/sssd.conf | grep -i domain | grep -i ad  | awk '{print $3}' )
-read -p "Do you wish to keep previous cnfiguration (y/n)?" yn
-   case $yn in
-    [Yy]* )
-    #sudo realm leave $realmad
-    #do simple aut without conf
-    ;;
-    [Nn]* )
-    sudo realm leave $realmad
-    ubuntuclient
-    ;;
-   esac
-}
+#Reauthenticate(){
+#realmad=$(sudo cat /etc/sssd/sssd.conf | grep -i domain | grep -i ad  | awk '{print $3}')
+#read -p "Do you wish to keep previous cnfiguration (y/n)?" yn
+#   case $yn in
+#    [Yy]* )
+#    #sudo realm leave $realmad
+#    #do simple aut without conf
+#    ;;
+#    [Nn]* )
+#    sudo realm leave $realmad
+#    ubuntuclient
+#    ;;
+#   esac
+#}
 
 ########################################### info #######################################
 
