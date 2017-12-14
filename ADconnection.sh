@@ -551,6 +551,7 @@ sudo apt-get update
 sudo apt-get install libsss-sudo -y
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
+sudo apt-get install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
