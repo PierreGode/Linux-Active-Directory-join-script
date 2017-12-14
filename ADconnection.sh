@@ -595,7 +595,7 @@ read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN
+sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
