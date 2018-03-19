@@ -154,29 +154,29 @@ else
 #   esac
    sudo realm join --verbose --user=$ADMIN $DOMAIN
    else
-       if [ "$var" -eq "17" ]
+       if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
        then
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
           sleep 1
    clear
-   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-                        read -r OU
-MyOU=$(echo $OU | cut -d '=' -f1 | awk '{print toupper($0)}')
-if [ "$MyOU" = OU ]
-then
-echo "Setting OU: $OU"
-sudo realm join --user=ADMIN --computer-ou=$OU DOMAIN
-else
-echo "Something went wrong. please use this format ( OU=Computers,DC=domain,DC=com )"
-exit
-fi;;
-
-    [Nn]* ) echo "";;
-    * ) echo 'Please answer yes or no.';;
-   esac
-       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
+#   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
+#   case $yn in
+#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
+#                        read -r OU
+#MyOU=$(echo $OU | cut -d '=' -f1 | awk '{print toupper($0)}')
+#if [ "$MyOU" = OU ]
+#then
+#echo "Setting OU: $OU"
+#sudo realm join --user=ADMIN --computer-ou=$OU DOMAIN
+#else
+#echo "Something went wrong. please use this format ( OU=Computers,DC=domain,DC=com )"
+#exit
+#fi;;
+#
+#    [Nn]* ) echo "";;
+#    * ) echo 'Please answer yes or no.';;
+#   esac
+       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/   
        else
        clear
       sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
