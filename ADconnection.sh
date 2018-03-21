@@ -76,7 +76,7 @@ fi
 echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 5 $DOMAIN  >/dev/null
 if [ $? = 0 ]
 then
 clear
