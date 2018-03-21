@@ -95,7 +95,7 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-discovery=$(realm discover $DOMAIN | grep domain-name)
+discovery=$($DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
@@ -317,7 +317,7 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection and d
 exit
 fi
 sleep 1
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
 ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
@@ -419,7 +419,7 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -536,7 +536,7 @@ NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
 clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
@@ -635,7 +635,7 @@ echo  "Checking sssd config.. OK"
 else
 echo "Checking sssd config.. FAIL"
 fi
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ "$therealm" = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -690,7 +690,7 @@ CentOS(){
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
@@ -775,7 +775,7 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
@@ -837,7 +837,7 @@ sudo mkdir -p /var/lib/samba/private
 sudo aptitude install libsss-sudo
 sudo systemctl enable sssd
 clear
-DOMAIN=$(realm discover | grep -i realm.name | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
 echo ""
 echo "please type Domain admin"
 read -r ADMIN
@@ -891,7 +891,7 @@ read -r DOMAIN
 else
 echo ""
 fi
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ $therealm = no ]
 then
 echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
