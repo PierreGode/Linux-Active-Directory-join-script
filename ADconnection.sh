@@ -1031,6 +1031,7 @@ clear
     echo "${MENU}*${NUMBER} 6)${MENU} Search with ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 7)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
 	echo "${MENU}*${NUMBER} 8)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 9)${MENU} Leave Domain             ${NORMAL}"
 	echo "${MENU}*${NUMBER} 10)${MENU} README with examples             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
