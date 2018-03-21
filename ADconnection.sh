@@ -104,11 +104,8 @@ echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
@@ -118,8 +115,7 @@ else
    then
    echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
    clear
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
@@ -131,8 +127,7 @@ read ADMIN
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
           sleep 1
    clear
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
