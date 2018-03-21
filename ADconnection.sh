@@ -991,6 +991,7 @@ fi
 ########################################### Leave Realm ################################
 
 leave(){
+echo "${NUMBER}This funktion only works properly if this computer can locate the domain${END}"
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
     if [ "$LEFT" = "no" ]
