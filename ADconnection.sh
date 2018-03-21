@@ -95,10 +95,9 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-discovery=$($DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 clear
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
@@ -108,7 +107,7 @@ echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 clear
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
