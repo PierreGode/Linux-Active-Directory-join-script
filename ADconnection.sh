@@ -991,14 +991,19 @@ fi
 ########################################### Leave Realm ################################
 
 leave(){
+LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-read -p "Do you really want to leave $DOMAIN (y/n)?" yn
+    if [ "$LEFT" = "no" ]
+    then
+    echo "$DOMAIN has not been configured"
+    exit
+    fi
+read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover $DOMAIN
     sudo realm leave $DOMAIN
-    left=$(sudo realm discover | grep configured | awk '{print $2}')
-    if [ "$left" = "no" ]
+    if [ "$LEFT" = "no" ]
     then
     echo ""
     echo "$DOMAIN has been left"
@@ -1009,6 +1014,14 @@ read -p "Do you really want to leave $DOMAIN (y/n)?" yn
     [Nn]* ) echo "Enter Domain to leave"
 	read -r DOMAIN
 	sudo realm leave $DOMAIN
+    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$left" = "no" ]
+    then
+    echo ""
+    echo "$DOMAIN has been left"
+    else
+    echo "something went wrong, try to leave manually"
+    fi
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
