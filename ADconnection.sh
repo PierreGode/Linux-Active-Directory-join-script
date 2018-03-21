@@ -994,7 +994,9 @@ leave(){
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 read -p "Do you really want to leave $DOMAIN (y/n)?" yn
    case $yn in
-    [Yy]* ) sudo realm leave $DOMAIN
+    [Yy]* ) echo "Listing domain"
+    sudo realm discover $DOMAIN
+    sudo realm leave $DOMAIN
     ;;
     [Nn]* ) echo "Enter Domain to leave"
 	read -r DOMAIN
