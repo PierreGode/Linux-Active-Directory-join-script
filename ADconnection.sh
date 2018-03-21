@@ -338,7 +338,7 @@ read -r DOMAIN
 fi
 echo "${NUMBER}Please type groupname in AD for admins${END}"
 read -r Mysrvgroup
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read -r ADMIN
@@ -530,7 +530,6 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-discovery=$(realm discover $DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
@@ -714,7 +713,7 @@ fi
 clear
 sudo echo "Please enter AD admin user:"
 read -r ADMIN
-sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
