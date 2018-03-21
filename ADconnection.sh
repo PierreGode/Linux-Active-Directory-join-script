@@ -118,6 +118,8 @@ else
    then
    echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
    clear
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
@@ -129,6 +131,8 @@ read ADMIN
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
           sleep 1
    clear
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
