@@ -1000,6 +1000,7 @@ read -p "Do you really want to leave $DOMAIN (y/n)?" yn
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
+    echo ""
     echo "$DOMAIN has been left"
     else
     echo "something went wrong, try to leave manually"
