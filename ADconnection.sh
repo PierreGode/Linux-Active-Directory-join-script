@@ -8,7 +8,7 @@
 #                                                                                                                                #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-# 1 2 times. if it still is not working see line 24-25
+# a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
@@ -22,15 +22,17 @@
 
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 30 #fixerrors
+#this funktion is not called in the script : to activate, uncomment line line 31 #fixerrors
 #This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin auth
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
 sudo apt-get install packagekit
+MENU_FN
 }
 #fixerrors
 
 ####################### Setup for Ubuntu 14,16 and 17 clients #######################################
+#Runs ADjoin in debug mode. meaning it opens terminals following logs
 ubuntuclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
@@ -74,14 +76,14 @@ fi
 echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN
+ping -c 2 $DOMAIN  >/dev/null
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -95,8 +97,6 @@ read -r DOMAIN
 fi
 discovery=$(realm discover $DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-echo "${INTRO_TEXT}"Please type Admin user"${END}"
-read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -107,51 +107,22 @@ echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 clear
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-sleep 1
-clear
-#read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-#   case $yn in
-#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-#                        read -r OU
-#MyOU=$(echo $OU | cut -d '=' -f1 | awk '{print toupper($0)}')
-#if [ "$MyOU" = OU ]
-#then
-#echo "Setting OU: $OU"
-#sudo realm join --user=ADMIN --computer-ou=$OU DOMAIN
-#else
-#echo "Something went wrong. please use this format ( OU=Computers,DC=domain,DC=com )"
-#exit
-#fi;;
-#
-#    [Nn]* ) echo "";;
-#    * ) echo 'Please answer yes or no.';;
-#   esac
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 else
    if [ "$var" -eq "16" ]
    then
    echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-   sleep 1
    clear
-#   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-#   case $yn in
-#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-#                        read -r OU
-#MyOU=$(echo $OU | cut -d '=' -f1 | awk '{print toupper($0)}')
-#if [ "$MyOU" = OU ]
-#then
-#echo "Setting OU: $OU"
-#sudo realm join --user=ADMIN --computer-ou=$OU DOMAIN
-#else
-#echo "Something went wrong. please use this format ( OU=Computers,DC=domain,DC=com )"
-#exit
-#fi;;
-#
-#    [Nn]* ) echo "";;
-#    * ) echo 'Please answer yes or no.';;
-#   esac
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
    sudo realm join --verbose --user=$ADMIN $DOMAIN
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
@@ -159,23 +130,10 @@ else
        echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
           sleep 1
    clear
-#   read -p "Do you wish to select an OU? (Default is  CN=Computers,DC=domain,DC=com) (y/n)?" yn
-#   case $yn in
-#    [Yy]* ) echo "${INTRO_TEXT}"Please type OU"${END}"
-#                        read -r OU
-#MyOU=$(echo $OU | cut -d '=' -f1 | awk '{print toupper($0)}')
-#if [ "$MyOU" = OU ]
-#then
-#echo "Setting OU: $OU"
-#sudo realm join --user=ADMIN --computer-ou=$OU DOMAIN
-#else
-#echo "Something went wrong. please use this format ( OU=Computers,DC=domain,DC=com )"
-#exit
-#fi;;
-#
-#    [Nn]* ) echo "";;
-#    * ) echo 'Please answer yes or no.';;
-#   esac
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
        sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/   
        else
        clear
@@ -238,7 +196,7 @@ read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${
 	if [ -f /etc/sudoers.d/sudoers ]
 then
 echo ""
-echo "Sudoersfile seems already to be modified, skipping..."
+echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -269,25 +227,6 @@ sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/light
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 fi
 clear
-#echo "If you have several domain controllers worldwide it is recomended to set your DC"
-#echo ""
-#read -p "Do you wish to set your DC in configuration (y/n)?" yn
-#case $yn in
-#[Yy]* )
-#echo "Type DC"
-#read dcs
-#ldaps=$( cat /etc/sssd/sssd.conf | grep -i $dcs | cut -d '/' -f3 )
-#echo ""
-#if [ "$ldaps" = "$dcs" ]
-#then echo "sssd seems already have $dcs configured.. skipping.."
-#else
-#echo
-#var=$( echo "ldap_uri = ldap://$dcs" )
-#sed -i '9i\'"$var"'' /etc/sssd/sssd.conf
-#fi;;
-#[Nn]* ) echo "skipping...";;
-#* ) echo "Please awnser yes or No" ;;
-#esac
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
@@ -383,7 +322,7 @@ ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
@@ -397,13 +336,13 @@ clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "${NUMBER}I Please enter AD admin user ${END}"
-read -r ADMIN
 fi
-echo "${NUMBER}Please type groupname in ad for admins ${END}"
+echo "${NUMBER}Please type groupname in AD for admins${END}"
 read -r Mysrvgroup
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read -r ADMIN
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
@@ -543,7 +482,11 @@ then
 ""
 else
 apt get install sudo -y
-echo "administrator ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
+export whoami
+whoamis=$( whoami )
+echo $whoamis
+admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
@@ -569,7 +512,7 @@ fi
 echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN
+ping -c 2 $DOMAIN  >/dev/null
 if [ $? = 0 ]
 then
 clear
@@ -590,7 +533,7 @@ read -r DOMAIN
 fi
 discovery=$(realm discover $DOMAIN | grep domain-name)
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
-echo "${INTRO_TEXT}"Please type Admin user"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
 clear
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
@@ -752,7 +695,7 @@ ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found >>> $DOMAIN  <<< ${END}"
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
@@ -770,7 +713,7 @@ echo "${NUMBER}I Please enter AD admin user ${END}"
 read -r ADMIN
 fi
 clear
-sudo echo "Please enter AD admin user"
+sudo echo "Please enter AD admin user:"
 read -r ADMIN
 sudo echo "${INTRO_TEXT}"Realm= $discovery"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -1002,7 +945,6 @@ realm list
 exit
 }
 
-
 #################################### ldapsearch #####################################################
 
 ldaplook(){
@@ -1072,7 +1014,7 @@ echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in
 echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
 exit
 }
-
+MENU_FN(){
 ########################################### Menu #######################################
 
 clear
@@ -1099,56 +1041,46 @@ while [ opt != '' ]
             exit;
     else
         case $opt in
-        1) clear;
+    1) clear;
             echo "Installing on Ubuntu Client/Server";
             ubuntuclient;
             ;;
-
-        2) clear;
+	2) clear;
             echo "Installing on Debian Jessie client";
             debianclient
             ;;
-			
 	3) clear;
 	    echo "Installing on Debian Cent OS"
 	    CentOS
             ;;
-	    
 	4) clear;
 	    echo "Join to AD on Ubuntu Client or Server in debug mode"
 	     ubuntuclientdebug
             ;;
-	    
 	5) clear;
 	    echo "Check for errors"
 	     failcheck
-            ;;
-	 6) clear;
+             ;;
+	6) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	 
 	7) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-
-     	 8) clear;
+	8) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	 
-     	 9) clear;
+	9) clear;
      	   echo "READ ME"
 	   readmes
            ;;
-		 
         x)exit;
         ;;
-
-        \n)exit;
+       \n)exit;
         ;;
-
         *)clear;
         opt "Pick an option from the menu";
         show_etcmenu;
@@ -1156,3 +1088,5 @@ while [ opt != '' ]
     esac
 fi
 done
+}
+MENU_FN
