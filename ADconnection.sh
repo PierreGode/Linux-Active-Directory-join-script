@@ -997,6 +997,13 @@ read -p "Do you really want to leave $DOMAIN (y/n)?" yn
     [Yy]* ) echo "Listing domain"
     sudo realm discover $DOMAIN
     sudo realm leave $DOMAIN
+    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$left" = "no" ]
+    then
+    echo "$DOMAIN has been left"
+    else
+    echo "something went wrong, try to leave manually"
+    fi
     ;;
     [Nn]* ) echo "Enter Domain to leave"
 	read -r DOMAIN
