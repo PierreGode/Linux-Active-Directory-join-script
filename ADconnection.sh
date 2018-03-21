@@ -995,7 +995,9 @@ LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
+    echo ""
     echo "$DOMAIN has not been configured"
+    echo ""
     exit
     fi
 read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
@@ -1003,6 +1005,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     [Yy]* ) echo "Listing domain"
     sudo realm discover $DOMAIN
     sudo realm leave $DOMAIN
+    LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
     echo ""
