@@ -47,13 +47,14 @@ echo ""
 else
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 if [ "$rasp" = "Raspbian" ]
-then 
-echo "this seems to be a raspberry Pi"
+then
+echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
 raspberry
 else
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 if [ "$kalilinux" = "Kali" ]
 then
+echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
 kalijoin
 else
 echo " this seems to be a server, swithching to server mode"
