@@ -484,8 +484,6 @@ export whoami
 whoamis=$( whoami )
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
 echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
-fi
-clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get update
 sudo apt-get install libsss-sudo -y
