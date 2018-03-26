@@ -31,6 +31,173 @@ MENU_FN
 }
 #fixerrors
 
+####################### final auth ##################################################################
+
+fi_auth(){
+sudo echo "############################"
+sudo echo "Configuratig files.."
+sudo echo "Verifying the setup"
+sudo systemctl enable sssd
+sudo systemctl start sssd
+states=$( echo null )
+states1=$( echo null )
+grouPs=$( echo null )
+therealm=$( echo null )
+cauth=$( echo null )
+clear
+read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/ssh/login.group.allowed ]
+then
+echo "Files seems already to be modified, skipping..."
+else
+echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+sudo touch /etc/ssh/login.group.allowed
+admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+echo ""
+echo ""
+read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
+    [Nn]* ) echo "please type name of current administrator"
+read -p MYADMIN
+sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+    * ) echo "Please answer yes or no.";;
+   esac
+sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+echo "enabled SSH-allow"
+fi;;
+    [Nn]* ) echo "Disabled SSH login.group.allowed"
+    states1=$( echo 12 );;
+    * ) echo "Please answer yes or no.";;
+   esac
+echo ""
+echo "-------------------------------------------------------------------------------------------"
+echo ""
+read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+   case $yn in
+    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+	if [ -f /etc/sudoers.d/sudoers ]
+then
+echo ""
+echo "The Sudoers file seems already to be modified, skipping..."
+echo ""
+else
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
+   case $yn in
+    [Yy]* ) 
+sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  
+;;
+
+ [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  
+;;
+    * ) echo "Please answer yes or no.";;
+   esac
+fi;;
+    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    	    echo ""
+	    echo ""
+	    states=$( echo 12 );;
+    * ) echo 'Please answer yes or no.';;
+   esac
+homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
+if [ $homedir = 0022 ]
+then
+echo "pam_mkhomedir.so configured"
+sleep 1
+else
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+fi
+logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+if [ "$logintrue" =  "greeter-show-manual-login=true" ]
+then
+echo "50-ubuntu.conf is already configured.. skipping"
+else
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+fi
+clear
+sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
+sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
+sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
+sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
+cat /etc/sssd/sssd.conf | grep -i override
+sudo echo "[nss]
+filter_groups = root
+filter_users = root
+reconnection_retries = 3
+entry_cache_timeout = 5400
+entry_cache_user_timeout = 5400
+entry_cache_group_timeout = 5400
+cache_credentials = TRUE
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sudo service sssd restart
+if [ $? = 0 ]
+then
+echo  "Checking sssd config.. OK"
+else
+echo "Checking sssd config.. FAIL"
+fi
+therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ "$therealm" = no ]
+then
+echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+else
+echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+fi
+if [ $states = 12 ]
+then
+echo "Sudoers not configured... skipping"
+else
+if [ -f /etc/sudoers.d/sudoers ]
+then
+echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+else
+echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+fi
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
+if [ "$grouPs" = "$myhost""sudoers" ]
+then
+echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ]
+then
+echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+if [ $states1 = 12 ]
+then 
+echo "Disabled SSH login.group.allowed"
+else
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+if [ $cauth = allow ]
+then
+echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+else
+echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+fi
+fi
+realm discover $DOMAIN
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
+exit
+fi
+}
+
 ####################### Setup for Ubuntu 14,16 and 17 clients #######################################
 #Runs ADjoin in debug mode. meaning it opens terminals following logs
 linuxclientdebug(){
@@ -39,6 +206,9 @@ gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe | grep -i -e closed -e Successfully -e 'Preauthentication failed' -e 'authenticate' -e 'Failed to join the domain'; exec bash\""
 linuxclient
 }
+
+################################## Join for linux clients ##########################################
+
 linuxclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 if [ $? = 0 ]
@@ -150,165 +320,7 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
 fi
-sudo echo "############################"
-sudo echo "Configuratig files.."
-sudo echo "Verifying the setup"
-sudo systemctl enable sssd
-sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
-clear
-read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed ]
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-echo ""
-echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
-    * ) echo "Please answer yes or no.";;
-   esac
-echo ""
-echo "-------------------------------------------------------------------------------------------"
-echo ""
-read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers ]
-then
-echo ""
-echo "The Sudoers file seems already to be modified, skipping..."
-echo ""
-else
-read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
-   case $yn in
-    [Yy]* ) 
-sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-
- [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-    * ) echo "Please answer yes or no.";;
-   esac
-fi;;
-    [Nn]* ) echo "Disabled sudo rights for users on this machine"
-    	    echo ""
-	    echo ""
-	    states=$( echo 12 );;
-    * ) echo 'Please answer yes or no.';;
-   esac
-homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
-if [ $homedir = 0022 ]
-then
-echo "pam_mkhomedir.so configured"
-sleep 1
-else
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-fi
-logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
-if [ "$logintrue" =  "greeter-show-manual-login=true" ]
-then
-echo "50-ubuntu.conf is already configured.. skipping"
-else
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-fi
-clear
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_timeout = 300
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-if [ "$therealm" = no ]
-then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ $states = 12 ]
-then
-echo "Sudoers not configured... skipping"
-else
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
-if [ "$grouPs" = "$myhost""sudoers" ]
-then
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-if [ $states1 = 12 ]
-then 
-echo "Disabled SSH login.group.allowed"
-else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-fi
-realm discover $DOMAIN
-echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-exit
-fi
+fi_auth
 }
 
 ####################### Setup for Ubuntu server #######################################
@@ -479,12 +491,14 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 300
+entry_cache_timeout = 5400
+entry_cache_user_timeout = 5400
+entry_cache_group_timeout = 5400
+cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 realm discover $DOMAIN
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-eof
 exit
 }
 
@@ -549,156 +563,7 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
 fi
-sudo echo "############################"
-sudo echo "Configuratig files.."
-sudo echo "Verifying the setup"
-sudo systemctl enable sssd
-sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
-clear
-read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed ]
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-echo ""
-echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
-    * ) echo "Please answer yes or no.";;
-   esac
-echo ""
-echo "-------------------------------------------------------------------------------------------"
-echo ""
-read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers ]
-then
-echo ""
-echo "Sudoersfile seems already to be modified, skipping..."
-echo ""
-else
-read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-    * ) echo "Please answer yes or no.";;
-   esac
-fi;;
-    [Nn]* ) echo "Disabled sudo rights for users on this machine"
-    	    echo ""
-	    echo ""
-	    states=$( echo 12 );;
-    * ) echo 'Please answer yes or no.';;
-   esac
-homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
-if [ $homedir = 0022 ]
-then
-echo "pam_mkhomedir.so configured"
-sleep 1
-else
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-fi
-clear
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_timeout = 300
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ "$therealm" = no ]
-then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ $states = 12 ]
-then
-echo "Sudoers not configured... skipping"
-else
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
-if [ "$grouPs" = "$myhost""sudoers" ]
-then
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-if [ $states1 = 12 ]
-then 
-echo "Disabled SSH login.group.allowed"
-else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-fi
-realm discover $DOMAIN
-echo "${INTRO_TEXT}REBOOT is neccesery!${INTRO_TEXT}"
-echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-exit
-fi
+fi_auth
 }
 
 ####################################### Debian ##########################################
@@ -772,155 +637,7 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
 fi
-sudo echo "############################"
-sudo echo "Configuratig files.."
-sudo echo "Verifying the setup"
-sudo systemctl enable sssd
-sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
-clear
-read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed ]
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-echo ""
-echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
-    * ) echo "Please answer yes or no.";;
-   esac
-echo ""
-echo "-------------------------------------------------------------------------------------------"
-echo ""
-read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers ]
-then
-echo ""
-echo "Sudoersfile seems already to be modified, skipping..."
-echo ""
-else
-read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers" 
-;;
-    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers" 
-;;
-    * ) echo "Please answer yes or no.";;
-   esac
-fi;;
-    [Nn]* ) echo "Disabled sudo rights for users on this machine"
-    	    echo ""
-	    echo ""
-	    states=$( echo 12 );;
-    * ) echo 'Please answer yes or no.';;
-   esac
-homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
-if [ $homedir = 0022 ]
-then
-echo "pam_mkhomedir.so configured"
-sleep 1
-else
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-fi
-clear
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_timeout = 300
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
-if [ $? = 0 ]
-then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
-fi
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ "$therealm" = no ]
-then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ $states = 12 ]
-then
-echo "Sudoers not configured... skipping"
-else
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
-fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
-if [ "$grouPs" = "$myhost""sudoers" ]
-then
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-if [ $states1 = 12 ]
-then 
-echo "Disabled SSH login.group.allowed"
-else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-fi
-realm discover $DOMAIN
-echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-exit
-fi
+fi_auth
 }
 ####################################### Cent OS #########################################
 
@@ -961,119 +678,7 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit 1
 fi
-sudo echo "############################"
-sudo echo "Configuratig files.."
-sudo echo "Verifying the setup"
-sudo systemctl enable sssd
-sudo systemctl start sssd
-clear
-read -p "Do you wish to enable SSH allow/disble protection (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-	if [ -f /etc/ssh/login.group.allowed ]
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
-sudo echo "$MYADMIN"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "disabled SSH allow";;
-    * ) echo "Please answer yes or no.";;
-   esac
-read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers ]
-then
-echo "Sudoersfile seems already to be modified, skipping..."
-else
-read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
-;;
-    * ) echo "Please answer yes or no.";;
-   esac
-fi;;
-    [Nn]* ) echo "disabled sudo rights for users on this machine";;
-    * ) echo 'Please answer yes or no.';;
-   esac
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ $therealm = no ]
-then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
-else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
-fi
-if [ -f /etc/sudoers.d/sudoers ]
-then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-else
-echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
-fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
-then 
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
-fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ]
-then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
-fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ]
-then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
-else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
-fi
-sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
-echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_timeout = 5400
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
-realm discover $DOMAIN
-echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
-eof
-exit
+fi_auth
 }
 
 ############################### Raspberry Pi ###################################
@@ -1105,7 +710,10 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 300
+entry_cache_timeout = 5400
+entry_cache_user_timeout = 5400
+entry_cache_group_timeout = 5400
+cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 exit
