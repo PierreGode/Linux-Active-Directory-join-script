@@ -203,10 +203,18 @@ echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    * ) echo "Please answer yes or no.";;
+   esac
 fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
@@ -590,10 +598,18 @@ echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
 echo ""
 else
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    * ) echo "Please answer yes or no.";;
+   esac
 fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
@@ -803,10 +819,18 @@ echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
 echo ""
 else
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    * ) echo "Please answer yes or no.";;
+   esac
 fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
@@ -969,11 +993,18 @@ read -p "Do you wish to give users on this machine sudo rights? (y/n)?" yn
 then
 echo "Sudoersfile seems already to be modified, skipping..."
 else
-sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
+   case $yn in
+    [Yy]* ) sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%domain\ users ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+#sudo realm permit --groups "$myhost""sudoers"  ;;
+    * ) echo "Please answer yes or no.";;
+   esac
 fi;;
     [Nn]* ) echo "disabled sudo rights for users on this machine";;
     * ) echo 'Please answer yes or no.';;
