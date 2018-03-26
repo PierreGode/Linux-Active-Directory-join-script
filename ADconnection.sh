@@ -673,14 +673,11 @@ echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
 realm discover $DOMAIN
+echo "${INTRO_TEXT}REBOOT is neccesery!${INTRO_TEXT}"
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
 fi
 }
-
-
-
-
 
 ####################################### Debian ##########################################
 
