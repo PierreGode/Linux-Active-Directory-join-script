@@ -33,13 +33,13 @@ MENU_FN
 
 ####################### Setup for Ubuntu 14,16 and 17 clients #######################################
 #Runs ADjoin in debug mode. meaning it opens terminals following logs
-ubuntuclientdebug(){
+linuxclientdebug(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe | grep -i -e closed -e Successfully -e 'Preauthentication failed' -e 'authenticate' -e 'Failed to join the domain'; exec bash\""
-ubuntuclient
+linuxclient
 }
-ubuntuclient(){
+linuxclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 if [ $? = 0 ]
 then
@@ -47,7 +47,7 @@ echo ""
 else
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 if [ "$rasp" = "Raspbian" ]
-then
+then 
 echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
 raspberry
 else
@@ -484,7 +484,6 @@ myhost=$( hostname )
 export whoami
 whoamis=$( whoami )
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get update
 sudo apt-get install libsss-sudo -y
@@ -1086,7 +1085,7 @@ exit
 #echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
 #sleep 3
 #sudo domainjoin-cli leave
-#ubuntuclient
+#linuxclient
 #}
 
 ############################### Fail check ####################################
@@ -1195,7 +1194,7 @@ fi
 #    ;;
 #    [Nn]* )
 #    sudo realm leave $realmad
-#    ubuntuclient
+#    linuxclient
 #    ;;
 #   esac
 #}
@@ -1300,7 +1299,7 @@ while [ opt != '' ]
         case $opt in
     1) clear;
             echo "Installing on Ubuntu Client/Server";
-            ubuntuclient;
+            linuxclient;
             ;;
 	2) clear;
             echo "Installing on Debian Jessie client";
@@ -1312,7 +1311,7 @@ while [ opt != '' ]
             ;;
 	4) clear;
 	    echo "Join to AD on Ubuntu Client or Server in debug mode"
-	     ubuntuclientdebug
+	     linuxclientdebug
             ;;
 	5) clear;
 	    echo "Check for errors"
