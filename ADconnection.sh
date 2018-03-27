@@ -872,7 +872,8 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
-    echo ""
+    echo "" 
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     else
     echo "something went wrong, try to leave manually"
@@ -885,6 +886,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     if [ "$left" = "no" ]
     then
     echo ""
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     else
     echo "something went wrong, try to leave manually"
