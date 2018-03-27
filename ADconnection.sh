@@ -129,7 +129,13 @@ sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/light
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 fi
 else
-echo "no 50-ubuntu.conf "
+if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf ]
+then
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
+else
+echo ""
+fi
 fi
 clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
