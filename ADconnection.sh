@@ -219,28 +219,30 @@ linuxclient
 }
 
 ################################## Join for linux clients ##########################################
-
 linuxclient(){
-desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
-if [ $? = 0 ]
+desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
+rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+
+if [ "$desktop" = "desktop" ]
 then
-	rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-	if [ "$rasp" = "Raspbian" ]
-	then
-	echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
-	raspberry
-	else
-		kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-		if [ "$kalilinux" = "Kali" ]
-		then
-		echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
-		kalijoin
-		else
-		echo " this seems to be a server, swithching to server mode"
-		ubuntuserver14
+if [ "$rasp" = "Raspbian" ]
+then
+echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+raspberry
+else
+if [ "$kalilinux" = "Kali" ]
+then
+echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+kalijoin
+else
+echo ""
 fi
-	fi
-		fi
+fi
+else
+echo " this seems to be a server, swithching to server mode"
+ubuntuserver14
+fi
 export HOSTNAME
 myhost=$( hostname )
 clear
