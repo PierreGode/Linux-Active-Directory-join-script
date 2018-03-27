@@ -203,7 +203,9 @@ then
 echo "${RED_TEXT}"Join has Failed"${END}"
 else
 lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
+echo ""
 echo "${INTRO_TEXT}"joined to $lastverify"${END}"
+echo ""
 fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
@@ -294,6 +296,7 @@ clear
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
@@ -305,6 +308,7 @@ else
    clear
 sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
@@ -317,6 +321,7 @@ read ADMIN
    clear
 sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
 echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
@@ -544,7 +549,6 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg
 exit
 fi
 echo "hostname is $myhost"
-sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN  >/dev/null
 if [ $? = 0 ]
@@ -566,6 +570,7 @@ echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+echo ""
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
 clear
@@ -640,6 +645,7 @@ echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+echo ""
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
 clear
