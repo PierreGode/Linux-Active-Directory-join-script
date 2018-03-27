@@ -1,6 +1,6 @@
 # Linux-Active-Directory-join-script By Pierre 2018
 
-Supported OS: Ubuntu 14-18, Debian, Cent OS, Rasbian and Kali
+Supported OS: Ubuntu 14-18 + mate, Debian, Cent OS, Rasbian and Kali
 
 This is a script for Active Directory join with realmd.
 and is a result of al lot of small upgrades according as needs emerged.
@@ -72,4 +72,12 @@ then run sudo realm leave domain.com reboot and rejoin running the script again,
 reboot and wait 5 min before login
 
 If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal. this was added 2017/11 so if you have and older "join" than 2017/11 you should do a rejoin.
+
+How to git?
+On linux client install git = sudo apt-get install git -y
+Clone this repo = sudo git clone https://github.com/PierreGode/Linux-Active-Directory-join-script.git
+To update repo to latest version = in the folder Linux-Active-Directory-join-script/ = sudo git pull
+
+
+
 
