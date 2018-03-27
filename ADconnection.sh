@@ -255,9 +255,9 @@ sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg
 exit
 fi
 echo "hostname is $myhost"
-sleep 1
+echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 5 $DOMAIN  >/dev/null
+ping -c 2 $DOMAIN  >/dev/null
 if [ $? = 0 ]
 then
 clear
