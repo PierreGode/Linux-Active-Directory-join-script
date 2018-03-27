@@ -224,25 +224,23 @@ linuxclient(){
 desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop)
 if [ $? = 0 ]
 then
-echo ""
-else
-rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-if [ "$rasp" = "Raspbian" ]
-then 
-echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
-raspberry
-else
-kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-if [ "$kalilinux" = "Kali" ]
-then
-echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
-kalijoin
-else
-echo " this seems to be a server, swithching to server mode"
-ubuntuserver14
+	rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+	if [ "$rasp" = "Raspbian" ]
+	then
+	echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+	raspberry
+	else
+		kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+		if [ "$kalilinux" = "Kali" ]
+		then
+		echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+		kalijoin
+		else
+		echo " this seems to be a server, swithching to server mode"
+		ubuntuserver14
 fi
-fi
-fi
+	fi
+		fi
 export HOSTNAME
 myhost=$( hostname )
 clear
