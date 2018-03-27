@@ -87,7 +87,7 @@ echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-read -p "${RED_TEXT}"'Do you wish to DISABLE password promt for users in terminal?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "Do you wish to DISABLE password promt for users in terminal (y/n)?" yn
    case $yn in
     [Yy]* ) 
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -95,6 +95,7 @@ sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"  
 ;;
+
  [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
@@ -118,12 +119,17 @@ else
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 fi
 logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
+thn
 if [ "$logintrue" =  "greeter-show-manual-login=true" ]
 then
 echo "50-ubuntu.conf is already configured.. skipping"
 else
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
+fi
+else
+echo "no 50-ubuntu.conf "
 fi
 clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
