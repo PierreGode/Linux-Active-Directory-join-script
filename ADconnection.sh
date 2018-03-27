@@ -142,10 +142,10 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 5400
-entry_cache_user_timeout = 5400
-entry_cache_group_timeout = 5400
-cache_credentials = TRUE
+entry_cache_timeout = 600
+#entry_cache_user_timeout = 5400
+#entry_cache_group_timeout = 5400
+#cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 if [ $? = 0 ]
@@ -496,10 +496,10 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 5400
-entry_cache_user_timeout = 5400
-entry_cache_group_timeout = 5400
-cache_credentials = TRUE
+entry_cache_timeout = 600
+#entry_cache_user_timeout = 5400
+#entry_cache_group_timeout = 5400
+#cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 realm discover $DOMAIN
@@ -716,10 +716,10 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 5400
-entry_cache_user_timeout = 5400
-entry_cache_group_timeout = 5400
-cache_credentials = TRUE
+entry_cache_timeout = 600
+#entry_cache_user_timeout = 5400
+#entry_cache_group_timeout = 5400
+#cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 exit
