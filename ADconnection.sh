@@ -131,8 +131,7 @@ fi
 else
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf ]
 then
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
+echo ""
 else
 echo "No lightdm to configure"
 fi
