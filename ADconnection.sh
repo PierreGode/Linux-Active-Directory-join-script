@@ -120,7 +120,7 @@ echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -
 fi
 logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
-thn
+then
 if [ "$logintrue" =  "greeter-show-manual-login=true" ]
 then
 echo "50-ubuntu.conf is already configured.. skipping"
