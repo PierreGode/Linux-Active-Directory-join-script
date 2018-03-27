@@ -203,7 +203,7 @@ then
 echo "${RED_TEXT}"Join has Failed"${END}"
 else
 lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
-echo "${INTRO_TEXT}"joined to $ lastverify"${END}"
+echo "${INTRO_TEXT}"joined to $lastverify"${END}"
 fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
