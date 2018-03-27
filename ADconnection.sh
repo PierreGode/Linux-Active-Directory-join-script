@@ -518,6 +518,7 @@ admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get update
 sudo apt-get install libsss-sudo -y
+sudo apt-get install adcli -y
 sudo apt-get install realmd adcli sssd -y
 sudo apt-get install ntp -y
 sudo apt-get install policykit-1 -y
