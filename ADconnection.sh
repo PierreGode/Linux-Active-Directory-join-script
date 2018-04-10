@@ -252,6 +252,7 @@ clear
 sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo apt-get install -f -y
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
@@ -292,6 +293,7 @@ if [ "$var" -eq "14" ]
 then
 echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get install -f -y
 clear
 echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
 sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
@@ -350,6 +352,7 @@ sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user
+sudo apt-get install -f -y
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
@@ -537,6 +540,7 @@ sudo apt-get install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo apt-get install -f -y
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
@@ -611,6 +615,7 @@ sudo apt-get install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo apt-get install -f
 clear
 sudo dpkg -l | grep realmd
 if [ $? = 0 ]
