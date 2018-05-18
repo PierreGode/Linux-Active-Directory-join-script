@@ -1035,7 +1035,10 @@ DATE=`date +%H:%M`
 MENU_FN 2>&1 | sudo tee ADconnection.log
 exit
 else
+echo "incorrect flag, see --help for help"
 echo ""
+echo ""
+exit
 fi
 fi
 fi
