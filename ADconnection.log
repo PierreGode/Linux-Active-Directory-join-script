@@ -1,3 +1,19 @@
+[H[J[32m   Active directory connection tool             [32m
+[32m       Created by Pierre Goude                  [32m
+[32m This script will edit several critical files.. [32m
+[32m  DO NOT attempt this without expert knowledge  [32m
+[m                                                    [m
+[36m*[33m 1)[36m Join to AD on Linux (Ubuntu/Rasbian)    [m
+[36m*[33m 2)[36m Join to AD on Debian Jessie Client    [m
+[36m*[33m 3)[36m Join to AD on CentOS  [m
+[36m*[33m 4)[36m Check for errors    [m
+[36m*[33m 5)[36m Search with ldap              [m
+[36m*[33m 6)[36m Reauthenticate (Ubuntu14 only)   [m
+[36m*[33m 7)[36m Update from Likewise to Realmd for Ubuntu 14 [m
+[36m*[33m 8)[36m Leave Domain             [m
+[m                                                    [m
+Please enter a menu option and enter or [31menter to exit. [m
+[H[JInstalling on Ubuntu Client/Server
 
 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
 
@@ -23,9 +39,9 @@ Do you wish to use it (y/n)?
 [32mPlease log in with domain admin to TOBII.INTRA to connect[0m
 [32mPlease type Admin user:[0m
  * Resolving: _ldap._tcp.tobii.intra
- * Performing LDAP DSE lookup on: 10.46.10.23
- * Performing LDAP DSE lookup on: fd93:27e0:59ca:10:4cc6:9e6e:2cc6:8d18
- * Performing LDAP DSE lookup on: fd93:27e0:59ca:10::23
+ * Performing LDAP DSE lookup on: 10.2.10.191
+ * Performing LDAP DSE lookup on: 10.46.10.70
+ * Performing LDAP DSE lookup on: fd93:27e0:59ca:10::70
  * Successfully discovered: tobii.intra
 realm: Already joined to this domain
 [31mAD join failed.please check that computer object is already created and test again [0m
