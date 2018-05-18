@@ -89,17 +89,17 @@ echo ""
 else
 read -p "${RED_TEXT}"'Do you wish to DISABLE password promt for users in terminal?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
-    [Yy]* ) 
+    [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
+#sudo realm permit --groups "$myhost""sudoers"
 ;;
 
  [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
-#sudo realm permit --groups "$myhost""sudoers"  
+#sudo realm permit --groups "$myhost""sudoers"
 ;;
     * ) echo "Please answer yes or no.";;
    esac
@@ -327,7 +327,7 @@ echo ""
 echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
 echo "${INTRO_TEXT}"Please type Admin user:"${END}"
 read ADMIN
-       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/   
+       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
        else
        clear
       sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
@@ -428,7 +428,7 @@ read -p MYADMIN
 sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
-sudo echo "$Mysrvgroup" | sudo tee -a /etc/ssh/login.group.allowed  
+sudo echo "$Mysrvgroup" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
@@ -451,7 +451,7 @@ echo "Sudoersfile seems already to be modified, skipping..."
 echo ""
 else
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-sudo echo "%$Mysrvgroup""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers 
+sudo echo "%$Mysrvgroup""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%domain\ users ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
@@ -482,7 +482,7 @@ echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
 fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
-then 
+then
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
@@ -890,7 +890,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
-    echo "" 
+    echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     else
@@ -928,17 +928,23 @@ echo "${INTRO_TEXT}                                                            $
 echo "${INTRO_TEXT}     Domain username:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}ADadmin${NUMBER}"${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     AD Group to put users in:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}Sudoers.global${NUMBER}"${INTRO_TEXT}"
-echo "${RED_TEXT}     User and computer must Exist in AD before Join             ${RED_TEXT}"
+echo "${RED_TEXT}       group should be created in AD with the groupname beeing the HOSTNAMEsudores             ${RED_TEXT}"
 echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Script will use hostname and add sudoer to it to sudoers "${RED_TEXT}Example:${RED_TEXT}""${NUMBER} myhostsudoer${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}     It is important that the computerobject "${RED_TEXT}Ex:${RED_TEXT}" myhost exists in AD ${INTRO_TEXT}"
+echo "${INTRO_TEXT}     It is important that the computerobject "${RED_TEXT}Ex:${RED_TEXT}" myhost gets created in AD pre or post running the script ( the join will create an computer object by it self ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     and that the group "${RED_TEXT}Ex:${RED_TEXT}" myhostsudoes exists, sudoers must be added or edit this script to remove sudoers from name${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Script will also add domain admin group to sudoes                     ${INTRO_TEXT}"
-echo "${NUMBER}     Remember to Check Hostname and add it to AD before running the ADjoin${NUMBER}"
+echo "${NUMBER}     Remember to Check Hostname and add it to AD${NUMBER}"
 echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                                                                ${INTRO_TEXT}"
 echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${INTRO_TEXT}"
 echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
+echo ""
+echo ""
+echo "AD-Connection flags"
+echo "-d      ubuntu debug mode GNU required"
+echo "-l        Run script and log to logfile"
+echo ""
 exit
 }
 MENU_FN(){
@@ -953,19 +959,17 @@ clear
     echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian)    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Join to AD on Ubuntu Client or Server in debug mode ${NORMAL}"
-    echo "${MENU}*${NUMBER} 5)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 6)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 8)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 9)${MENU} Leave Domain             ${NORMAL}"
-	echo "${MENU}*${NUMBER} 10)${MENU} README with examples             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 5)${MENU} Search with ldap              ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 8)${MENU} Leave Domain             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
 while [ opt != '' ]
     do
-    if [ $opt = "" ]; then 
+    if [ $opt = "" ]; then
             exit;
     else
         case $opt in
@@ -982,34 +986,26 @@ while [ opt != '' ]
 	    CentOS
             ;;
 	4) clear;
-	    echo "Join to AD on Ubuntu Client or Server in debug mode"
-	     linuxclientdebug
-            ;;
-	5) clear;
 	    echo "Check for errors"
 	     failcheck
              ;;
-	6) clear;
+	5) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	7) clear;
+	6) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-	8) clear;
+	7) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	9)
+	8)
 	clear;
 	echo "Leave domain"
 	leave
 	;;
-	10) clear;
-     	   echo "READ ME"
-	   readmes
-           ;;
         x)exit;
         ;;
        \n)exit;
@@ -1022,4 +1018,25 @@ while [ opt != '' ]
 fi
 done
 }
+clear
+if [ "$1" = "--help" ]
+then
+clear
+readmes
+exit
+else
+if [ "$1" = "-d" ]
+then
+linuxclientdebug
+else
+if [ "$1" = "-l" ]
+then
+DATE=`date +%H:%M`
+MENU_FN 2>&1 | sudo tee ADconnection.log
+exit
+else
+echo ""
+fi
+fi
+fi
 MENU_FN
