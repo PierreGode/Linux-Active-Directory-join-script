@@ -1,0 +1,31 @@
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+No LSB modules are available.
+No LSB modules are available.
+
+[H[J[31mInstalling pakages do no abort!.......[32m
+Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 15 not upgraded.
+[H[Jii  realmd                                        0.16.2-2                                     amd64        DBus service for configuring kerberos and other online identities
+[H[J[32mPakages installed[0m
+hostname is sewspierre
+Looking for Realms.. please wait
+[H[J[33mI searched for an available domain and found [36m>>> TOBII.INTRA  <<<[0m[0m
+Do you wish to use it (y/n)?
+[H[JNo LSB modules are available.
+[32mDetecting Ubuntu 16[0m
+[H[J[32mRealm=TOBII.INTRA[32m
+[32mJoining Ubuntu 16[0m
+
+[32mPlease log in with domain admin to TOBII.INTRA to connect[0m
+[32mPlease type Admin user:[0m
+ * Resolving: _ldap._tcp.tobii.intra
+ * Performing LDAP DSE lookup on: 10.46.10.23
+ * Performing LDAP DSE lookup on: fd93:27e0:59ca:10:4cc6:9e6e:2cc6:8d18
+ * Performing LDAP DSE lookup on: fd93:27e0:59ca:10::23
+ * Successfully discovered: tobii.intra
+realm: Already joined to this domain
+[31mAD join failed.please check that computer object is already created and test again [0m
