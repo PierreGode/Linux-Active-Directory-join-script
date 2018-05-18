@@ -2,6 +2,8 @@
 
 Supported OS: Ubuntu 14-18 + mate, Debian, Cent OS, Rasbian and Kali
 
+update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
+
 This is a script for Active Directory join with realmd.
 and is a result of al lot of small upgrades according as needs emerged.
 
