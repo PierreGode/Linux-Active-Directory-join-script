@@ -943,7 +943,8 @@ echo ""
 echo ""
 echo "AD-Connection flags"
 echo "-d      ubuntu debug mode GNU required"
-echo "-l        Run script and log to logfile"
+echo "-l      Run script and log to logfile"
+echo "-j      Simple direct join: sh ADconnection.sh -j admin domain"
 echo ""
 exit
 }
@@ -1025,20 +1026,23 @@ clear
 readmes
 exit
 else
-if [ "$1" = "-d" ]
-then
-linuxclientdebug
-else
-if [ "$1" = "-l" ]
-then
-DATE=`date +%H:%M`
-MENU_FN 2>&1 | sudo tee ADconnection.log
-exit
-else
-echo "incorrect flag, see --help for help"
-echo ""
-echo ""
-exit
+  if [ "$1" = "-d" ]
+  then
+  linuxclientdebug
+  else
+    if [ "$1" = "-l" ]
+    then
+    DATE=`date +%H:%M`
+    MENU_FN 2>&1 | sudo tee ADconnection.log
+    exit
+    else
+      if [ "$1" = "-j" ]
+      then
+      sudo realm join -v -U $2 $3 --install=/
+      exit
+      else
+      echo ""
+fi
 fi
 fi
 fi
