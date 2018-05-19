@@ -1,7 +1,7 @@
 #!/bin/bash
 ##################################################################################################################################
 #                                                                                                                                #
-#                                           This script is written by Pierre Goude                                               #
+#                                           This script is written by Pierre Gode                                                #
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
