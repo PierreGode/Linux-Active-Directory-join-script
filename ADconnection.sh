@@ -919,7 +919,12 @@ exit
 
 readmes(){
 clear
-echo "${INTRO_TEXT}              Active directory connection tool   Realmd                     ${INTRO_TEXT}"
+echo "Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]"
+echo "                          [-j admin domain (Simple direct join)"
+echo "                          [-l (script output to log file)]"
+echo ""
+echo""
+echo "${INTRO_TEXT}           Active directory connection tool                     ${INTRO_TEXT}"
 echo "${INTRO_TEXT}                          Examples                                      ${INTRO_TEXT}"
 echo "${INTRO_TEXT}     Domain to join:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain.intra${NUMBER}"${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
@@ -938,13 +943,7 @@ echo "${NUMBER}     Remember to Check Hostname and add it to AD${NUMBER}"
 echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                                                                ${INTRO_TEXT}"
 echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${INTRO_TEXT}"
-echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXT}"
-echo ""
-echo ""
-echo "AD-Connection flags"
-echo "-d      ubuntu debug mode GNU required"
-echo "-l      Run script and log to logfile"
-echo "-j      Simple direct join: sh ADconnection.sh -j admin domain"
+echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXt}"
 echo ""
 exit
 }
