@@ -71,10 +71,10 @@ I have issues!
 1. After reboot I cant login at all. (local or AD)  
 "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
 
-2. I rebooted the computer but i till can not login with the AD user!   
-"did you wait 3 to 5 min for AD to sync?
+2. I rebooted the computer but i still can not login with the AD user!   
+"did you wait 5 min for AD to sync?
 check that the computer object is created in the AD
-Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user then it works. if you have it set up with an ADgroup then you can execute: 
+Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user and all the groups the user is member of in AD then it works. if you have it set up with an ADgroup then you can execute: 
 id yourADusername | grep -i LINUXCOMPUTERsudoers (the groupname or hostname depending on you setup)
 
 3. Damn i got the wrong hostname and its not a computerobject in AD   
