@@ -922,6 +922,7 @@ clear
 echo "Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]"
 echo "                          [-j admin domain (Simple direct join)"
 echo "                          [-l (script output to log file)]"
+echo "                          [-s (Discover domain)]"
 echo ""
 echo""
 echo "${INTRO_TEXT}           Active directory connection tool                     ${INTRO_TEXT}"
@@ -1040,7 +1041,12 @@ else
       sudo realm join -v -U $2 $3 --install=/
       exit
       else
-      echo ""
+	if [ "$1" = "-s" ]
+	then
+	sudo realm discover
+	else
+	echo ""
+fi
 fi
 fi
 fi
