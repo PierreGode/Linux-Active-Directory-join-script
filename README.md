@@ -20,11 +20,11 @@ Complete steps
 and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
 and also /etc/ssh/login.allow if you have selected this option for security.
 
-Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers (same as hostname) in AD, in this step you dont need to edit files, the script will allow you to choose if you want users to be sudoers or not.
+Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers and LINUXCOMPUTER as hostname, they are not related, but Computer object in AD will be created and named after hostname and naming the group makes search easier in the future, therefore the script by defaut will add "LINUXCOMPUTERsudoers" as default in sudoers.d/sudoers, in this step you dont need to edit files, the script will allow you to choose if you want users to be sudoers or not.
 3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
 4. git clone this script and run.
 
-execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16 or 17
+Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16 or 17
 the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
 after that authorise with a admin user.
 make sure to read the questions carefully and also read built in help in the script.
