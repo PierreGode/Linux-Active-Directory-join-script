@@ -77,9 +77,10 @@ check that the computer object is created in the AD
 Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user and all the groups the user is member of in AD then it works. if you have it set up with an ADgroup then you can execute: 
 id yourADusername | grep -i LINUXCOMPUTERsudoers (the groupname or hostname depending on you setup)
 
-3. Damn i got the wrong hostname and its not a computerobject in AD   
-"Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  and /etc/hosts
+3. Damn i got the wrong hostname and its not created as a computerobject in AD   
+"Login with local admin and change your hostname to this files so it matches groupobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  and /etc/hosts
 then run sudo realm leave domain.com reboot and rejoin running the script again, the script will not override files if they have been configured before.
+If the computerobject is existing in AD but you wish to replace it, just delete the computerobject and join/rejoin with computer/server with the same hostname as the computerobject.
 reboot and wait 5 min before login
 
 If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal. this was added 2017/11 so if you have and older "join" than 2017/11 you should do a rejoin.
