@@ -68,14 +68,17 @@ If you are having problems with the computer not fetching the new password. On o
 
 I have issues!
 
-1. After reboot I cant login at all. (local or AD)  "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
+1. After reboot I cant login at all. (local or AD)  
+"This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
 
-2. I rebooted the computer but i till can not login with the AD user!   "did you wait 3 to 5 min for AD to sync?
+2. I rebooted the computer but i till can not login with the AD user!   
+"did you wait 3 to 5 min for AD to sync?
 check that the computer object is created in the AD
 Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user then it works. if you have it set up with an ADgroup then you can execute: 
 id yourADusername | grep -i LINUXCOMPUTERsudoers (the groupname or hostname depending on you setup)
 
-3. Damn i got the wrong hostname and its not a computerobject in AD   "Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  and /etc/hosts
+3. Damn i got the wrong hostname and its not a computerobject in AD   
+"Login with local admin and change your hostname to this files so it matches computerobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  and /etc/hosts
 then run sudo realm leave domain.com reboot and rejoin running the script again, the script will not override files if they have been configured before.
 reboot and wait 5 min before login
 
