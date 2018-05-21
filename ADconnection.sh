@@ -1033,7 +1033,7 @@ else
     if [ "$1" = "-l" ]
     then
     DATE=`date +%H:%M`
-    MENU_FN 2>&1 | sudo tee ADconnection.log
+    MENU_FN 2>&1 | sudo tee adconnection.log
     exit
     else
       if [ "$1" = "-j" ]
@@ -1044,6 +1044,7 @@ else
 	if [ "$1" = "-s" ]
 	then
 	sudo realm discover
+	exit
 	else
 	echo ""
 fi
