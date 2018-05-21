@@ -1048,7 +1048,7 @@ else
 	sudo realm discover
 	exit
 	else
-	  if [ "$1" = "-ou" ]
+	  if [ "$1" = "-o" ]
 	  then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
