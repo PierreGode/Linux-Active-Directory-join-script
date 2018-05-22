@@ -1025,13 +1025,13 @@ fi
 done
 }
 clear
-while test $# -gt 0; do
+while adjoin $# -gt 0; do
         case "$1" in
                 -h|--help)
 						readmes
                         ;;
                 -d)
-                        if test $# -gt 0; then
+                        if adjoin $# -gt 0; then
                         linuxclientdebug
                         else
                         echo ""
@@ -1039,7 +1039,7 @@ while test $# -gt 0; do
                         fi
                          ;;
                 -l)
-                        if test $? -gt 0; then
+                        if adjoin $? -gt 0; then
                         DATE=`date +%H:%M`
 			MENU_FN 2>&1 | sudo tee adconnection.log
                         else
@@ -1048,7 +1048,7 @@ while test $# -gt 0; do
                         fi
                         ;;
                 -j)
-                        if test $# -gt 0; then
+                        if adjoin $# -gt 0; then
 			sudo realm join -v -U $2 $3 --install=/
 			exit
                         else
@@ -1057,7 +1057,7 @@ while test $# -gt 0; do
                         fi
                         ;;
                 -s)
-                        if test $# -gt 0; then
+                        if adjoin $# -gt 0; then
 			sudo realm discover
 			exit
                         else
@@ -1066,7 +1066,7 @@ while test $# -gt 0; do
                         fi
                         ;;
                 -o)
-                        if test $# -gt 0; then
+                        if adjoin $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
