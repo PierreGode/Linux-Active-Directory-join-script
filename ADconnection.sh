@@ -7,7 +7,7 @@
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 #           note: the script will NOT manipulate any files until the join to active directory is successful                      #
 ##################################################################################################################################
-#known bugs: 
+#known bugs:
 #Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 #Sometimes the script fails to find domain, for some reason somtimes it just dont respond. try cancel and re run the script 2-3 times
 #if it still fails then check your ip configuration,dns-search,in hosts: hostname   hostname.domain.com
@@ -1025,13 +1025,13 @@ fi
 done
 }
 clear
-while adjoin $# -gt 0; do
+while test $# -gt 0; do
         case "$1" in
                 -h|--help)
-						readmes
+			readmes
                         ;;
                 -d)
-                        if adjoin $# -gt 0; then
+                        if test $# -gt 0; then
                         linuxclientdebug
                         else
                         echo ""
@@ -1039,7 +1039,7 @@ while adjoin $# -gt 0; do
                         fi
                          ;;
                 -l)
-                        if adjoin $? -gt 0; then
+                        if test $? -gt 0; then
                         DATE=`date +%H:%M`
 			MENU_FN 2>&1 | sudo tee adconnection.log
                         else
@@ -1048,7 +1048,7 @@ while adjoin $# -gt 0; do
                         fi
                         ;;
                 -j)
-                        if adjoin $# -gt 0; then
+                        if test $# -gt 0; then
 			sudo realm join -v -U $2 $3 --install=/
 			exit
                         else
@@ -1057,7 +1057,7 @@ while adjoin $# -gt 0; do
                         fi
                         ;;
                 -s)
-                        if adjoin $# -gt 0; then
+                        if test $# -gt 0; then
 			sudo realm discover
 			exit
                         else
@@ -1066,7 +1066,7 @@ while adjoin $# -gt 0; do
                         fi
                         ;;
                 -o)
-                        if adjoin $# -gt 0; then
+                        if test $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
