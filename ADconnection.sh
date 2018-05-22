@@ -5,12 +5,9 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
-#           note: the script will NOT manipulate any files until the join to active directory is successful                      #
+#                                                                                                                                #
 ##################################################################################################################################
-#known bugs:
-#Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-#Sometimes the script fails to find domain, for some reason somtimes it just dont respond. try cancel and re run the script 2-3 times
-#if it still fails then check your ip configuration,dns-search,in hosts: hostname   hostname.domain.com
+#known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 #
@@ -1014,14 +1011,168 @@ while [ opt != '' ]
 	;;
         x)exit;
         ;;
-
-        \n)exit;
+       \n)exit;
         ;;
-
         *)clear;
+        opt "Pick an option from the menu";
+        show_etcmenu;
         ;;
     esac
 fi
 done
 }
+clear
+if [ "$1" = "--help" ]
+then
+clear
+readmes
+exit
+else
+  if [ "$1" = "-d" ]
+  then
+  linuxclientdebug
+  else
+    if [ "$1" = "-l" ]
+    then
+    DATE=`date +%H:%M`
+    MENU_FN 2>&1 | sudo tee adconnection.log
+    exit
+    else
+      if [ "$1" = "-j" ]
+      then
+      sudo realm join -v -U $2 $3 --install=/
+      exit
+      else
+	if [ "$1" = "-s" ]
+	then
+	sudo realm discover
+	exit
+	else
+	  if [ "$1" = "-o" ]
+	  then
+desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
+rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+
+if [ "$desktop" = "desktop" ]
+then
+if [ "$rasp" = "Raspbian" ]
+then
+echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+raspberry
+else
+if [ "$kalilinux" = "Kali" ]
+then
+echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+kalijoin
+else
+echo ""
+fi
+fi
+else
+echo "this seems to be a server, swithching to server mode"
+ubuntuserver14
+fi
+export HOSTNAME
+myhost=$( hostname )
+clear
+sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install ntp -y
+sudo apt-get install -f -y
+clear
+sudo dpkg -l | grep realmd
+if [ $? = 0 ]
+then
+clear
+sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+else
+clear
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+exit
+fi
+echo "hostname is $myhost"
+echo "Looking for Realms.. please wait"
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+ping -c 2 $DOMAIN  >/dev/null
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+fi
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+clear
+var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
+if [ "$var" -eq "14" ]
+then
+echo "Installing additional dependencies"
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get install -f -y
+clear
+echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
+realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN --install=/
+else
+   if [ "$var" -eq "16" ]
+   then
+   echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+   clear
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
+   realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN
+   else
+       if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
+       then
+       echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+          sleep 1
+   clear
+sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
+echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo ""
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
+       realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN --install=/
+       else
+       clear
+      sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
+     exit
+     fi
+  fi
+fi
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit
+fi
+fi_auth
+else
+echo ""
+fi
+fi
+fi
+fi
+fi
+fi
 MENU_FN
