@@ -1028,51 +1028,41 @@ while test $# -gt 0; do
 						readmes
                         ;;
                 -d)
-                        shift
                         if test $# -gt 0; then
-                                linuxclientdebug
+                        linuxclientdebug
                         else
-                                echo ""
-                                exit 1
+                        echo ""
+                        exit 1
                         fi
-                        shift
-                        ;;
+                         ;;
                 -l)
-                        shift
-                        if test $# -gt 0; then
+                        if test $? -gt 0; then
                         DATE=`date +%H:%M`
-						MENU_FN 2>&1 | sudo tee adconnection.log
+			MENU_FN 2>&1 | sudo tee adconnection.log
                         else
-                                echo ""
-                                exit 1
+                        echo ""
+                        exit 1
                         fi
-                        shift
                         ;;
-						
                 -j)
-                        shift
                         if test $# -gt 0; then
-						sudo realm join -v -U $2 $3 --install=/
-						exit
+			sudo realm join -v -U $2 $3 --install=/
+			exit
                         else
-                                echo ""
-                                exit 1
+                        echo ""
+                        exit 1
                         fi
-                        shift
                         ;;
                 -s)
-                        shift
                         if test $# -gt 0; then
-						sudo realm discover
-						exit
+			sudo realm discover
+			exit
                         else
-                                echo ""
-                                exit 1
+                        echo ""
+                        exit 1
                         fi
-                        shift
                         ;;
-                -s)
-                        shift
+                -o)
                         if test $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
@@ -1195,7 +1185,6 @@ fi_auth
                                 echo ""
                                 exit 1
                         fi
-                        shift
                         ;;
                 *)
                         break
