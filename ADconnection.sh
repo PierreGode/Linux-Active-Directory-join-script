@@ -1022,34 +1022,58 @@ fi
 done
 }
 clear
-if [ "$1" = "--help" ]
-then
-clear
-readmes
-exit
-else
-  if [ "$1" = "-d" ]
-  then
-  linuxclientdebug
-  else
-    if [ "$1" = "-l" ]
-    then
-    DATE=`date +%H:%M`
-    MENU_FN 2>&1 | sudo tee adconnection.log
-    exit
-    else
-      if [ "$1" = "-j" ]
-      then
-      sudo realm join -v -U $2 $3 --install=/
-      exit
-      else
-	if [ "$1" = "-s" ]
-	then
-	sudo realm discover
-	exit
-	else
-	  if [ "$1" = "-o" ]
-	  then
+while test $# -gt 0; do
+        case "$1" in
+                -h|--help)
+						readmes
+                        ;;
+                -d)
+                        shift
+                        if test $# -gt 0; then
+                                linuxclientdebug
+                        else
+                                echo ""
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                -l)
+                        shift
+                        if test $# -gt 0; then
+                        DATE=`date +%H:%M`
+						MENU_FN 2>&1 | sudo tee adconnection.log
+                        else
+                                echo ""
+                                exit 1
+                        fi
+                        shift
+                        ;;
+						
+                -j)
+                        shift
+                        if test $# -gt 0; then
+						sudo realm join -v -U $2 $3 --install=/
+						exit
+                        else
+                                echo ""
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                -s)
+                        shift
+                        if test $# -gt 0; then
+						sudo realm discover
+						exit
+                        else
+                                echo ""
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                -s)
+                        shift
+                        if test $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
@@ -1167,12 +1191,15 @@ if [ $? -ne 0 ]; then
     exit
 fi
 fi_auth
-else
-echo ""
-fi
-fi
-fi
-fi
-fi
-fi
+                        else
+                                echo ""
+                                exit 1
+                        fi
+                        shift
+                        ;;
+                *)
+                        break
+                        ;;
+        esac
+done
 MENU_FN
