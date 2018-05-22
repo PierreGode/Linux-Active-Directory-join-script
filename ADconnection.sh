@@ -1015,7 +1015,7 @@ while [ opt != '' ]
         ;;
         *)clear;
         opt "Pick an option from the menu";
-        show_etcmenu;
+        MENU_FN;
         ;;
     esac
 fi
