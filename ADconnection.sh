@@ -7,7 +7,10 @@
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 #           note: the script will NOT manipulate any files until the join to active directory is successful                      #
 ##################################################################################################################################
-#known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
+#known bugs: 
+#Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
+#Sometimes the script fails to find domain, for some reason somtimes it just dont respond. try cancel and re run the script 2-3 times
+#if it still fails then check your ip configuration,dns-search,in hosts: hostname   hostname.domain.com
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 #
