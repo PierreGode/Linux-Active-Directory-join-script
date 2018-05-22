@@ -1014,10 +1014,13 @@ while [ opt != '' ]
 	;;
         x)exit;
         ;;
-       \n)exit;
+
+        \n)exit;
         ;;
+
         *)clear;
         opt "Pick an option from the menu";
+        show_etcmenu;
         ;;
     esac
 fi
