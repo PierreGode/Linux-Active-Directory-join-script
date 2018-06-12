@@ -11,7 +11,7 @@
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 #
-version=$( echo 7 )
+Versi0n=$( echo 7 )
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
     MENU=$(echo "\033[36m") #Blue
