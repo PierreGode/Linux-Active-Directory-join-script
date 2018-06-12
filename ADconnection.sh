@@ -11,7 +11,6 @@
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-25
 #
-Versi0n=$( echo 7 )
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
     MENU=$(echo "\033[36m") #Blue
@@ -1024,6 +1023,16 @@ done
 }
 ############################## Flags ###############################
 clear
+Versi0n=$( echo "7" )
+update=$( curl -s https://github.com/PierreGode/Linux-Active-Directory-join-script/blob/master/ADconnection.sh | grep -i Versi0n | awk '{print $10}' )
+if [ "$update" -gt "$Version" ]
+then
+echo "Updating ADconnection"
+sleep 1
+git pull
+else
+echo "ADconnection is up to date"
+fi
 while test $# -gt 0; do
         case "$1" in
                 -h|--help)
