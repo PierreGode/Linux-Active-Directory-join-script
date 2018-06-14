@@ -816,7 +816,7 @@ if [ $cauth = allow 2> /dev/null ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}"SSH security not configured"${END}"
 fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
