@@ -499,7 +499,7 @@ if [ $cauth = allow 2> /dev/null ]
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL ssh security not configured"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}"SSH security not configured"${END}"
 fi
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
