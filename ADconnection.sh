@@ -197,7 +197,7 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
-realm discover $DOMAIN
+#realm discover $DOMAIN
 if [ "$therealm" = no ]
 then
 echo "${RED_TEXT}"Join has Failed"${END}"
@@ -822,7 +822,6 @@ echo ""
 echo "-------------------------------------------------------------------------------------"
 realm discover
 echo "-------------------------------------------------------------------------------------"
-realm list
 exit
 }
 
