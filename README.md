@@ -85,6 +85,10 @@ reboot and wait 5 min before login
 
 If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal. this was added 2017/11 so if you have and older "join" than 2017/11 you should do a rejoin.
 
+4. I am a member of sudores but programs require administrator to login..
+you are sudo user if added to sudoes file, bu the account is an standard account. to give full administration priviligies
+run in terminal: sudo usermod -a -G sudo user
+
 How to git?
 
 On linux client install git = sudo apt-get install git -y
