@@ -215,7 +215,7 @@ fi
 ####################### Setup for Ubuntu 14,16 and 17 clients #######################################
 #Runs ADjoin in debug mode. meaning it opens terminals following logs
 linuxclientdebug(){
-desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1)
+desktop=$(sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}')
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe; exec bash\""
 gnome-terminal --geometry=130x20 -e "bash -c \"journalctl -fxe | grep -i -e closed -e Successfully -e 'Preauthentication failed' -e 'authenticate' -e 'Failed to join the domain'; exec bash\""
 linuxclient
@@ -223,7 +223,7 @@ linuxclient
 
 ################################## Join for linux clients ##########################################
 linuxclient(){
-desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 )
+desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 #### OS detection
