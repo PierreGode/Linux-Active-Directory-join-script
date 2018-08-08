@@ -891,6 +891,16 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     if [ "$LEFT" = "no" ]
     then
     echo ""
+    whoelse=$(who | head -1 | awk '{print $1}')
+homes=$( ls /home/tobii.intra/ )
+if [ "$homes" = "$whoelse" ]
+then
+echo ""
+echo "you are logged in as an AD user.. canceling request"
+echo "only administrator has permissions"
+echo ""
+exit
+else
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     linuxclient
@@ -899,6 +909,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     	read -r DOMAIN
 	sudo realm leave $DOMAIN
     left=$(sudo realm discover | grep configured | awk '{print $2}')
+    fi
     if [ "$left" = "no" ]
     then
     echo ""
