@@ -744,7 +744,10 @@ exit
 }
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
+clear
+echo ""
 echo "this secion has been depricated, If you are still using likewise please see code"
+echo ""
 exit
 }
 
