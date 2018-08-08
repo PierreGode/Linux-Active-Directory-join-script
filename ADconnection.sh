@@ -832,6 +832,7 @@ export HOSTNAME
 myhost=$( hostname )
 ldaptools=$( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
 echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server to use this funktion${END}"
+echo "${NUMBER}Remember!please edit in ldap.conf the lines BASE and URI in /etc/ldap/ldap.conf ${END}"
 sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
