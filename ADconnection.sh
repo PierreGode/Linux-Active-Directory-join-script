@@ -865,7 +865,7 @@ fi
 ############################### Reauth ##########################################
 
 Reauthenticate(){
-whoelse=$(who | head -1 | awk '{print $1}')
+whoelse=$( echo `whoami` )
 homes=$( ls /home/tobii.intra/ )
 if [ "$homes" = "$whoelse" ]
 then
@@ -933,7 +933,7 @@ fi
 ########################################### Leave Realm ################################
 
 leave(){
-whoelse=$(who | head -1 | awk '{print $1}')
+whoelse=$( echo `whoami` )
 homes=$( ls /home/tobii.intra/ )
 if [ "$homes" = "$whoelse" ]
 then
