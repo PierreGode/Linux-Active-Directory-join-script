@@ -1041,7 +1041,7 @@ clear
 #fi
 while test $# -gt 0; do
         case "$1" in
-                -h|--help)
+                -help|--help)
 			readmes
                         ;;
                 -d)
