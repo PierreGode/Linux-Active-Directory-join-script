@@ -30,7 +30,7 @@ sudo apt-get install packagekit
 MENU_FN
 }
 #fixerrors
-
+#Realmdupdate11
 ####################### final auth ##################################################################
 
 fi_auth(){
@@ -743,20 +743,21 @@ sudo service sssd restart
 exit
 }
 ############################### Update to Realmd from likewise ##################
-
-#Realmdupdate1(){
-#export HOSTNAME
-#myhost=$( hostname )
-#echo "This will delete your homefolder and replace it. Please do a BACKUP"
-#echo "Press ctrl C to cancel skript if you wish to make an backup first"
-#sleep 5
-#sudo apt-get update
-#clear
-#echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
-#sleep 3
-#sudo domainjoin-cli leave
-#linuxclient
-#}
+#this section has been depricated
+#If you are still using likewise plese uncomment line 33
+Realmdupdate11(){
+export HOSTNAME
+myhost=$( hostname )
+echo "This will delete your homefolder and replace it. Please do a BACKUP"
+echo "Press ctrl C to cancel skript if you wish to make an backup first"
+sleep 5
+sudo apt-get update
+clear
+echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
+sleep 3
+sudo domainjoin-cli leave
+linuxclient
+}
 
 ############################### Fail check ####################################
 
@@ -854,20 +855,61 @@ fi
 
 ############################### Reauth ##########################################
 
-#Reauthenticate(){
-#realmad=$(sudo cat /etc/sssd/sssd.conf | grep -i domain | grep -i ad  | awk '{print $3}')
-
-#   case $yn in
-#    [Yy]* )
-#    #sudo realm leave $realmad
-#    #do simple aut without conf
-#    ;;
-#    [Nn]* )
-#    sudo realm leave $realmad
-#    linuxclient
-#    ;;
-#   esac
-#}
+Reauthenticate(){
+LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
+DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
+if [ "$DOMAINlower" = "$SSSD" ]
+then
+echo "Detecting realm $SSSD"
+else
+    if [ "$LEFT" = "no" ]
+    then
+    echo ""
+    echo "$DOMAIN has not been configured"
+    echo ""
+    linuxclient
+    exit
+    fi
+    fi
+read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "Listing domain"
+    sudo realm discover $DOMAIN
+    sudo realm leave $DOMAIN
+    LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$LEFT" = "no" ]
+    then
+    echo ""
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
+    echo "$DOMAIN has been left"
+    echo ""
+    linuxclient
+    else
+    echo "something went wrong, try to leave manually"
+    	read -r DOMAIN
+	sudo realm leave $DOMAIN
+    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$left" = "no" ]
+    then
+    echo ""
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
+    echo "$DOMAIN has been left"
+    echo ""
+    linuxclient
+    else
+    echo "something went wrong"
+    fi
+    fi
+    ;;
+    [Nn]* ) echo "Bye"
+	exit
+	;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+exit
+}
 
 ########################################### Leave Realm ################################
 
