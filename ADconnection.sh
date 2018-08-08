@@ -48,7 +48,7 @@ clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed 2> /dev/null ]
+	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
 then
 echo "Files seems already to be modified, skipping..."
 else
@@ -81,7 +81,7 @@ echo ""
 read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers 2> /dev/null ]
+	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
@@ -165,7 +165,7 @@ if [ $states = 12 ]
 then
 echo "Sudoers not configured... skipping"
 else
-if [ -f /etc/sudoers.d/sudoers 2> /dev/null ]
+if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
@@ -179,7 +179,7 @@ else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 2> /dev/null ]
+if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -190,7 +190,7 @@ then
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow 2> /dev/null ]
+if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -410,7 +410,7 @@ clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed 2> /dev/null ]
+	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
 then
 echo "Files seems already to be modified, skipping..."
 else
@@ -444,7 +444,7 @@ echo ""
 read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
-	if [ -f /etc/sudoers.d/sudoers 2> /dev/null ]
+	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo ""
 echo "Sudoersfile seems already to be modified, skipping..."
@@ -474,7 +474,7 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/sudoers 2> /dev/null ]
+if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
@@ -488,14 +488,14 @@ else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 2> /dev/null ]
+if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow 2> /dev/null ]
+if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
@@ -789,7 +789,7 @@ echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
 fi
-if [ -f /etc/sudoers.d/admins 2> /dev/null ]
+if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
@@ -800,7 +800,7 @@ grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  
          echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
          fi
 else
-if [ -f /etc/sudoers.d/sudoers 2> /dev/null ]
+if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
@@ -815,14 +815,14 @@ echo Checking sudoers file.. "${RED_TEXT}"FAIL not configured"${END}"
 fi
 fi
 homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 2> /dev/null ]
+if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow 2> /dev/null ]
+if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
 else
