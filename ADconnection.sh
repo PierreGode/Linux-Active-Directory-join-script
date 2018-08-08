@@ -900,10 +900,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo "$DOMAIN has been left"
     else
     echo "something went wrong, try to leave manually"
-    fi
-    ;;
-    [Nn]* ) echo "Enter Domain to leave"
-	read -r DOMAIN
+    	read -r DOMAIN
 	sudo realm leave $DOMAIN
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
@@ -912,8 +909,12 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     else
-    echo "something went wrong, try to leave manually"
+    echo "something went wrong"
     fi
+    fi
+    ;;
+    [Nn]* ) echo "Bye"
+	exit
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
