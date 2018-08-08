@@ -977,7 +977,7 @@ readmes(){
 clear
 echo "Usage: sh ADconnection.sh [--help] "
 echo "                          [-d (ubuntu debug mode)]"
-echo "                          [-j admin domain (Simple direct join)"
+echo "                          [-j admin domain (Simple direct join) ADconnection -j ADadmin domain"
 echo "                          [-l (script output to log file)]"
 echo "                          [-s (Discover domain)]"
 echo "                          [-o (assign OU for computer object (-o OU=Clients,OU=Computers))"
