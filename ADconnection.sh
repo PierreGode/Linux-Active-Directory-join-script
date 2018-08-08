@@ -871,15 +871,21 @@ fi
 ########################################### Leave Realm ################################
 
 leave(){
-echo "${NUMBER}This funktion only works properly if this computer can locate the domain${END}"
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
+DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
+if [ "$DOMAINlower" = "$SSSD" ]
+then
+echo "Detecting realm $SSSD"
+else
     if [ "$LEFT" = "no" ]
     then
     echo ""
     echo "$DOMAIN has not been configured"
     echo ""
     exit
+    fi
     fi
 read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
