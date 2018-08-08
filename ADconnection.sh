@@ -757,7 +757,7 @@ exit
 #sleep 3
 #sudo domainjoin-cli leave
 #linuxclient
-}
+#}
 
 ############################### Fail check ####################################
 
