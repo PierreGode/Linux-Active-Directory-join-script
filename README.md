@@ -11,7 +11,7 @@ Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
 Usage of the script: sudo sh ADconnection.sh
 
 This is a script for Active Directory join with realmd.
-and is a result of a lot of small upgrades according as needs emerged.
+and is a result of a lot of small upgrades according as needs has emerged.
 
 Complete steps
 
