@@ -855,9 +855,59 @@ fi
 
 ############################### Reauth ##########################################
 
-#Reauthenticate(){
-#echo ""
-#}
+Reauthenticate(){
+LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
+DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
+if [ "$DOMAINlower" = "$SSSD" ]
+then
+echo "Detecting realm $SSSD"
+else
+    if [ "$LEFT" = "no" ]
+    then
+    echo ""
+    echo "$DOMAIN has not been configured"
+    echo ""
+    linuxclient
+    exit
+    fi
+    fi
+read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "Listing domain"
+    sudo realm discover $DOMAIN
+    sudo realm leave $DOMAIN
+    LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$LEFT" = "no" ]
+    then
+    echo ""
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
+    echo "$DOMAIN has been left"
+    linuxclient
+    else
+    echo "something went wrong, try to leave manually"
+    	read -r DOMAIN
+	sudo realm leave $DOMAIN
+    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    if [ "$left" = "no" ]
+    then
+    echo ""
+    sudo echo "" | sudo tee /etc/sssd/sssd.conf
+    echo "$DOMAIN has been left"
+    linuxclient
+    else
+    echo "something went wrong"
+    fi
+    fi
+    ;;
+    [Nn]* ) echo "Bye"
+	exit
+	;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+exit
+}
 
 ########################################### Leave Realm ################################
 
