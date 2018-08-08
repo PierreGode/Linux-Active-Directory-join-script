@@ -869,7 +869,6 @@ else
     echo ""
     echo "$DOMAIN has not been configured"
     echo ""
-    linuxclient
     exit
     fi
     fi
@@ -884,8 +883,6 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
-    echo ""
-    linuxclient
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
@@ -896,8 +893,6 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
-    echo ""
-    linuxclient
     else
     echo "something went wrong"
     fi
