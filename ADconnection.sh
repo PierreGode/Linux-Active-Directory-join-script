@@ -1038,7 +1038,7 @@ clear
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${INTRO_TEXT}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian)    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali)    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
