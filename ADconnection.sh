@@ -744,19 +744,19 @@ exit
 }
 ############################### Update to Realmd from likewise ##################
 #this section has been depricated
-#If you are still using likewise plese uncomment line 33
-Realmdupdate11(){
-export HOSTNAME
-myhost=$( hostname )
-echo "This will delete your homefolder and replace it. Please do a BACKUP"
-echo "Press ctrl C to cancel skript if you wish to make an backup first"
-sleep 5
-sudo apt-get update
-clear
-echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
-sleep 3
-sudo domainjoin-cli leave
-linuxclient
+#If you are still using likewise plese uncomment lines below and line 33
+#Realmdupdate11(){
+#export HOSTNAME
+#myhost=$( hostname )
+#echo "This will delete your homefolder and replace it. Please do a BACKUP"
+#echo "Press ctrl C to cancel skript if you wish to make an backup first"
+#sleep 5
+#sudo apt-get update
+#clear
+#echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
+#sleep 3
+#sudo domainjoin-cli leave
+#linuxclient
 }
 
 ############################### Fail check ####################################
@@ -855,9 +855,9 @@ fi
 
 ############################### Reauth ##########################################
 
-Reauthenticate(){
-echo ""
-}
+#Reauthenticate(){
+#echo ""
+#}
 
 ########################################### Leave Realm ################################
 
