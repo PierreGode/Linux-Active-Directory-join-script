@@ -1011,7 +1011,7 @@ clear
     echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
     echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
     echo "${MENU}*${NUMBER} 5)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate (Ubuntu14 only)   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate   ${NORMAL}"
 	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
 	echo "${MENU}*${NUMBER} 8)${MENU} Leave Domain             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
