@@ -743,8 +743,14 @@ sudo service sssd restart
 exit
 }
 ############################### Update to Realmd from likewise ##################
+Realmdupdate(){
+echo "this secion has been depricated, If you are still using likewise please see code"
+exit
+}
+
+
 #this section has been depricated
-#If you are still using likewise plese uncomment lines below and line 33
+#If you are still using likewise please uncomment lines below and line 33
 #Realmdupdate11(){
 #export HOSTNAME
 #myhost=$( hostname )
