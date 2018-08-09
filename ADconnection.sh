@@ -1072,6 +1072,73 @@ echo "--------------------------------------------------------------------------
 exit
 }
 
+
+failcheck_yum(){
+clear
+export HOSTNAME
+myhost=$( hostname )
+find=$( realm discover )
+if [ $? = 1 ]
+then
+echo "Sorry I am having issues finding your domain.. please type it"
+read -r DOMAIN
+else
+echo ""
+fi
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
+if [ $therealm = no ]
+then
+echo "Realm configured?.. FAIL"
+else
+echo "Realm configured?.. OK"
+fi
+if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
+then
+echo "Checking sudoers file.. OK"
+grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+     if [ $grouPs = "$myhost""sudoers" ]
+         then
+         echo "Checking sudoers users.. OK"
+         else
+         echo "Checking sudoers users.. FAIL"
+         fi
+else
+if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
+then
+echo "Checking sudoers file..  "OK"
+grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+     if [ $grouPs1 = "$myhost""sudoers" ]
+         then
+         echo "Checking sudoers users.. OK"
+         else
+         echo "Checking sudoers users.. FAIL"
+         fi
+else
+echo "Checking sudoers file.. FAIL not configured"
+fi
+fi
+homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+then
+echo "Checking PAM configuration.. OK"
+else
+echo "Checking PAM configuration.. FAIL"
+fi
+cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+then
+echo "Checking PAM auth configuration.. OK"
+else
+echo "Checking PAM auth configuration.. SSH security not configured"
+fi
+echo ""
+echo "-------------------------------------------------------------------------------------"
+realm discover
+echo "-------------------------------------------------------------------------------------"
+exit
+}
+
+
 #################################### ldapsearch #####################################################
 
 ldaplook(){
@@ -1338,7 +1405,7 @@ fi
 done
 }
 YUM_MENU(){
-########################################### Menu #######################################
+########################################### Menu YUM #######################################
 
 clear
     echo "  Active directory connection tool             "
@@ -1377,7 +1444,7 @@ while [ opt != '' ]
             ;;
 	4) clear;
 	    echo "Check for errors"
-	     failcheck
+	     failcheck_yum
              ;;
 	5) clear;
 	     echo "Check in Ldap"
