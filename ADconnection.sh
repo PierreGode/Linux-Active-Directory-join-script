@@ -404,19 +404,22 @@ linuxclient
 
 ################################## Join for linux clients ##########################################
 linuxclient(){
-fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+fedoras=$( cat /etc/fedora-release | awk '{print $1}' ) < /dev/null > /dev/null 2>&1
 Centoss=$( hostnamectl | grep -i Operating | awk '{print $3}' )
 Debians=$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
+echo "Fedora detected"
 Fedora_fn
 else
 if [ "$Centoss" = "CentOS" ]
 then
+echo "Cent OS detected"
 CentOS
 else
 if [ "$Debians" = "Debian" ]
 then
+echo "Debian detected"
 debianclient
 else
 echo ""
@@ -442,13 +445,15 @@ kalijoin
 else
 if [ "$fedoras" = "Fedora" ]
 then
+echo "Fedora detected"
 Fedora_fn
 else
 if [ "$debians" = "Debian" ]
 then
+echo "Debian detected"
 debianclient
 else
-echo ""
+echo "Ubuntu detected"
 fi
 fi
 fi
