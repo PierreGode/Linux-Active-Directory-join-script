@@ -422,7 +422,7 @@ then
 echo "Debian detected"
 debianclient
 else
-echo ""
+echo "Ubuntu Detected"
 fi
 fi
 fi
@@ -1383,7 +1383,7 @@ while [ opt != '' ]
         case $opt in
     1) clear;
             echo "Installing on Linux Client/Server";
-            linuxclient;
+            linuxclient
             ;;
 
 	2) clear;
@@ -1445,7 +1445,7 @@ while [ opt != '' ]
         case $opt in
     1) clear;
             echo "Installing on Linux Client/Server";
-            linuxclient;
+            linuxclient
             ;;
 	2) clear;
 	    echo "Check for errors"
