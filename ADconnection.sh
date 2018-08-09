@@ -1105,7 +1105,7 @@ grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  
 else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
-echo "Checking sudoers file..  "OK"
+echo "Checking sudoers file..  OK"
 grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
      if [ $grouPs1 = "$myhost""sudoers" ]
          then
