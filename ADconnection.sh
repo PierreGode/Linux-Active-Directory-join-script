@@ -223,10 +223,16 @@ linuxclient
 
 ################################## Join for linux clients ##########################################
 linuxclient(){
+fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+if [ "$fedoras" = "Fedora" ]
+then
+Fedora_fn
+else
+echo ""
+fi
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
 #### OS detection
 if [ "$desktop" = "desktop" ]
 then
