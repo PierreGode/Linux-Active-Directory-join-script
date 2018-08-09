@@ -421,6 +421,7 @@ fi
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+debians=$( hostnamectl | grep -i operating | awk '{print $3}' )
 #### OS detection
 if [ "$desktop" = "desktop" ]
 then
@@ -438,7 +439,12 @@ if [ "$fedoras" = "Fedora" ]
 then
 Fedora_fn
 else
+if [ "$debians" = "Debian" ]
+then
+debianclient
+else
 echo ""
+fi
 fi
 fi
 fi
@@ -1351,12 +1357,11 @@ clear
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} Leave Domain             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${NORMAL}"
+	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Leave Domain             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -1370,27 +1375,24 @@ while [ opt != '' ]
             echo "Installing on Linux Client/Server";
             linuxclient;
             ;;
+
 	2) clear;
-            echo "Installing on Debian Jessie client";
-            debianclient
-            ;;
-	3) clear;
 	    echo "Check for errors"
 	     failcheck
              ;;
-	4) clear;
+	3) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	5) clear;
+	4) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-	6) clear;
+	5) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	7)
+	6)
 	clear;
 	echo "Leave domain"
 	leave
@@ -1417,12 +1419,11 @@ clear
 	echo "  DO NOT attempt this without expert knowledge  "
     echo ""
     echo "1) Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)"
-    echo "2) Join to AD on Debian Jessie Client"
-    echo "3) Check for errors"
-    echo "4) Search with ldap"
-	echo "5) Reauthenticate"
-	echo "6) Update from Likewise to Realmd for Ubuntu 14"
-	echo "7) Leave Domain"
+    echo "2) Check for errors"
+    echo "3) Search with ldap"
+	echo "4) Reauthenticate"
+	echo "5) Update from Likewise to Realmd for Ubuntu 14"
+	echo "6) Leave Domain"
     echo ""
     echo "Please enter a menu option and enter or enter to exit."
 	read opt
@@ -1437,26 +1438,22 @@ while [ opt != '' ]
             linuxclient;
             ;;
 	2) clear;
-            echo "Installing on Debian Jessie client";
-            debianclient
-            ;;
-	3) clear;
 	    echo "Check for errors"
 	     failcheck_yum
              ;;
-	4) clear;
+	3) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	5) clear;
+	4) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-	6) clear;
+	5) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	7)
+	5)
 	clear;
 	echo "Leave domain"
 	leave
