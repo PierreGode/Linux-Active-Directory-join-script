@@ -1352,12 +1352,11 @@ clear
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Join to AD on Debian Jessie Client    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Join to AD on CentOS  ${NORMAL}"
-    echo "${MENU}*${NUMBER} 4)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 5)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Reauthenticate   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 7)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 8)${MENU} Leave Domain             ${NORMAL}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Check for errors    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 4)${MENU} Search with ldap              ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Reauthenticate   ${NORMAL}"
+	echo "${MENU}*${NUMBER} 6)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
+	echo "${MENU}*${NUMBER} 7)${MENU} Leave Domain             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -1376,26 +1375,22 @@ while [ opt != '' ]
             debianclient
             ;;
 	3) clear;
-	    echo "Installing on Debian Cent OS"
-	    CentOS
-            ;;
-	4) clear;
 	    echo "Check for errors"
 	     failcheck
              ;;
-	5) clear;
+	4) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	6) clear;
+	5) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-	7) clear;
+	6) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	8)
+	7)
 	clear;
 	echo "Leave domain"
 	leave
@@ -1423,12 +1418,11 @@ clear
     echo ""
     echo "1) Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)"
     echo "2) Join to AD on Debian Jessie Client"
-    echo "3) Join to AD on CentOS"
-    echo "4) Check for errors"
-    echo "5) Search with ldap"
-	echo "6) Reauthenticate"
-	echo "7) Update from Likewise to Realmd for Ubuntu 14"
-	echo "8) Leave Domain"
+    echo "3) Check for errors"
+    echo "4) Search with ldap"
+	echo "5) Reauthenticate"
+	echo "6) Update from Likewise to Realmd for Ubuntu 14"
+	echo "7) Leave Domain"
     echo ""
     echo "Please enter a menu option and enter or enter to exit."
 	read opt
@@ -1447,26 +1441,22 @@ while [ opt != '' ]
             debianclient
             ;;
 	3) clear;
-	    echo "Installing on Debian Cent OS"
-	    CentOS
-            ;;
-	4) clear;
 	    echo "Check for errors"
 	     failcheck_yum
              ;;
-	5) clear;
+	4) clear;
 	     echo "Check in Ldap"
 	     ldaplook
              ;;
-	6) clear;
+	5) clear;
 	    echo "Rejoin to AD"
 	    Reauthenticate
             ;;
-	7) clear;
+	6) clear;
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	8)
+	7)
 	clear;
 	echo "Leave domain"
 	leave
