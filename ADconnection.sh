@@ -1362,7 +1362,7 @@ clear
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${INTRO_TEXT}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
     echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)    ${NORMAL}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora/Debian)    ${NORMAL}"
     echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${NORMAL}"
