@@ -406,7 +406,7 @@ linuxclient
 ################################## Join for linux clients ##########################################
 linuxclient(){
 fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
-Centoss$( hostnamectl | grep -i Operating | awk '{print $3}' )
+Centoss=$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
 Fedora_fn
