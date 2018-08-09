@@ -97,6 +97,7 @@ Clone this repo = sudo git clone https://github.com/PierreGode/Linux-Active-Dire
 
 To update repo to latest version = in the folder Linux-Active-Directory-join-script/ = sudo git pull
 
-
+5. notice %ADgroup in sudoers is not working atm on Debian, fedora or Cento OS. this will be fixed when i find the issue.
+please ad the ADuser as a regular user in sudoers.
 
 
