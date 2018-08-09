@@ -226,6 +226,7 @@ linuxclient(){
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
 #### OS detection
 if [ "$desktop" = "desktop" ]
 then
@@ -239,7 +240,12 @@ then
 echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
 kalijoin
 else
+if [ "$fedoras" = "Fedora" ]
+then
+Fedora_fn
+else
 echo ""
+fi
 fi
 fi
 else
@@ -742,6 +748,12 @@ entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 exit
 }
+############################### Fedora #########################################
+Fedora_fn(){
+echo "this is fedora"
+exit
+}
+
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
 clear
