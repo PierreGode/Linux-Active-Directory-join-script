@@ -407,6 +407,7 @@ linuxclient
 linuxclient(){
 fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
 Centoss=$( hostnamectl | grep -i Operating | awk '{print $3}' )
+Debians=$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
 Fedora_fn
@@ -415,7 +416,12 @@ if [ "$Centoss" = "CentOS" ]
 then
 CentOS
 else
+if [ "$Debians" = "Debian" ]
+then
+debianclient
+else
 echo ""
+fi
 fi
 fi
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
