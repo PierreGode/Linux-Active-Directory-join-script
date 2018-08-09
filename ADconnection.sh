@@ -764,10 +764,10 @@ ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+echo "I searched for an available domain and found >>> $DOMAIN  <<<"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -775,20 +775,20 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "${NUMBER}I Please enter AD admin user ${END}"
+echo "I Please enter AD admin user "
 read -r ADMIN
 fi
 clear
 sudo echo "Please enter AD admin user:"
 read -r ADMIN
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
+sudo echo "Realm= $DOMAIN"
+sudo echo ""
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "AD join failed.please check that computer object is already created and test again"
     exit 1
 fi
 fi_auth
