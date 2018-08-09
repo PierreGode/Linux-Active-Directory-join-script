@@ -1592,13 +1592,13 @@ fi_auth
                         ;;
         esac
 done
-PRECHECK_FN(){
-fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
-if [ "$fedoras" = "Fedora" ]
-then
-YUM_MENU
-else
-MENU_FN
-fi
-PRECHECK_FN
+#PRECHECK_FN(){
+#fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+#if [ "$fedoras" = "Fedora" ]
+#then
+#YUM_MENU
+#else
+#MENU_FN
+#fi
+#PRECHECK_FN
 MENU_FN
