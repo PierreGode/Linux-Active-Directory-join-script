@@ -388,7 +388,7 @@ echo ""
 echo "joined to $lastverify"
 echo ""
 fi
-echo "}Please reboot your machine and wait 3 min for Active Directory to sync before login"
+echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
 exit
 fi
 }
@@ -869,10 +869,10 @@ ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+echo "I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -880,23 +880,23 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "I searched for an available domain and found nothing, please type your domain manually below..."
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "${NUMBER}I Please enter AD admin user ${END}"
+echo "I Please enter AD admin user"
 read -r ADMIN
 fi
 clear
 sudo echo "Please enter AD admin user:"
 read -r ADMIN
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
-sudo echo "${NORMAL}${NORMAL}"
+sudo echo "Realm= $DOMAIN"
+sudo echo ""
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "AD join failed.please check that computer object is already created and test again"
     exit 1
 fi
-fi_auth
+fi_auth_yum
 }
 
 ############################### Raspberry Pi ###################################
@@ -1337,6 +1337,81 @@ while [ opt != '' ]
 fi
 done
 }
+YUM_MENU(){
+########################################### Menu #######################################
+
+clear
+    echo "  Active directory connection tool             "
+    echo "      Created by Pierre Goude                 "
+	echo " This script will edit several critical files.. "
+	echo "  DO NOT attempt this without expert knowledge  "
+    echo ""
+    echo "1) Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)"
+    echo "2) Join to AD on Debian Jessie Client"
+    echo "3) Join to AD on CentOS"
+    echo "4) Check for errors"
+    echo "5) Search with ldap"
+	echo "6) Reauthenticate"
+	echo "7) Update from Likewise to Realmd for Ubuntu 14"
+	echo "8) Leave Domain"
+    echo ""
+    echo "Please enter a menu option and enter or enter to exit."
+	read opt
+while [ opt != '' ]
+    do
+    if [ $opt = "" ]; then
+            exit;
+    else
+        case $opt in
+    1) clear;
+            echo "Installing on Linux Client/Server";
+            linuxclient;
+            ;;
+	2) clear;
+            echo "Installing on Debian Jessie client";
+            debianclient
+            ;;
+	3) clear;
+	    echo "Installing on Debian Cent OS"
+	    CentOS
+            ;;
+	4) clear;
+	    echo "Check for errors"
+	     failcheck
+             ;;
+	5) clear;
+	     echo "Check in Ldap"
+	     ldaplook
+             ;;
+	6) clear;
+	    echo "Rejoin to AD"
+	    Reauthenticate
+            ;;
+	7) clear;
+     	   echo "Update from Likewise to Realmd"
+ 	   Realmdupdate
+           ;;
+	8)
+	clear;
+	echo "Leave domain"
+	leave
+	;;
+        x)exit;
+        ;;
+       \n)exit;
+        ;;
+        *)clear;
+        opt "Pick an option from the menu";
+        MENU_FN;
+        ;;
+    esac
+fi
+done
+}
+
+
+
+
 ############################## Flags ###############################
 clear
 #Versi0n=$( echo "7" )
@@ -1517,4 +1592,13 @@ fi_auth
                         ;;
         esac
 done
+PRECHECK_FN(){
+fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+if [ "$fedoras" = "Fedora" ]
+then
+YUM_MENU
+else
+MENU_FN
+fi
+PRECHECK_FN
 MENU_FN
