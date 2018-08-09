@@ -1669,7 +1669,7 @@ fi_auth
 done
 PRECHECK_FN(){
 fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
-Centoss$( hostnamectl | grep -i Operating | awk '{print $3}' )
+Centoss=$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
 YUM_MENU
