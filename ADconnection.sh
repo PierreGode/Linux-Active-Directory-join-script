@@ -861,6 +861,7 @@ fi_auth
 
 # Functional but ugly
 CentOS(){
+#ugly but functional
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
@@ -869,7 +870,7 @@ ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
 clear
-echo "I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<"
+echo "I searched for an available domain and found >>> $DOMAIN  <<<"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
@@ -880,10 +881,10 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "I searched for an available domain and found nothing, please type your domain manually below..."
+echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "I Please enter AD admin user"
+echo "I Please enter AD admin user "
 read -r ADMIN
 fi
 clear
@@ -897,6 +898,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 fi_auth_yum
+exit
 }
 
 ############################### Raspberry Pi ###################################
