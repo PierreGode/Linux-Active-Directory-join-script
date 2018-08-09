@@ -406,11 +406,17 @@ linuxclient
 ################################## Join for linux clients ##########################################
 linuxclient(){
 fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+Centoss$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
 Fedora_fn
 else
+if [ "$Centoss" = "CentOS" ]
+then
+CentOS
+else
 echo ""
+fi
 fi
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
@@ -1663,11 +1669,17 @@ fi_auth
 done
 PRECHECK_FN(){
 fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
+Centoss$( hostnamectl | grep -i Operating | awk '{print $3}' )
 if [ "$fedoras" = "Fedora" ]
 then
 YUM_MENU
 else
+if [ "$Centoss" = "CentOS" ]
+then
+YUM_MENU
+else
 MENU_FN
+fi
 fi
 }
 PRECHECK_FN
