@@ -756,9 +756,45 @@ exit
 }
 ############################### Fedora #########################################
 Fedora_fn(){
-echo "this is fedora"
+export HOSTNAME
+myhost=$( hostname )
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
+DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
+ping -c 1 $DOMAIN
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+echo "${NUMBER}I Please enter AD admin user ${END}"
+read -r ADMIN
+fi
+clear
+sudo echo "Please enter AD admin user:"
+read -r ADMIN
+sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${NORMAL}${NORMAL}"
+sudo realm join -v -U $ADMIN $DOMAIN --install=/
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit 1
+fi
+fi_auth
 exit
 }
+
 
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
@@ -1074,7 +1110,7 @@ while [ opt != '' ]
     else
         case $opt in
     1) clear;
-            echo "Installing on Ubuntu Client/Server";
+            echo "Installing on Linux Client/Server";
             linuxclient;
             ;;
 	2) clear;
