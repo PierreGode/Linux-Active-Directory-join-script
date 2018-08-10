@@ -404,67 +404,52 @@ linuxclient
 
 ################################## Join for linux clients ##########################################
 linuxclient(){
-fedoras=$( cat /etc/fedora-release | awk '{print $1}' ) < /dev/null > /dev/null 2>&1
-TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' )
-if [ "$fedoras" = "Fedora" ]
+TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
+#### OS detection ####
+if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
 echo "Fedora detected"
-Fedora_fn
+echo Fedora_fn
 else
-if [ "$TheOS" = "CentOS" ]
+if [ "$TheOS" = "CentOS" ] < /dev/null > /dev/null 2>&1
 then
 echo "Cent OS detected"
-CentOS
+echo CentOS
 else
-if [ "$TheOS" = "Debian" ]
+if [ "$TheOS" = "Debian" ] < /dev/null > /dev/null 2>&1
 then
 echo "Debian detected"
-debianclient
+echo debianclient
 else
-if [ $"TheOS" = "Ubuntu" ]
+if [ $"TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
+then
+if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo ""
-else
-echo ""
-fi
-fi
-fi
-fi
-desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
-rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-debians=$( hostnamectl | grep -i operating | awk '{print $3}' )
-#### OS detection
-if [ "$desktop" = "desktop" ]
-then
-if [ "$rasp" = "Raspbian" ]
-then
-echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
-raspberry
-else
-if [ "$kalilinux" = "Kali" ]
-then
-echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
-kalijoin
-else
-if [ "$fedoras" = "Fedora" ]
-then
-echo "Fedora detected"
-Fedora_fn
-else
-if [ "$debians" = "Debian" ]
-then
-echo "Debian detected"
-debianclient
-else
-echo "Ubuntu detected"
-fi
-fi
-fi
-fi
 else
 echo " this seems to be a server, swithching to server mode"
-ubuntuserver14
+echo ubuntuserver14
+fi
+else
+if [ "$rasp" = "Raspbian" ] < /dev/null > /dev/null 2>&1
+then
+echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+echo raspberry
+else
+if [ "$kalilinux" = "Kali" ] < /dev/null > /dev/null 2>&1
+then
+echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+echo kalijoin
+else
+echo "No compatible System found"
+fi
+fi
+fi
+fi
+fi
 fi
 export HOSTNAME
 myhost=$( hostname )
