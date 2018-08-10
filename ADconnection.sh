@@ -1007,7 +1007,7 @@ exit
 
 ############################# Linux Mint #####################################
 LinuxMint(){
-echo test Linux mint"
+echo "Linux mint"
 exit
 }
 
