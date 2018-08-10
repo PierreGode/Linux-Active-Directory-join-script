@@ -1661,13 +1661,12 @@ fi_auth
         esac
 done
 PRECHECK_FN(){
-fedoras=$( cat /etc/fedora-release | awk '{print $1}' )
-Centoss=$( hostnamectl | grep -i Operating | awk '{print $3}' )
-if [ "$fedoras" = "Fedora" ]
+TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+if [ "$TheOS" = "Fedora" ]
 then
 YUM_MENU
 else
-if [ "$Centoss" = "CentOS" ]
+if [ "$TheOS" = "CentOS" ]
 then
 YUM_MENU
 else
@@ -1676,4 +1675,3 @@ fi
 fi
 }
 PRECHECK_FN
-
