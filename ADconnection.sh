@@ -412,39 +412,41 @@ desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
 echo "Fedora detected"
-echo Fedora_fn
+Fedora_fn
 else
 if [ "$TheOS" = "CentOS" ] < /dev/null > /dev/null 2>&1
 then
 echo "Cent OS detected"
-echo CentOS
+CentOS
 else
 if [ "$TheOS" = "Debian" ] < /dev/null > /dev/null 2>&1
 then
 echo "Debian detected"
-echo debianclient
+debianclient
 else
 if [ $"TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
 then
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
+echo "Ubuntu detected"
 echo ""
 else
 echo " this seems to be a server, swithching to server mode"
-echo ubuntuserver14
+ubuntuserver14
 fi
 else
 if [ "$rasp" = "Raspbian" ] < /dev/null > /dev/null 2>&1
 then
 echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
-echo raspberry
+raspberry
 else
 if [ "$kalilinux" = "Kali" ] < /dev/null > /dev/null 2>&1
 then
 echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
-echo kalijoin
+ kalijoin
 else
 echo "No compatible System found"
+exit
 fi
 fi
 fi
