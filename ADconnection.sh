@@ -1008,6 +1008,7 @@ exit
 ############################# Linux Mint #####################################
 LinuxMint(){
 echo "Linux mint"
+raspberry
 exit
 }
 
