@@ -19,6 +19,7 @@
     INTRO_TEXT=$(echo "\033[32m") #green and white text
     END=$(echo "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
+
 ################################ fix errors # funktion not called ################
 fixerrors(){
 #this funktion is not called in the script : to activate, uncomment line line 31 #fixerrors
@@ -30,8 +31,9 @@ MENU_FN
 }
 #fixerrors
 #Realmdupdate11
-####################### final auth ##################################################################
 
+####################### final auth ##################################################################
+#this section will do the last part, configure sssd, sam files and sudoers#
 fi_auth(){
 sudo echo "############################"
 sudo echo "Configuratig files.."
@@ -211,8 +213,9 @@ exit
 fi
 }
 
-####################### final auth yum##################################################################
-
+####################### final auth yum ##################################################################
+#this section will do the last part, configure sssd, sam files and sudoers# same as final auth
+#but without colors#
 fi_auth_yum(){
 sudo echo "############################"
 sudo echo "Configuratig files.."
@@ -408,6 +411,7 @@ TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
+
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
@@ -457,6 +461,8 @@ fi
 fi
 fi
 }
+
+################################ Ubuntu 14-18 ###########################################
 UbuntU(){
 export HOSTNAME
 myhost=$( hostname )
@@ -554,8 +560,7 @@ fi
 fi_auth
 }
 
-####################### Setup for Ubuntu server #######################################
-
+####################### Setup for Ubuntu server ubuntu 14 #######################################
 ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
@@ -735,7 +740,6 @@ exit
 }
 
 ####################################### Kali ############################################
-
 kalijoin(){
 export HOSTNAME
 myhost=$( hostname )
@@ -801,7 +805,6 @@ fi_auth
 }
 
 ####################################### Debian ##########################################
-
 debianclient(){
 export HOSTNAME
 myhost=$( hostname )
@@ -875,11 +878,9 @@ if [ $? -ne 0 ]; then
 fi
 fi_auth
 }
-####################################### Cent OS #########################################
 
-# Functional but ugly
+####################################### Cent OS #########################################
 CentOS(){
-#ugly but functional
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
@@ -920,7 +921,6 @@ exit
 }
 
 ############################### Raspberry Pi ###################################
-
 raspberry(){
 export HOSTNAME
 myhost=$( hostname )
@@ -956,9 +956,9 @@ entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 exit
 }
+
 ############################### Fedora #########################################
 Fedora_fn(){
-#ugly but functional
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
@@ -1008,7 +1008,6 @@ echo ""
 exit
 }
 
-
 #this section has been depricated
 #If you are still using likewise please uncomment lines below and line 33
 #Realmdupdate11(){
@@ -1026,7 +1025,6 @@ exit
 #}
 
 ############################### Fail check ####################################
-
 failcheck(){
 clear
 export HOSTNAME
@@ -1092,7 +1090,7 @@ echo "--------------------------------------------------------------------------
 exit
 }
 
-
+############################### Fail check Yum ####################################
 failcheck_yum(){
 clear
 export HOSTNAME
@@ -1160,7 +1158,6 @@ exit
 
 
 #################################### ldapsearch #####################################################
-
 ldaplook(){
 export HOSTNAME
 myhost=$( hostname )
@@ -1187,7 +1184,6 @@ fi
 }
 
 ############################### Reauth ##########################################
-
 Reauthenticate(){
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homes=$( ls /home/tobii.intra/ )
@@ -1255,7 +1251,6 @@ fi
 }
 
 ########################################### Leave Realm ################################
-
 leave(){
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homes=$( ls /home/tobii.intra/ )
@@ -1319,7 +1314,6 @@ fi
 }
 
 ########################################### info #######################################
-
 readmes(){
 clear
 echo "Usage: sh ADconnection.sh [--help] "
@@ -1353,9 +1347,9 @@ echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/s
 echo ""
 exit
 }
-MENU_FN(){
-########################################### Menu #######################################
 
+########################################### Menu #######################################
+MENU_FN(){
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
     echo "${INTRO_TEXT}       Created by Pierre Goude                  ${INTRO_TEXT}"
@@ -1415,9 +1409,9 @@ while [ opt != '' ]
 fi
 done
 }
-YUM_MENU(){
-########################################### Menu YUM #######################################
 
+########################################### Menu YUM #######################################
+YUM_MENU(){
 clear
     echo "  Active directory connection tool             "
     echo "      Created by Pierre Goude                 "
@@ -1476,9 +1470,6 @@ while [ opt != '' ]
 fi
 done
 }
-
-
-
 
 ############################## Flags ###############################
 clear
@@ -1661,6 +1652,7 @@ fi_auth
         esac
 done
 PRECHECK_FN(){
+## Precheck sends yum based OS to an own menu ##
 TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 if [ "$TheOS" = "Fedora" ]
 then
