@@ -426,6 +426,9 @@ debianclient
 else
 if [ $"TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
 then
+echo "Ubuntu detected"
+echo ""
+echo "Checking if it is a Desktop or server"
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu detected"
