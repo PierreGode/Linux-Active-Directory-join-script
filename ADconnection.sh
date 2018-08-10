@@ -431,7 +431,7 @@ echo ""
 echo "Checking if it is a Desktop or server"
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
-echo "Ubuntu detected"
+echo "Ubuntu Desktop detected"
 echo ""
 else
 echo " this seems to be a server, swithching to server mode"
