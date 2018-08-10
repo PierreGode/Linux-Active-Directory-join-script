@@ -424,7 +424,7 @@ then
 echo "Debian detected"
 debianclient
 else
-if [ $"TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
+if [ "$TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu detected"
 echo ""
