@@ -453,7 +453,7 @@ then
 echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
  kalijoin
 else
-if [ "$MinOS" = Mint ]
+if [ "$MintOS" = Mint ]
 then
 echo "Detecting Linux Mint"
 LinuxMint
