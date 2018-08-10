@@ -408,6 +408,7 @@ linuxclient
 ################################## Join for linux clients ##########################################
 linuxclient(){
 TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
@@ -452,8 +453,14 @@ then
 echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
  kalijoin
 else
+if [ "$MinOS" = Mint ]
+then
+echo "Detecting Linux Mint"
+LinuxMint
+else
 echo "No compatible System found"
 exit
+fi
 fi
 fi
 fi
@@ -998,6 +1005,11 @@ fi_auth_yum
 exit
 }
 
+############################# Linux Mint #####################################
+LinuxMint(){
+echo test Linux mint"
+exit
+}
 
 ############################### Update to Realmd from likewise ##################
 Realmdupdate(){
