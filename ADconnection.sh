@@ -432,7 +432,7 @@ echo "Checking if it is a Desktop or server"
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu Desktop detected"
-echo ""
+UbuntU
 else
 echo " this seems to be a server, swithching to server mode"
 ubuntuserver14
@@ -456,6 +456,8 @@ fi
 fi
 fi
 fi
+}
+UbuntU(){
 export HOSTNAME
 myhost=$( hostname )
 clear
