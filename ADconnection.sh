@@ -1044,6 +1044,10 @@ echo "please type Domain admin"
 read -r ADMIN
 sudo realm join -v -U $ADMIN $DOMAIN
 sudo systemctl start sssd
+if [ $? -ne 0 ]; then
+	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+    exit
+fi
 #echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 #sudo echo "pi ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 #sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
