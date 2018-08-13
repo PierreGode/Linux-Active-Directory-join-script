@@ -1009,10 +1009,8 @@ exit
 LinuxMint(){
 export HOSTNAME
 myhost=$( hostname )
-sudo aptitude install ntp adcli sssd
-sudo mkdir -p /var/lib/samba/private
-sudo aptitude install libsss-sudo
-sudo systemctl enable sssd
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
@@ -1035,15 +1033,13 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
+clear
+echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
+echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+read ADMIN
 NetBios=$(echo $DOMAIN | cut -d '.' -f1)
 clear
-clear
-DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}' )
-echo ""
-echo "please type Domain admin"
-read -r ADMIN
-sudo realm join -v -U $ADMIN $DOMAIN
-sudo systemctl start sssd
+   sudo realm join --verbose --user=$ADMIN $DOMAIN
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
