@@ -1048,26 +1048,13 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
 fi
-#echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
-#sudo echo "pi ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-#sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
-#sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
-#sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
-#sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-#sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+allowguest=$( sudo cat /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep manual | grep true | cut -d '=' -f2 | head -1 )
+if [ "$allowguest" = "true" ]
+then
+echo "Lightdm is already confugured.. skipping.."
+else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
-#echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-#cat /etc/sssd/sssd.conf | grep -i override
-#sudo echo "[nss]
-#filter_groups = root
-#filter_users = root
-#reconnection_retries = 3
-#entry_cache_timeout = 600
-#entry_cache_user_timeout = 5400
-#entry_cache_group_timeout = 5400
-#cache_credentials = TRUE
-#entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-#sudo service sssd restart
+fi
 fi_auth
 exit
 }
