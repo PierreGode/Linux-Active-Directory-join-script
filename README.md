@@ -16,6 +16,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 Complete steps
 
 1. remember to set a hostname on the client or server, the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+in this script there is a magic word added for groups in AD and it is sudoers, allways sudoers after hostname, like linuxcomputersudoers
 2. At this point you have 2 options. you already have a Group i AD example:"ADMINS" here you have your users with sudo rights. then you need to edit /etc/sudoers.d/sudoers
 and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
 and also /etc/ssh/login.allow if you have selected this option for security.
