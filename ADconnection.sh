@@ -1013,6 +1013,30 @@ sudo aptitude install ntp adcli sssd
 sudo mkdir -p /var/lib/samba/private
 sudo aptitude install libsss-sudo
 sudo systemctl enable sssd
+echo "hostname is $myhost"
+echo "Looking for Realms.. please wait"
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+ping -c 2 $DOMAIN  >/dev/null
+if [ $? = 0 ]
+then
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+else
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+fi
+NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+clear
 clear
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}' )
 echo ""
