@@ -411,7 +411,6 @@ TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev
 MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&1
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
 
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
@@ -434,6 +433,7 @@ then
 echo "Ubuntu detected"
 echo ""
 echo "Checking if it is a Desktop or server"
+desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu Desktop detected"
