@@ -150,6 +150,7 @@ entry_cache_timeout = 600
 #cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
+################################# Check #######################################
 if [ $? = 0 ]
 then
 echo  "Checking sssd config.. OK"
@@ -173,7 +174,7 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
@@ -332,6 +333,7 @@ entry_cache_timeout = 600
 #cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
+####################### Check #########################
 if [ $? = 0 ]
 then
 echo  "Checking sssd config.. OK"
@@ -355,7 +357,7 @@ echo "Checking sudoers file.. OK"
 else
 echo "Checking sudoers file.. FAIL"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}')
+grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. OK"
@@ -1119,7 +1121,7 @@ else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
      if [ $grouPs1 = "$myhost""sudoers" ]
          then
          echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
@@ -1185,7 +1187,7 @@ else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file..  OK"
-grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
      if [ $grouPs1 = "$myhost""sudoers" ]
          then
          echo "Checking sudoers user groups.. OK"
