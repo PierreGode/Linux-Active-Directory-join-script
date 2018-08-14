@@ -1531,7 +1531,22 @@ while [ opt != '' ]
 fi
 done
 }
-
+################# Precheck for YUM based OS ################# 
+PRECHECK_FN(){
+## Precheck sends yum based OS to an own menu ##
+TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+if [ "$TheOS" = "Fedora" ]
+then
+YUM_MENU
+else
+if [ "$TheOS" = "CentOS" ]
+then
+YUM_MENU
+else
+MENU_FN
+fi
+fi
+}
 ############################## Flags ###############################
 clear
 #Versi0n=$( echo "7" )
@@ -1712,19 +1727,4 @@ fi_auth
                         ;;
         esac
 done
-PRECHECK_FN(){
-## Precheck sends yum based OS to an own menu ##
-TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-if [ "$TheOS" = "Fedora" ]
-then
-YUM_MENU
-else
-if [ "$TheOS" = "CentOS" ]
-then
-YUM_MENU
-else
-MENU_FN
-fi
-fi
-}
 PRECHECK_FN
