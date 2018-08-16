@@ -209,6 +209,7 @@ lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
 echo ""
 echo "${INTRO_TEXT}"joined to $lastverify"${END}"
 echo ""
+notify-send ADconnection "Joined $lastverify "
 fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
@@ -392,6 +393,7 @@ lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
 echo ""
 echo "joined to $lastverify"
 echo ""
+notify-send ADconnection "Joined $lastverify "
 fi
 echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
 exit
@@ -1352,6 +1354,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
+    notify-send ADconnection "Left $DOMAIN "
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
@@ -1362,6 +1365,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
+    notify-send ADconnection "Left $DOMAIN "
     else
     echo "something went wrong"
     fi
