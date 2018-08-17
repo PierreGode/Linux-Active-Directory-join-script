@@ -4,6 +4,21 @@ Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint a
 
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
 
+But why?
+Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
+as you expect, like: 
+getting an "empty login prompt for ADusers" at the login promt
+setting sudo permissions
+settings for mobile accound in sam
+better security with ssh login allowence
+additional configuration to sssd.conf
+this script allows you to join a domain very easly just awnsering a couple of questions
+. It autodetects 7 different distros
+. It autodetects realm
+. It generates or edit nessesery files
+built in failcheck
+
+
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
 Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
                           [-j admin domain (Simple direct join)
