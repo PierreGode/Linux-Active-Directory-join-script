@@ -6,17 +6,17 @@ Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint a
 
 But why?
 <p>Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
-as you expect, like: 
-getting an "empty login prompt for ADusers" at the login promt
-setting sudo permissions
-settings for mobile accound in sam
-better security with ssh login allowence
-additional configuration to sssd.conf
-this script allows you to join a domain very easly just awnsering a couple of questions
-. It autodetects 7 different distros
-. It autodetects realm
-. It generates or edit nessesery files
-built in failcheck</p>
+as you expect, like: </p>
+<p>getting an "empty login prompt for ADusers" at the login promt</p>
+<p>setting sudo permissions</p>
+<p>settings for mobile accound in sam</p>
+<p>better security with ssh login allowence</p>
+<p>additional configuration to sssd.conf</p>
+<p>this script allows you to join a domain very easly just awnsering a couple of questions</p>
+<p>. It autodetects 7 different distros</p>
+<p>. It autodetects realm</p>
+<p>. It generates or edit nessesery files</p>
+<p>built in failcheck</p>
 
 
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
