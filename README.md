@@ -2,11 +2,15 @@
 
 Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali
 
+also see <a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki">wki</a>
+
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
 Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
                           [-j admin domain (Simple direct join)
                           [-l (script output to log file)]
                           [-s (Discover domain)]
+                          
+                          
 
 Usage of the script: sudo sh ADconnection.sh
 
