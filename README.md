@@ -2,7 +2,7 @@
 
 Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali
 
-<p>Also see<a href="href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki</a>Wiki</p>
+<p>Also see<a href="href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki</a> Wiki</p></a>
 
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
 Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
