@@ -4,7 +4,7 @@ Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint a
 
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
 
-But why?
+<H4>But why?</H4>
 <p>Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
 as you expect, like: </p>
 <p>getting an "empty login prompt for ADusers" at the login promt</p>
@@ -17,6 +17,10 @@ as you expect, like: </p>
 <p>. It autodetects realm</p>
 <p>. It generates or edit nessesery files</p>
 <p>built in failcheck</p>
+
+<H4>What is the setup then?</H4>
+computer objct = HOSTNAME
+sudo group = HOSTNAMEsudoers = ADgroup
 
 
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
