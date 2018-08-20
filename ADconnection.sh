@@ -442,16 +442,7 @@ desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu Desktop detected"
-Arm=$( sudo hostnamectl | grep Architecture | awk '{print $2}' )
-if [ "$Arm" = "arm" ]
-then
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
 UbuntU
-else
-UbuntU
-fi
-if [ 
 else
 echo " this seems to be a server, swithching to server mode"
 ubuntuserver14
