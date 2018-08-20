@@ -120,6 +120,12 @@ sleep 1
 else
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 fi
+Arm=$( sudo hostnamectl | grep Architecture | awk '{print $2}' )
+if [ "$Arm" = "arm" ]
+then
+sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
+sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
+else
 logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
 then
@@ -132,6 +138,7 @@ sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.co
 fi
 else
 echo "No lightdm to configure"
+fi
 fi
 clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
@@ -416,7 +423,7 @@ TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev
 MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&1
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-Arm=$( sudo hostnamectl | grep Architecture | awk '{print $2}' )
+
 
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
@@ -444,15 +451,7 @@ desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
 echo "Ubuntu Desktop detected"
-#UbuntU
-if [ "$Arm" = "arm" ]
-then
-sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
-sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
 UbuntU
-else
-UbuntU
-fi
 else
 echo " this seems to be a server, swithching to server mode"
 ubuntuserver14
