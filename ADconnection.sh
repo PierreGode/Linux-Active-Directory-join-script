@@ -451,7 +451,6 @@ UbuntU
 else
 UbuntU
 fi
-else
 if [ 
 else
 echo " this seems to be a server, swithching to server mode"
