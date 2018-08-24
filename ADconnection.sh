@@ -1298,6 +1298,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     notify-send ADconnection "Left $DOMAIN "
+    linuxclient
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
@@ -1309,6 +1310,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     notify-send ADconnection "Left $DOMAIN "
+    linuxclient
     else
     echo "something went wrong"
     fi
