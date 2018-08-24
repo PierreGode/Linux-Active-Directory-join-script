@@ -1614,7 +1614,10 @@ while test $# -gt 0; do
 			sudo realm discover
 		        exit
 			else
+			clear
+			echo ""
 			echo "realmd is not installed"
+			echo ""
 			exit
                         fi
 			else
