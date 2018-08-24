@@ -1608,9 +1608,14 @@ while test $# -gt 0; do
                         ;;
                 -s)
                         if test $# -gt 0; then
+			if [ -f /etc/sssd ]
+			then
 			sudo realm discover
-			exit
-                        else
+		        exit
+			else
+			echo "realmd is not installed"
+                        fi
+			else
                         echo ""
                         exit 1
                         fi
