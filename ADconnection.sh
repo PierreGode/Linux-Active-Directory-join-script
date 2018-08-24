@@ -1608,8 +1608,8 @@ while test $# -gt 0; do
                         ;;
                 -s)
                         if test $# -gt 0; then
-			realm
-			if [ "$?" = "0" ]
+			realm < /dev/null > /dev/null 2>&1
+			if [ "$?" = "0" ] 
 			then
 			sudo realm discover
 		        exit
