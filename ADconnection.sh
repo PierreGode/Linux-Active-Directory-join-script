@@ -1258,7 +1258,7 @@ fi
 }
 
 ############################### Reauth ##########################################
-leave(){
+Reauthenticate(){
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
 homes=$( ls /home/$homeshome | head -1  )
