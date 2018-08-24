@@ -1323,7 +1323,7 @@ if [ "$homes" = "$whoelse" ]
 then
 echo ""
 echo "you are logged in as an AD user.. canceling request"
-echo "only administrator has 
+echo "only administrator has permissions"
 echo ""
 exit
 else
@@ -1347,7 +1347,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover $DOMAIN
-    sudo realm leave $DOMAIN
+#    sudo realm leave $DOMAIN
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
@@ -1358,7 +1358,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
-	sudo realm leave $DOMAIN
+#	sudo realm leave $DOMAIN
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
