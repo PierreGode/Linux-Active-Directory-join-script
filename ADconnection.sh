@@ -1258,7 +1258,21 @@ fi
 }
 
 ############################### Reauth ##########################################
-Reauthenticate(){
+
+
+########################################### Leave Realm ################################
+leave(){
+whoelse=$( who -ut | grep -v old | awk '{print $1}' )
+homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
+homes=$( ls /home/$homeshome | head -1  )
+if [ "$homes" = "$whoelse" ]
+then
+echo ""
+echo "you are logged in as an AD user.. canceling request"
+echo "only administrator has permissions"
+echo ""
+exit
+else
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
@@ -1272,7 +1286,6 @@ else
     echo ""
     echo "$DOMAIN has not been configured"
     echo ""
-    linuxclient
     exit
     fi
     fi
@@ -1280,26 +1293,25 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover $DOMAIN
-    sudo realm leave $DOMAIN
+#    sudo realm leave $DOMAIN
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
-    linuxclient
+    notify-send ADconnection "Left $DOMAIN "
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
-	sudo realm leave $DOMAIN
+#	sudo realm leave $DOMAIN
     left=$(sudo realm discover | grep configured | awk '{print $2}')
- 
     if [ "$left" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
-    linuxclient
+    notify-send ADconnection "Left $DOMAIN "
     else
     echo "something went wrong"
     fi
@@ -1313,9 +1325,6 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
 exit
 fi
 }
-
-########################################### Leave Realm ################################
-
 
 ########################################### info #######################################
 readmes(){
