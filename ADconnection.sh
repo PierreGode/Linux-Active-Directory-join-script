@@ -1371,6 +1371,8 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     notify-send ADconnection "Left $DOMAIN "
     else
     echo "something went wrong, try to leave manually"
+    echo ""
+    echo "Please type domain you wish to leave"
     	read -r DOMAIN
 	sudo realm leave $DOMAIN
     left=$(sudo realm discover | grep configured | awk '{print $2}')
