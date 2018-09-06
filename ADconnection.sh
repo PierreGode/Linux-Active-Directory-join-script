@@ -905,6 +905,7 @@ CentOS(){
 export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
+yum -y install ipa-client
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 ping -c 1 $DOMAIN
 if [ $? = 0 ]
