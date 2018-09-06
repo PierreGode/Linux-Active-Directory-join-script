@@ -1534,7 +1534,7 @@ while [ opt != '' ]
      	   echo "Update from Likewise to Realmd"
  	   Realmdupdate
            ;;
-	5)
+	6)
 	clear;
 	echo "Leave domain"
 	leave
