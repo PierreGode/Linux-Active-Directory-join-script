@@ -914,10 +914,15 @@ clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
-
+    [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect"
+    sudo echo "Please enter AD admin user:"
+    read -r ADMIN
+    ;;
     [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
+	read -r DOMAIN
+	sudo echo "Please enter AD admin user:"
+        read -r ADMIN
+	;;
     * ) echo 'Please answer yes or no.';;
    esac
 else
@@ -928,9 +933,6 @@ read -r DOMAIN
 echo "I Please enter AD admin user "
 read -r ADMIN
 fi
-clear
-sudo echo "Please enter AD admin user:"
-read -r ADMIN
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
