@@ -1332,9 +1332,9 @@ fi
 leave(){
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
 DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
-if [ "$DOMAINlower" = "$SSSD" ]
+if [ "$DOMAINlower" = "$SSSD" ] < /dev/null > /dev/null 2>&1
 then
 echo "Detecting realm $SSSD"
 else
