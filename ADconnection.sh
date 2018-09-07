@@ -1330,17 +1330,6 @@ fi
 
 ########################################### Leave Realm ################################
 leave(){
-whoelse=$( who -ut | grep -v old | awk '{print $1}' )
-homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
-homes=$( ls /home/$homeshome | head -1  )
-if [ "$homes" = "$whoelse" ]
-then
-echo ""
-echo "you are logged in as an AD user.. canceling request"
-echo "only administrator has permissions"
-echo ""
-exit
-else
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
@@ -1392,8 +1381,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
-exit
-fi
+exit	
 }
 
 ########################################### info #######################################
