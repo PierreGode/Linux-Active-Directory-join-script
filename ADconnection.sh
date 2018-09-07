@@ -1431,8 +1431,7 @@ clear
     echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${NORMAL}"
     echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${NORMAL}"
 	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Update from Likewise to Realmd for Ubuntu 14 ${NORMAL}"
-	echo "${MENU}*${NUMBER} 6)${MENU} Leave Domain             ${NORMAL}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Leave Domain             ${NORMAL}"
     echo "${NORMAL}                                                    ${NORMAL}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
 	read opt
@@ -1460,11 +1459,6 @@ while [ opt != '' ]
 	    Reauthenticate
             ;;
 	5) clear;
-     	   echo "Update from Likewise to Realmd"
- 	   Realmdupdate
-           ;;
-	6)
-	clear;
 	echo "Leave domain"
 	leave
 	;;
