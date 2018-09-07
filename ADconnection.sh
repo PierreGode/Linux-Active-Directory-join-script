@@ -906,7 +906,10 @@ export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
 yum -y install ipa-client
+echo "Looking for domains..."
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
+if [ -n "$DOMAIN" ]
+then
 ping -c 1 $DOMAIN
 if [ $? = 0 ]
 then
@@ -927,12 +930,20 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "I searched for an available domain and found nothing, please type your domain manually below... "
+echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 echo "I Please enter AD admin user "
 read -r ADMIN
 fi
+else
+clear
+echo "I searched for an available domain and found nothing, please type your domain manually below... "
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+echo "I Please enter AD admin user "
+read -r ADMIN
+fi	
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
 sudo realm join -v -U $ADMIN $DOMAIN --install=/
