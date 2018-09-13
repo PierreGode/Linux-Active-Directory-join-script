@@ -155,6 +155,15 @@ entry_cache_timeout = 600
 #entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
+### Added to help with group mapping
+###ldap_use_tokengroups = False
+#ldap_schema = rfc2307bis
+#ldap_schema = rfc2307
+#ldap_schema = IPA
+#ldap_schema = AD
+#ldap_search_base = DC=$NetBios,DC=$coms
+#ldap_group_member = uniquemember
+#ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 ################################# Check #######################################
