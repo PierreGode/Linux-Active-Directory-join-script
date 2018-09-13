@@ -15,7 +15,7 @@ as you expect, like: </p>
 <p>this script allows you to join a domain very easly just awnsering a couple of questions</p>
 <p>. It autodetects 7 different distros</p>
 <p>. It autodetects realm</p>
-<p>. It generates or edit nessesery files</p>
+<p>. It generates and/or edit nessesery files</p>
 <p>built in failcheck</p>
 
 <H4>What is the setup then?</H4>
@@ -91,7 +91,7 @@ This should read new info from AD when you are on "AD" network
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
 If you are having problems with the computer not fetching the new password. On office network.. open a terminal and execute sudo service sssd restart, this will reload information, logout and login with the new password.
 
-I have issues!
+##I have issues!
 
 1. After reboot I cant login at all. (local or AD)  
 "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
