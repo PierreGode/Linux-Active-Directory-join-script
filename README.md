@@ -114,6 +114,31 @@ If you have issues with slow replies from the domain controller i have added lin
 you are sudo user if added to sudoes file, but the account is a standard account. to give full administration priviligies
 run in terminal: sudo usermod -a -G sudo user
 
+
+Note. make sure dns works so it can properly find ldap server
+If you are using multiple domain servers or have a backup domain server, see example below
+[sssd]
+services = nss, pam
+config_file_version = 2
+domains = ad.example.com
+
+[domain/ad.example.com]
+id_provider = ad
+auth_provider = ad
+access_provider = ad
+chpass_provider = ad
+ad_server = dc1.ad.example.com
+ad_backup_server = dc2.ad.example.com
+filter_users = root at ad.example.com
+filter_groups = root at ad.example.com
+ldap_id_mapping = false
+dyndns_update = true
+dyndns_update_ptr = false
+enumerate = true
+subdomain_enumerate = all
+cache_credentials = true
+
+
 How to git?
 
 On linux client install git = sudo apt-get install git -y
