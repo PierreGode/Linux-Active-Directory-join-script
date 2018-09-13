@@ -10,7 +10,7 @@
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
-#known bugs: see line 24-25
+#known bugs: see line 24-33
 #
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
@@ -34,7 +34,7 @@ MENU_FN
 #Realmdupdate11
 
 ####################### final auth ##################################################################
-#this section will do the last part, configure sssd, sam files and sudoers#
+#this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
 sudo echo "############################"
 sudo echo "Configuratig files.."
