@@ -12,3 +12,4 @@ ADcomputer=$()			      	## desired computer object name ( this will only be the 
 OU=$()					          	## desired OU were the computer object is created
 
 sudo dsconfigad -add $DOMAIN -mobile enable -mobileconfirm disable -localhome enable -protocol smb -shell '/bin/bash' -username $admin -password $pass -groups $adgroup -computer $ADcomputer -ou $OU
+sudo dsconfig -show
