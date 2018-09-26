@@ -7,11 +7,11 @@ Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint a
 <H4>But why?</H4>
 <p>Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
 as you expect, like: </p>
-<p>getting an "empty login prompt for ADusers" at the login promt</p>
-<p>setting sudo permissions</p>
-<p>settings for mobile accound in sam</p>
-<p>better security with ssh login allowence</p>
-<p>additional configuration to sssd.conf</p>
+<p>Getting an "empty login prompt for ADusers" at the login promt</p>
+<p>Setting sudo permissions</p>
+<p>Settings for mobile account in sam</p>
+<p>Better security with ssh login allowence</p>
+<p>Additional configuration to sssd.conf</p>
 <p>this script allows you to join a domain very easly just awnsering a couple of questions</p>
 <p>. It autodetects 7 different distros</p>
 <p>. It autodetects realm</p>
