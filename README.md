@@ -2,6 +2,9 @@
 
 Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali
 
+This is a script for Active Directory join with realmd.
+and is a result of a lot of small upgrades according as needs has emerged.
+
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
 
 <H4>But why?</H4>
@@ -32,9 +35,6 @@ Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
                           
 
 Usage of the script: sudo sh ADconnection.sh
-
-This is a script for Active Directory join with realmd.
-and is a result of a lot of small upgrades according as needs has emerged.
 
 Complete steps
 
