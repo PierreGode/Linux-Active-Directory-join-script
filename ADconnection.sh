@@ -98,20 +98,23 @@ sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/
 #sudo realm permit --groups "$myhost""sudoers"
 ;;
 
- [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+ [Nn]* ) 
+sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 ;;
     * ) echo "Please answer yes or no.";;
    esac
-fi;;
+fi
+;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
 	    states=$( echo 12 );;
-    * ) echo 'Please answer yes or no.';;
-   esac
+    * ) echo "Please answer yes or no."
+	;;
+	esac
 homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
 if [ $homedir = 0022 ]
 then
