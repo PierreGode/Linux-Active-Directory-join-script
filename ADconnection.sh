@@ -219,6 +219,7 @@ else
 echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
 fi
+fi
 #realm discover $DOMAIN
 if [ "$therealm" = no ]
 then
