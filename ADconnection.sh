@@ -193,6 +193,7 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
+fi
 grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
