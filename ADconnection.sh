@@ -431,6 +431,8 @@ fi
 echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
 exit
 fi
+echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
+exit
 }
 
 
