@@ -233,6 +233,8 @@ fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
 fi
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
+exit
 }
 
 ####################### final auth yum ##################################################################
