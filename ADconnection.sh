@@ -108,7 +108,9 @@ sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domai
    esac
 fi
 ;;
-    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+    [Nn]* )
+            sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+    	    echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
 	    states=$( echo 12 );;
