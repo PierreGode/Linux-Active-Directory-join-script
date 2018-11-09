@@ -1368,7 +1368,7 @@ if [ "$DOMAINlower" = "$SSSD" ] < /dev/null > /dev/null 2>&1
 then
 echo "Detecting realm $SSSD"
 else
-    if [ "$LEFT" = "no" ]
+    if [ "$LEFT" = "no" ] < /dev/null > /dev/null 2>&1
     then
     echo ""
     echo "$DOMAIN has not been configured"
