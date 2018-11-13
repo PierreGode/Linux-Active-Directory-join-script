@@ -22,7 +22,7 @@ as you expect, like: </p>
 <p>built in failcheck</p>
 
 <H4>What is the setup then?</H4>
-computer objct = HOSTNAME
+computer objct = HOSTNAME .
 sudo group = HOSTNAMEsudoers = ADgroup
 
 
@@ -145,7 +145,4 @@ On linux client install git = sudo apt-get install git -y
 
 Clone this repo = sudo git clone https://github.com/PierreGode/Linux-Active-Directory-join-script.git
 
-To update repo to latest version = in the folder Linux-Active-Directory-join-script/ = sudo git pull
-
-
-
+To update repo to latest version = in the folder Linux-Active-Directory-join-script/    run: sudo git pull
