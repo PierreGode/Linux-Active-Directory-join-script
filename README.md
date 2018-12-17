@@ -17,7 +17,7 @@ as you expect, like: </p>
 <p>Additional configuration to sssd.conf</p>
 <p>this script allows you to join a domain very easly just awnsering a couple of questions</p>
 <p>. It autodetects 7 different distros</p>
-<p>. It autodetects realm</p>
+<p>. It autodetects your domain</p>
 <p>. It generates and/or edit nessesery files</p>
 <p>built in failcheck</p>
 
