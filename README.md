@@ -42,15 +42,22 @@ Complete steps
 
 2. At this point you have 2 options. you already have a Group i AD example:"ADMINS" here you have your users with sudo rights. then you need to edit /etc/sudoers.d/sudoers
 and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
-In this script there is a magic word added for groups in AD and it is sudoers, allways sudoers after hostname, like linuxcomputersudoers
+In this script there is a magic word added for groups in AD and it is sudoers, it always adds sudoers after hostname, like linuxcomputersudoers
+administratoator will always be added as a backdoor for sysadmins.
+
 and also /etc/ssh/login.allow if you have selected this option for security.
 
-Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers and LINUXCOMPUTER as hostname, they are not related, but Computer object in AD will be created and named after hostname and naming the ADgroup simmilar makes search easier in the future, therefore the script by defaut will add "LINUXCOMPUTERsudoers" as default in sudoers.d/sudoers, in this step you don't need to edit files, the script will allow you to choose if you want users to be sudoers or not.
-3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot
+Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers and LINUXCOMPUTER as hostname, they are not related, but Computer object in AD will be created and named after hostname and naming the ADgroup simmilar makes search easier in the future, therefore the script by defaut will add "LINUXCOMPUTERsudoers" as default in sudoers.d/sudoers, in this step you don't need to edit files, the script will allow you to choose if you want users to be sudoers or not and if yes the script will autogenerate "LINUXCOMPUTERsudoers" in sudoers
+.
+3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot 
+( in/etc/hosts it should look like 127.0.1.1       LINUXCOMPUTER01       LINUXCOMPUTER01.domain.com also in resolv.conf you should have search domain.com)
+
 4. git clone this script and run
 
-Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16 or 17
+Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16,17, 18,mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint or Kali
 the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
+If there are issues finding the domain please dubblecheck your dns configuration on the domain controller.
+
 after that authorise with a admin user.
 make sure to read the questions carefully and also read built in help in the script.
 
