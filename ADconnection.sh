@@ -12,6 +12,7 @@
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 24-33
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it.
+
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
     MENU=$(echo "\033[36m") #Blue
