@@ -10,7 +10,7 @@
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
-#known bugs: see line 24-33
+#known bugs: see line 25-35
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it.
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
