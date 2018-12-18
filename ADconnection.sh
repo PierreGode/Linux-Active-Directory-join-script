@@ -1,12 +1,12 @@
 #!/bin/bash
 ##################################################################################################################################
-#                                                                                                                                #
 #                                           This script is written by Pierre Gode                                                #
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 #       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
-#                                                                                                                                #
+#This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
+#Meaby someday I re-do the script and make it "good code"                                                                        #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
