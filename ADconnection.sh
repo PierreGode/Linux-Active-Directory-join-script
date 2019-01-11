@@ -11,7 +11,7 @@
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 26-36
-#known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it.
+#known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client and on DC.
 # see lines 357-368 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
