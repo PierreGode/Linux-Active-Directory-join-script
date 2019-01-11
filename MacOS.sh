@@ -7,7 +7,7 @@
 DOMAIN=$(test.com)	    		## Domain
 admin=$(admin)			      	## AD admin
 pass=$(password)		      	## AD admin pass
-adgroup=$(whatevergroup)    ## this is to give admin privileges to a group
+adgroup=$(whatevergroup)    ## this is to give admin privileges to a group in the active directory ex: MacAdmins
 ADcomputer=$()			      	## desired computer object name ( this will only be the name of the computer object in Active Directory, hostname is still the same as default)
 OU=$()					          	## desired OU were the computer object is created
 
