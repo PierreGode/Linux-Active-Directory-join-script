@@ -2,7 +2,7 @@
 #Note that Apple is going away from AD
 #Recomended solution is Nomad https://nomad.menu/products/#nomad
 
-# to automate ADjoin check the variables below and find a solution to get "next computer object"
+# to automate ADjoin check the variables below and find a solution to get from you AD or just type the name of next object in list "next computer object"
 
 DOMAIN=$(test.com)	    		## Domain
 admin=$(admin)			      	## AD admin
