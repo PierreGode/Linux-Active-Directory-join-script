@@ -12,6 +12,7 @@
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 25-35
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it.
+# see lines 357-368 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
