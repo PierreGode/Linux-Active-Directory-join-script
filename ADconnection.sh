@@ -265,7 +265,7 @@ then
 echo "Files seems already to be modified, skipping..."
 else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/login
 sudo touch /etc/ssh/login.group.allowed
 admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
 echo ""
@@ -412,7 +412,7 @@ if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+cauth=$(cat /etc/pam.d/login | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
