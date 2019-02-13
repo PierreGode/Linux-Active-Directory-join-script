@@ -654,17 +654,17 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-echo "${NUMBER}Please type groupname in AD for admins${END}"
-read -r Mysrvgroup
 sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
 sudo echo "${NORMAL}${NORMAL}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
-read -r ADMIN
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
+echo "${INTRO_TEXT}"Please type DomainAdmin user:"${END}"
+read -r DomainADMIN
+sudo realm join -v -U $DomainADMIN $DOMAIN --install=/
 if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit 1
 fi
+echo "${NUMBER}Please type groupname in AD for admins${END}"
+read -r Mysrvgroup
 sudo echo "############################"
 sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
