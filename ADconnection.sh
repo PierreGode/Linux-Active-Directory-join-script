@@ -1078,7 +1078,7 @@ echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN  >/dev/null
-if [ $? = 0 ]
+if [ "$?" = "0" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
