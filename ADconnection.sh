@@ -1078,7 +1078,7 @@ echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 ping -c 2 $DOMAIN  >/dev/null
-if [ "$?" -eq "0" ]
+if [ "$?" = "0" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
@@ -1178,7 +1178,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ $grouPs1 -eq "$myhost""sudoers" ]
+     if [ "$grouPs1" = "$myhost""sudoers" ]
          then
          echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
          else
