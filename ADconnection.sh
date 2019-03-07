@@ -14,7 +14,7 @@
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC.
 # see lines 357-368 for more advanced or specific setups of SSSD
-
+#
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(echo "\033[m")
     MENU=$(echo "\033[36m") #Blue
