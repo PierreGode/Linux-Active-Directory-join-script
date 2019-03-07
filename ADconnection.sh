@@ -23,7 +23,7 @@
     INTRO_TEXT=$(echo "\033[32m") #green and white text
     END=$(echo "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-
+#
 ################################ fix errors # funktion not called ################
 fixerrors(){
 #this funktion is not called in the script : to activate, uncomment line line 31 #fixerrors
