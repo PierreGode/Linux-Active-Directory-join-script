@@ -16,12 +16,12 @@
 # see lines 357-368 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-    NORMAL=$(echo "\033[m")
-    MENU=$(echo "\033[36m") #Blue
-    NUMBER=$(echo "\033[33m") #yellow
-    RED_TEXT=$(echo "\033[31m") #Red
-    INTRO_TEXT=$(echo "\033[32m") #green and white text
-    END=$(echo "\033[0m")
+    NORMAL=$(printf "\033[m")
+    MENU=$(printf "\033[36m") #Blue
+    NUMBER=$(printf "\033[33m") #yellow
+    RED_TEXT=$(printf "\033[31m") #Red
+    INTRO_TEXT=$(printf "\033[32m") #green and white text
+    END=$(printf "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
 ################################ fix errors # funktion not called ################
@@ -44,11 +44,11 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
+states="null"
+states1="null"
+grouPs="null"
+therealm="null"
+cauth="null"
 clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
@@ -60,15 +60,15 @@ else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+read -p "Is your current administrator = '$admins' ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
 read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
@@ -77,7 +77,7 @@ sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
     [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
+    states1="12";;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -116,12 +116,12 @@ fi
     	    echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
-	    states=$( echo 12 );;
+	    states="12";;
     * ) echo "Please answer yes or no."
 	;;
 	esac
-homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
-if [ $homedir = 0022 ]
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
+if [ "$homedir" = "0022" ]
 then
 echo "pam_mkhomedir.so configured"
 sleep 1
@@ -134,7 +134,7 @@ then
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu-mate.conf"
 else
-logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+logintrue=$( grep -i -m1 "login" /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf )
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
 then
 if [ "$logintrue" =  "greeter-show-manual-login=true" ]
@@ -154,7 +154,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
+sudo sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
 filter_groups = root
 filter_users = root
@@ -198,14 +198,14 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}' | head -1)
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers user groups.. "${RED_TEXT}"FAIL"${END}"
 fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
@@ -216,7 +216,7 @@ if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
@@ -251,11 +251,11 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
+states="null"
+states1="null"
+grouPs="null"
+therealm="null"
+cauth="null"
 clear
 read -p 'Do you wish to enable SSH login.group.allowed (y/n)?' yn
    case $yn in
@@ -267,7 +267,7 @@ else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/sshd
 sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
 read -p "Is your current administrator = "$admins" ? (y/n)?" yn
@@ -284,7 +284,7 @@ sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
     [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
+    states1="12";;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -319,18 +319,18 @@ fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
-	    states=$( echo 12 );;
+	    states="12";;
     * ) echo 'Please answer yes or no.';;
    esac
-homedir=$( cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3 )
-if [ $homedir = 0022 ]
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
+if [ "$homedir" = "0022" ]
 then
 echo "pam_mkhomedir.so configured"
 sleep 1
 else
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 fi
-logintrue=$( cat /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf | grep -i -m1 login )
+logintrue=$( grep -i -m1 "login" /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf )
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
 then
 if [ "$logintrue" =  "greeter-show-manual-login=true" ]
@@ -350,7 +350,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
+sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
 filter_groups = root
 filter_users = root
@@ -394,14 +394,14 @@ echo "Checking sudoers file.. OK"
 else
 echo "Checking sudoers file.. FAIL"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i "$myhost" | cut -d '%' -f2 | awk '{print $1}' | head -1)
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. OK"
 else
 echo "Checking sudoers user groups.. FAIL"
 fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
@@ -412,7 +412,7 @@ if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(cat /etc/pam.d/sshd | grep required | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+cauth=$(grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
@@ -519,7 +519,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f -y
@@ -531,7 +531,7 @@ clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
 exit
 fi
 echo "hostname is $myhost"
@@ -617,7 +617,7 @@ ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user
@@ -670,11 +670,11 @@ sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
 sudo systemctl enable sssd
 sudo systemctl start sssd
-states=$( echo null )
-states1=$( echo null )
-grouPs=$( echo null )
-therealm=$( echo null )
-cauth=$( echo null )
+states="null"
+states1="null"
+grouPs="null"
+therealm="null"
+cauth="null"
 clear
 read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
    case $yn in
@@ -686,7 +686,7 @@ else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo touch /etc/ssh/login.group.allowed
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
 read -p "Is your current administrator = "$admins" ? (y/n)?" yn
@@ -704,7 +704,7 @@ sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
     [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1=$( echo 12 );;
+    states1="12";;
     * ) echo "Please answer yes or no.";;
    esac
 echo ""
@@ -729,7 +729,7 @@ fi;;
     [Nn]* ) echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
-	    states=$( echo 12 );;
+	    states="12";;
     * ) echo 'Please answer yes or no.';;
    esac
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
@@ -749,21 +749,21 @@ echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
 else
 echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
 fi
-grouPs=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
 if [ $grouPs = "$myhost""sudoers" ]
 then
 echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
 fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
@@ -775,7 +775,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
+sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
 filter_groups = root
 filter_users = root
@@ -797,8 +797,8 @@ export HOSTNAME
 myhost=$( hostname )
 export whoami
 whoamis=$( whoami )
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
-sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
@@ -817,7 +817,7 @@ clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
 exit
 fi
 echo "hostname is $myhost"
@@ -869,11 +869,11 @@ apt get install sudo -y
 export whoami
 whoamis=$( whoami )
 echo $whoamis
-admins=$( cat /etc/passwd | grep home | grep bash | cut -d ':' -f1 )
+admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
-sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install realmd adcli sssd -y
@@ -891,7 +891,7 @@ clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
 exit
 fi
 echo "hostname is $myhost"
@@ -1013,7 +1013,7 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-cat /etc/sssd/sssd.conf | grep -i override
+sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
 filter_groups = root
 filter_users = root
@@ -1107,7 +1107,7 @@ if [ $? -ne 0 ]; then
 	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
     exit
 fi
-allowguest=$( sudo cat /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep manual | grep true | cut -d '=' -f2 | head -1 )
+allowguest=$( sudo grep manual /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep true | cut -d '=' -f2 | head -1 )
 if [ "$allowguest" = "true" ]
 then
 echo "Lightdm is already confugured.. skipping.."
@@ -1148,7 +1148,6 @@ failcheck(){
 clear
 export HOSTNAME
 myhost=$( hostname )
-find=$( realm discover )
 if [ $? = 1 ]
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1166,7 +1165,7 @@ fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(grep -i $myhost /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
      if [ $grouPs = "$myhost""sudoers" ]
          then
          echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
@@ -1177,7 +1176,7 @@ else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
+grouPs1=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
      if [ "$grouPs1" = "$myhost""sudoers" ]
          then
          echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
@@ -1188,14 +1187,14 @@ else
 echo Checking sudoers file.. "${RED_TEXT}"FAIL not configured"${END}"
 fi
 fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
 fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
@@ -1214,7 +1213,6 @@ failcheck_yum(){
 clear
 export HOSTNAME
 myhost=$( hostname )
-find=$( realm discover )
 if [ $? = 1 ]
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1232,7 +1230,7 @@ fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file.. OK"
-grouPs=$(cat /etc/sudoers.d/admins | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+grouPs=$(grep -i $myhost /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
      if [ $grouPs = "$myhost""sudoers" ]
          then
          echo "Checking sudoers users.. OK"
@@ -1243,7 +1241,7 @@ else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file..  OK"
-grouPs1=$(cat /etc/sudoers.d/sudoers | grep -i $myhost | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
+grouPs1=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
      if [ $grouPs1 = "$myhost""sudoers" ]
          then
          echo "Checking sudoers user groups.. OK"
@@ -1254,14 +1252,14 @@ else
 echo "Checking sudoers file.. FAIL not configured"
 fi
 fi
-homedir=$(cat /etc/pam.d/common-session | grep homedir | grep 0022 | cut -d '=' -f3)
+homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
 else
 echo "Checking PAM configuration.. FAIL"
 fi
-cauth=$(cat /etc/pam.d/common-auth | grep required | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
 if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
@@ -1306,7 +1304,7 @@ fi
 Reauthenticate(){
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
-homes=$( ls /home/$homeshome | head -1  )
+homes=$( find /home/$homeshome -maxdepth 1 -mindepth 1 | head -1  )
 if [ "$homes" = "$whoelse" ]
 then
 echo ""
@@ -1317,7 +1315,7 @@ exit
 else
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
+SSSD=$( sudo grep domain /etc/sssd/sssd.conf | awk '{print $3}' | head -1 )
 DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
 if [ "$DOMAINlower" = "$SSSD" ]
 then
@@ -1371,7 +1369,7 @@ fi
 }
 
 ########################################### Leave Realm ################################
-leave(){
+leaves(){
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
@@ -1456,7 +1454,7 @@ echo "${NUMBER}     Remember to Check Hostname and add it to AD${NUMBER}"
 echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
 echo "${INTRO_TEXT}                                                                                                ${INTRO_TEXT}"
 echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${INTRO_TEXT}"
-echo "${INTRO_TEXT} coding issues when building.. to change this configure /et/sssd/sssd.conf                      ${INTRO_TEXt}"
+echo "${INTRO_TEXT}  coding issues when building.. to change this configure /et/sssd/sssd.conf                     ${END}"
 echo ""
 exit
 }
@@ -1502,11 +1500,11 @@ while [ opt != '' ]
             ;;
 	5) clear;
 	echo "Leave domain"
-	leave
+	leaves
 	;;
         x)exit;
         ;;
-       \n)exit;
+       '\n')exit;
         ;;
         *)clear;
         opt "Pick an option from the menu";
@@ -1561,7 +1559,7 @@ while [ opt != '' ]
 	;;
         x)exit;
         ;;
-       \n)exit;
+       '\n')exit;
         ;;
         *)clear;
         opt "Pick an option from the menu";
@@ -1613,7 +1611,8 @@ while test $# -gt 0; do
                          ;;
                 -l)
                         if test $? -gt 0; then
-                        DATE=`date +%H:%M`
+                        DATE=$(date +%H:%M)
+                        echo "$DATE"
 			MENU_FN 2>&1 | sudo tee adconnection.log
                         else
                         echo ""
@@ -1676,7 +1675,7 @@ fi
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages do no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get install -f -y
@@ -1688,7 +1687,7 @@ clear
 sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update then try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
 exit
 fi
 echo "hostname is $myhost"
