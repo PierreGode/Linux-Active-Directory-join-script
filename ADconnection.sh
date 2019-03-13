@@ -1475,7 +1475,7 @@ clear
     echo "${NORMAL}                                                    ${END}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}ctrl + c to exit. ${END}"
 	read opt
-while [ opt != '' ]
+while [ "$opt" != '' ]
     do
     if [ "$opt" = "" ]; then
             exit;
@@ -1531,7 +1531,7 @@ clear
     echo ""
     echo "Please enter a menu option and enter or enter to exit."
 	read opt
-while [ opt != '' ]
+while [ "$opt" != '' ]
     do
     if [ "$opt" = "" ]; then
             exit;
