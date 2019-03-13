@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/sh
 ##################################################################################################################################
 #                                           This script is written by Pierre Gode                                                #
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
