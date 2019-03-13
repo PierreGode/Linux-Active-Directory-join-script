@@ -34,7 +34,8 @@ Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
                           
                           
 
-Usage of the script: sudo sh ADconnection.sh
+Usage of the script: sudo sh ADconnection.sh or sudo ./ADconnection.sh
+for ./ADconnection.sh do a sudo chmod +x ADconnection.sh first.
 
 Complete steps
 
