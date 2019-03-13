@@ -1,3 +1,4 @@
+#!/bin/bash
 #!/bin/sh
 ##################################################################################################################################
 #                                           This script is written by Pierre Gode                                                #
@@ -50,7 +51,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -83,7 +84,7 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -92,7 +93,7 @@ echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-read -p "${RED_TEXT}"'Do you wish to DISABLE password promt for users in terminal?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "${RED_TEXT}Do you wish to DISABLE password promt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -181,12 +182,12 @@ echo  "Checking sssd config.. OK"
 else
 echo "Checking sssd config.. FAIL"
 fi
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-if [ "$therealm" = no ]
+therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ "$therealm" = "no" ]
 then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+echo "Realm configured?.. ${RED_TEXT}FAIL${END}"
 else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+echo "Realm configured?.. ${INTRO_TEXT}OK${END}"
 fi
 if [ $states = 12 ]
 then
@@ -194,44 +195,44 @@ echo "Sudoers not configured... skipping"
 else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+echo "Checking sudoers file..  ${INTRO_TEXT}OK${END}"
 else
-echo checking sudoers file..  "${RED_TEXT}"FAIL"${END}"
+echo "Checking sudoers file..  ${RED_TEXT}FAIL${END}"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
-echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking sudoers user groups.. ${INTRO_TEXT}OK${END}"
 else
-echo Checking sudoers user groups.. "${RED_TEXT}"FAIL"${END}"
+echo "Checking sudoers user groups.. ${RED_TEXT}FAIL${END}"
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking PAM configuration.. ${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
 if [ $states1 = 12 ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking PAM auth configuration.. ${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"FAIL"${END}"
+echo "Checking PAM auth configuration.. ${RED_TEXT}FAIL${END}"
 fi
 fi
 #realm discover $DOMAIN
-if [ "$therealm" = no ]
+if [ "$therealm" = "no" ]
 then
-echo "${RED_TEXT}"Join has Failed"${END}"
+echo "${RED_TEXT}Join has Failed${END}"
 else
-lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
+lastverify=$( realm discover "$DOMAIN" | grep -m 1 "$DOMAIN" )
 echo ""
-echo "${INTRO_TEXT}"joined to $lastverify"${END}"
+echo "${INTRO_TEXT}joined to $lastverify${END}"
 echo ""
 notify-send ADconnection "Joined $lastverify "
 fi
@@ -270,12 +271,12 @@ sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+read -p "Is your current administrator = $admins ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
 read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
@@ -343,7 +344,7 @@ fi
 else
 echo "No lightdm to configure"
 fi
-coms=$( echo $DOMAIN | cut -d '.' -f2 )
+coms=$( echo "$DOMAIN" | cut -d '.' -f2 )
 clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
@@ -377,14 +378,14 @@ echo  "Checking sssd config.. OK"
 else
 echo "Checking sssd config.. FAIL"
 fi
-therealm=$(realm discover $DOMAIN | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
-if [ "$therealm" = no ]
+therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
+if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. FAIL"
 else
 echo "Realm configured?.. OK"
 fi
-if [ $states = 12 ]
+if [ "$states" = "12" ]
 then
 echo "Sudoers not configured... skipping"
 else
@@ -402,18 +403,18 @@ else
 echo "Checking sudoers user groups.. FAIL"
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
 else
 echo "Checking PAM configuration.. FAIL"
 fi
-if [ $states1 = 12 ]
+if [ "$states1" = "12" ]
 then 
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$(grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
-if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
 else
@@ -421,15 +422,15 @@ echo "Checking PAM auth configuration.. FAIL"
 fi
 fi
 #realm discover $DOMAIN
-if [ "$therealm" = no ]
+if [ "$therealm" = "no" ]
 then
 echo "Join has Failed"
 else
-lastverify=$( realm discover $DOMAIN | grep -m 1 $DOMAIN )
+lastverify=$( realm discover "$DOMAIN" | grep -m 1 "$DOMAIN" )
 echo ""
 echo "joined to $lastverify"
 echo ""
-notify-send ADconnection "Joined $lastverify "
+notify-send ADconnection "Joined $lastverify"
 fi
 echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
 exit
@@ -490,12 +491,12 @@ fi
 else
 if [ "$rasp" = "Raspbian" ] < /dev/null > /dev/null 2>&1
 then
-echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+echo "${INTRO_TEXT}Detecting Raspberry Pi${END}"
 raspberry
 else
 if [ "$kalilinux" = "Kali" ] < /dev/null > /dev/null 2>&1
 then
-echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+echo "${INTRO_TEXT}Detecting Kali linux${END}"
  kalijoin
 else
 if [ "$MintOS" = Mint ]
@@ -519,7 +520,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f -y
@@ -528,16 +529,16 @@ sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then
 clear
-sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 2 "$DOMAIN"  >/dev/null
 if [ $? = 0 ]
 then
 clear
@@ -556,7 +557,7 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
@@ -565,48 +566,48 @@ echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 clear
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
+sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 else
    if [ "$var" -eq "16" ]
    then
-   echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+   echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
    clear
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-   sudo realm join --verbose --user=$ADMIN $DOMAIN
+   sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
        then
-       echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+       echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
           sleep 1
    clear
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-       sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
+       sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
        else
        clear
-      sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
+      sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
      exit
      fi
   fi
 fi
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
     exit
 fi
 fi_auth
@@ -617,7 +618,7 @@ ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user
@@ -627,22 +628,22 @@ sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then
 clear
-sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection and dpkg and try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection and dpkg and try again.${END}"
 exit
 fi
 sleep 1
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
-ping -c 1 $DOMAIN
+ping -c 1 "$DOMAIN"
 if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -654,13 +655,13 @@ echo "${NUMBER}I searched for an available domain and found nothing, please type
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-echo "${INTRO_TEXT}"Please type DomainAdmin user:"${END}"
+echo "${INTRO_TEXT}Please type DomainAdmin user:${END}"
 read -r DomainADMIN
-sudo realm join -v -U $DomainADMIN $DOMAIN --install=/
+sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
     exit 1
 fi
 echo "${NUMBER}Please type groupname in AD for admins${END}"
@@ -676,7 +677,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -p "${RED_TEXT}"'Do you wish to enable SSH login.group.allowed'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -689,12 +690,12 @@ sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = "$admins" ? (y/n)?" yn
+read -p "Is your current administrator = $admins ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
 read -p MYADMIN
-sudo echo $MYADMIN | sudo tee -a /etc/ssh/login.group.allowed;;
+sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$Mysrvgroup" | sudo tee -a /etc/ssh/login.group.allowed
@@ -710,7 +711,7 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p "${RED_TEXT}"'Do you wish to give users on this machine sudo rights?'"${END}""${NUMBER}"'(y/n)?'"${END}" yn
+read -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -737,38 +738,38 @@ sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/light
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ $therealm = no ]
+if [ "$therealm" = "no" ]
 then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+echo Realm configured?.. "${RED_TEXT}FAIL${END}"
 else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+echo Realm configured?.. "${INTRO_TEXT}OK${END}"
 fi
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
+echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
 else
-echo checking sudoers file..  "${RED_TEXT}"FAIL not configured"${END}"
+echo checking sudoers file..  "${RED_TEXT}FAIL not configured${END}"
 fi
-grouPs=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
-echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking sudoers users.. ${INTRO_TEXT}OK${END}"
 else
-echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+echo "Checking sudoers users.. ${RED_TEXT}FAIL${END}"
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking PAM configuration.. ${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
 cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+echo "Checking PAM auth configuration..${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"SSH security not configured"${END}"
+echo "Checking PAM auth configuration..${RED_TEXT}SSH security not configured${END}"
 fi
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
@@ -786,8 +787,8 @@ entry_cache_timeout = 600
 #cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
-realm discover $DOMAIN
-echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
+realm discover "$DOMAIN"
+echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${END}"
 exit
 }
 
@@ -798,7 +799,7 @@ myhost=$( hostname )
 export whoami
 whoamis=$( whoami )
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
@@ -814,22 +815,22 @@ sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then
 clear
-sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 fi
 echo "hostname is $myhost"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 2 "$DOMAIN"  >/dev/null
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found $DOMAIN  ${END}"
+echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -837,20 +838,20 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
 clear
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
+sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
     exit
 fi
 fi_auth
@@ -868,12 +869,12 @@ else
 apt get install sudo -y
 export whoami
 whoamis=$( whoami )
-echo $whoamis
+echo "$whoamis"
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
-sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install realmd adcli sssd -y
@@ -888,23 +889,23 @@ sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then
 clear
-sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 fi
 echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 2 "$DOMAIN"  >/dev/null
 if [ $? = 0 ]
 then
 clear
-echo "${NUMBER}I searched for an available domain and found $DOMAIN  ${END}"
+echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
 read -p "Do you wish to use it (y/n)?" yn
    case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}";;
+    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN;;
@@ -912,20 +913,20 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
 clear
-sudo echo "${INTRO_TEXT}"Realm= $DOMAIN"${INTRO_TEXT}"
+sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-sudo realm join --verbose --user=$ADMIN $DOMAIN --install=/
+sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
     exit
 fi
 fi_auth
@@ -941,7 +942,7 @@ echo "Looking for domains..."
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 if [ -n "$DOMAIN" ]
 then
-ping -c 1 $DOMAIN
+ping -c 1 "$DOMAIN"
 if [ $? = 0 ]
 then
 clear
@@ -977,7 +978,7 @@ read -r ADMIN
 fi	
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
+sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
 	echo "AD join failed.please check that computer object is already created and test again"
     exit 1
@@ -999,7 +1000,7 @@ DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
 echo ""
 echo "please type Domain admin"
 read -r ADMIN
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
+sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
 	echo "AD join failed.please check that computer object is already created and test again"
     exit 1
@@ -1033,7 +1034,7 @@ export HOSTNAME
 myhost=$( hostname )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
-ping -c 1 $DOMAIN
+ping -c 1 "$DOMAIN"
 if [ $? = 0 ]
 then
 clear
@@ -1059,7 +1060,7 @@ sudo echo "Please enter AD admin user:"
 read -r ADMIN
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
-sudo realm join -v -U $ADMIN $DOMAIN --install=/
+sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 if [ $? -ne 0 ]; then
 	echo "AD join failed.please check that computer object is already created and test again"
     exit 1
@@ -1077,7 +1078,7 @@ sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 2 "$DOMAIN"  >/dev/null
 if [ "$?" = "0" ]
 then
 clear
@@ -1097,14 +1098,14 @@ echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
 clear
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
-   sudo realm join --verbose --user=$ADMIN $DOMAIN
+   sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
     exit
 fi
 allowguest=$( sudo grep manual /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep true | cut -d '=' -f2 | head -1 )
@@ -1156,50 +1157,50 @@ else
 echo ""
 fi
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ $therealm = no ]
+if [ "$therealm" = "no" ]
 then
-echo Realm configured?.. "${RED_TEXT}"FAIL"${END}"
+echo Realm configured?.. "${RED_TEXT}FAIL${END}"
 else
-echo Realm configured?.. "${INTRO_TEXT}"OK"${END}"
+echo Realm configured?.. "${INTRO_TEXT}OK${END}"
 fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs=$(grep -i $myhost /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
+echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+     if [ "$grouPs" = "$myhost""sudoers" ]
          then
-         echo Checking sudoers users.. "${INTRO_TEXT}"OK"${END}"
+         echo Checking sudoers users.. "${INTRO_TEXT}OK${END}"
          else
-         echo Checking sudoers users.. "${RED_TEXT}"FAIL"${END}"
+         echo Checking sudoers users.. "${RED_TEXT}FAIL${END}"
          fi
 else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
-echo Checking sudoers file..  "${INTRO_TEXT}"OK"${END}"
-grouPs1=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
+echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
+grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
      if [ "$grouPs1" = "$myhost""sudoers" ]
          then
-         echo Checking sudoers user groups.. "${INTRO_TEXT}"OK"${END}"
+         echo Checking sudoers user groups.. "${INTRO_TEXT}OK${END}"
          else
-         echo Checking sudoers user groups.. "${RED_TEXT}"FAIL"${END}"
+         echo Checking sudoers user groups.. "${RED_TEXT}FAIL${END}"
          fi
 else
-echo Checking sudoers file.. "${RED_TEXT}"FAIL not configured"${END}"
+echo Checking sudoers file.. "${RED_TEXT}FAIL not configured${END}"
 fi
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM configuration.. "${INTRO_TEXT}"OK"${END}"
+echo Checking PAM configuration.. "${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM configuration.. "${RED_TEXT}"FAIL"${END}"
+echo Checking PAM configuration.. "${RED_TEXT}FAIL${END}"
 fi
 cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
-echo Checking PAM auth configuration.. "${INTRO_TEXT}"OK"${END}"
+echo Checking PAM auth configuration.. "${INTRO_TEXT}OK${END}"
 else
-echo Checking PAM auth configuration.. "${RED_TEXT}"SSH security not configured"${END}"
+echo Checking PAM auth configuration.. "${RED_TEXT}SSH security not configured${END}"
 fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
@@ -1221,7 +1222,7 @@ else
 echo ""
 fi
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ $therealm = no ]
+if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. FAIL"
 else
@@ -1230,8 +1231,8 @@ fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file.. OK"
-grouPs=$(grep -i $myhost /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
+     if [ "$grouPs" = "$myhost""sudoers" ]
          then
          echo "Checking sudoers users.. OK"
          else
@@ -1241,8 +1242,8 @@ else
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file..  OK"
-grouPs1=$(grep -i $myhost /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ $grouPs1 = "$myhost""sudoers" ]
+grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
+     if [ "$grouPs1" = "$myhost""sudoers" ]
          then
          echo "Checking sudoers user groups.. OK"
          else
@@ -1253,14 +1254,14 @@ echo "Checking sudoers file.. FAIL not configured"
 fi
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ $homedir = 0022 ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
 else
 echo "Checking PAM configuration.. FAIL"
 fi
 cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ $cauth = allow ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
 else
@@ -1285,17 +1286,17 @@ sleep 3
 if [ "$ldaptools" = dap-uti ]
 then 
 echo "ldap tool installed.. trying to find this host"
-sudo ldapsearch cn=$myhost'*'
+sudo ldapsearch cn="$myhost'*'"
 echo "Please type what you are looking for"
 read own
-sudo ldapsearch | grep -i $own
+sudo ldapsearch | grep -i "$own"
 exit
 else
 sudo apt-get install ldap-utils -y
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
 sudo nano /etc/ldap/ldap.conf
-sudo ldapsearch | grep -i $myhost
+sudo ldapsearch | grep -i "$myhost"
 exit
 fi
 }
@@ -1304,7 +1305,7 @@ fi
 Reauthenticate(){
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
-homes=$( find /home/$homeshome -maxdepth 1 -mindepth 1 | head -1  )
+homes=$( find /home/"$homeshome" -maxdepth 1 -mindepth 1 | head -1 | cut -d '/' -f4  )
 if [ "$homes" = "$whoelse" ]
 then
 echo ""
@@ -1316,7 +1317,7 @@ else
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 SSSD=$( sudo grep domain /etc/sssd/sssd.conf | awk '{print $3}' | head -1 )
-DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
+DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' )
 if [ "$DOMAINlower" = "$SSSD" ]
 then
 echo "Detecting realm $SSSD"
@@ -1332,8 +1333,8 @@ else
 read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
-    sudo realm discover $DOMAIN
-    sudo realm leave $DOMAIN
+    sudo realm discover "$DOMAIN"
+    sudo realm leave "$DOMAIN"
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
@@ -1345,7 +1346,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     else
     echo "something went wrong, try to leave manually"
     	read -r DOMAIN
-	sudo realm leave $DOMAIN
+	sudo realm leave "$DOMAIN"
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
@@ -1373,7 +1374,7 @@ leaves(){
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
-DOMAINlower=$( echo $DOMAIN | tr '[:upper:]' '[:lower:]' )
+DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' )
 if [ "$DOMAINlower" = "$SSSD" ] < /dev/null > /dev/null 2>&1
 then
 echo "Detecting realm $SSSD"
@@ -1389,8 +1390,8 @@ else
 read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
-    sudo realm discover $DOMAIN
-    sudo realm leave $DOMAIN
+    sudo realm discover "$DOMAIN"
+    sudo realm leave "$DOMAIN"
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
@@ -1403,7 +1404,7 @@ read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     echo ""
     echo "Please type domain you wish to leave"
     	read -r DOMAIN
-	sudo realm leave $DOMAIN
+	sudo realm leave "$DOMAIN"
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
@@ -1435,25 +1436,25 @@ echo "                          [-s (Discover domain)]"
 echo "                          [-o (assign OU for computer object (-o OU=Clients,OU=Computers))"
 echo ""
 echo""
-echo "${INTRO_TEXT}           Active directory connection tool                     ${INTRO_TEXT}"
-echo "${INTRO_TEXT}                          Examples                                      ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     Domain to join:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain.intra${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     Domain’s NetBios name:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}mydomain${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     Domain username:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}ADadmin${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     AD Group to put users in:"${RED_TEXT}Example:${RED_TEXT}"" ${NUMBER}Sudoers.global${NUMBER}"${INTRO_TEXT}"
-echo "${RED_TEXT}       group should be created in AD with the groupname beeing the HOSTNAMEsudores             ${RED_TEXT}"
-echo "${INTRO_TEXT}                                                            ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     Script will use hostname and add sudoer to it to sudoers "${RED_TEXT}Example:${RED_TEXT}""${NUMBER} myhostsudoer${NUMBER}"${INTRO_TEXT}"
-echo "${INTRO_TEXT}     It is important that the computerobject "${RED_TEXT}Ex:${RED_TEXT}" myhost gets created in AD pre or post running the script ( the join will create an computer object by it self ${INTRO_TEXT}"
-echo "${INTRO_TEXT}     and that the group "${RED_TEXT}Ex:${RED_TEXT}" myhostsudoes exists, sudoers must be added or edit this script to remove sudoers from name${INTRO_TEXT}"
-echo "${INTRO_TEXT}     Script will also add domain admin group to sudoes                     ${INTRO_TEXT}"
-echo "${NUMBER}     Remember to Check Hostname and add it to AD${NUMBER}"
-echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${INTRO_TEXT}"
-echo "${INTRO_TEXT}                                                                                                ${INTRO_TEXT}"
-echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${INTRO_TEXT}"
+echo "${INTRO_TEXT}           Active directory connection tool                     ${END}"
+echo "${INTRO_TEXT}                          Examples                                      ${END}"
+echo "${INTRO_TEXT}     Domain to join:${RED_TEXT}Example:${RED_TEXT}${NUMBER}mydomain.intra${NUMBER}${END}"
+echo "${INTRO_TEXT}                                                            ${END}"
+echo "${INTRO_TEXT}     Domain’s NetBios name:${RED_TEXT}Example:${RED_TEXT}${NUMBER}mydomain${NUMBER}${END}"
+echo "${INTRO_TEXT}                                                            ${END}"
+echo "${INTRO_TEXT}     Domain username:${RED_TEXT}Example:${RED_TEXT}${NUMBER}ADadmin${NUMBER}${END}"
+echo "${INTRO_TEXT}                                                            ${END}"
+echo "${INTRO_TEXT}     AD Group to put users in:${RED_TEXT}Example:${RED_TEXT}${NUMBER}Sudoers.global${NUMBER}${END}"
+echo "${RED_TEXT}       group should be created in AD with the groupname beeing the HOSTNAMEsudores             ${END}"
+echo "${INTRO_TEXT}                                                            ${END}"
+echo "${INTRO_TEXT}     Script will use hostname and add sudoer to it to sudoers ${RED_TEXT}Example:${RED_TEXT}${NUMBER} myhostsudoer${NUMBER}${END}"
+echo "${INTRO_TEXT}     It is important that the computerobject ${RED_TEXT}Ex:${RED_TEXT} myhost gets created in AD pre or post running the script ( the join will create an computer object by it self ${END}"
+echo "${INTRO_TEXT}     and that the group ${RED_TEXT}Ex:${RED_TEXT} myhostsudoes exists, sudoers must be added or edit this script to remove sudoers from name${END}"
+echo "${INTRO_TEXT}     Script will also add domain admin group to sudoes                     ${END}"
+echo "${NUMBER}     Remember to Check Hostname and add it to AD${END}"
+echo "${INTRO_TEXT}     Reauthenticate is a fix for Ubuntu 14 likewise issues when client looses user (who am I?)${END}"
+echo "${INTRO_TEXT}                                                                                                ${END}"
+echo "${INTRO_TEXT}  Ubuntu 16 and 14 has the setting not to show domain name in name or homefolder due it can give${END}"
 echo "${INTRO_TEXT}  coding issues when building.. to change this configure /et/sssd/sssd.conf                     ${END}"
 echo ""
 exit
@@ -1462,22 +1463,22 @@ exit
 ########################################### Menu #######################################
 MENU_FN(){
 clear
-    echo "${INTRO_TEXT}   Active directory connection tool             ${INTRO_TEXT}"
-    echo "${INTRO_TEXT}       Created by Pierre Goude                  ${INTRO_TEXT}"
-	echo "${INTRO_TEXT} This script will edit several critical files.. ${INTRO_TEXT}"
-	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${INTRO_TEXT}"
-    echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora/Debian)    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${NORMAL}"
-    echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${NORMAL}"
-	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${NORMAL}"
-	echo "${MENU}*${NUMBER} 5)${MENU} Leave Domain             ${NORMAL}"
-    echo "${NORMAL}                                                    ${NORMAL}"
-    echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}enter to exit. ${NORMAL}"
+    echo "${INTRO_TEXT}   Active directory connection tool             ${END}"
+    echo "${INTRO_TEXT}       Created by Pierre Goude                  ${END}"
+	echo "${INTRO_TEXT} This script will edit several critical files.. ${END}"
+	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${END}"
+    echo "${NORMAL}                                                    ${END}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora/Debian)    ${END}"
+    echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${END}"
+    echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${END}"
+	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${END}"
+	echo "${MENU}*${NUMBER} 5)${MENU} Leave Domain             ${END}"
+    echo "${NORMAL}                                                    ${END}"
+    echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}ctrl + c to exit. ${END}"
 	read opt
 while [ opt != '' ]
     do
-    if [ $opt = "" ]; then
+    if [ "$opt" = "" ]; then
             exit;
     else
         case $opt in
@@ -1533,7 +1534,7 @@ clear
 	read opt
 while [ opt != '' ]
     do
-    if [ $opt = "" ]; then
+    if [ "$opt" = "" ]; then
             exit;
     else
         case $opt in
@@ -1621,7 +1622,7 @@ while test $# -gt 0; do
                         ;;
                 -j)
                         if test $# -gt 0; then
-			sudo realm join -v -U $2 $3 --install=/
+			sudo realm join -v -U "$2" "$3" --install=/
 			exit
                         else
                         echo ""
@@ -1657,12 +1658,12 @@ if [ "$desktop" = "desktop" ]
 then
 if [ "$rasp" = "Raspbian" ]
 then
-echo "${INTRO_TEXT}"Detecting Raspberry Pi"${END}"
+echo "${INTRO_TEXT}Detecting Raspberry Pi${END}"
 raspberry
 else
 if [ "$kalilinux" = "Kali" ]
 then
-echo "${INTRO_TEXT}"Detecting Kali linux"${END}"
+echo "${INTRO_TEXT}Detecting Kali linux${END}"
 kalijoin
 else
 echo ""
@@ -1675,7 +1676,7 @@ fi
 export HOSTNAME
 myhost=$( hostname )
 clear
-sudo echo "${RED_TEXT}"Installing pakages 'do' no abort!......."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get install -f -y
@@ -1684,16 +1685,16 @@ sudo dpkg -l | grep realmd
 if [ $? = 0 ]
 then
 clear
-sudo echo "${INTRO_TEXT}"Pakages installed"${END}"
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 else
 clear
-sudo echo "${RED_TEXT}"Installing pakages failed.. please check connection ,dpkg and apt-get update 'then' try again."${INTRO_TEXT}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 $DOMAIN  >/dev/null
+ping -c 2 "$DOMAIN"  >/dev/null
 if [ $? = 0 ]
 then
 clear
@@ -1708,11 +1709,11 @@ read -p "Do you wish to use it (y/n)?" yn
    esac
 else
 clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 fi
-NetBios=$(echo $DOMAIN | cut -d '.' -f1)
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
@@ -1721,48 +1722,48 @@ echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 sudo apt-get install -f -y
 clear
-echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN --install=/
+realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
 else
    if [ "$var" -eq "16" ]
    then
-   echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+   echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
    clear
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-   realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN
+   realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN"
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
        then
-       echo "${INTRO_TEXT}"Detecting Ubuntu $var"${END}"
+       echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
           sleep 1
    clear
-sudo echo "${INTRO_TEXT}"Realm=$DOMAIN"${INTRO_TEXT}"
-echo "${INTRO_TEXT}"Joining Ubuntu $var"${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-echo "${INTRO_TEXT}"Please log in with domain admin to $DOMAIN to connect"${END}"
-echo "${INTRO_TEXT}"Please type Admin user:"${END}"
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read ADMIN
-       realm join -v --user="$ADMIN" --computer-ou="$2" $DOMAIN --install=/
+       realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
        else
        clear
-      sudo echo "${RED_TEXT}"I am having issuers to detect your Ubuntu version"${INTRO_TEXT}"
+      sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
      exit
      fi
   fi
 fi
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}"AD join failed.please check that computer object is already created and test again "${END}"
+	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
     exit
 fi
 fi_auth
