@@ -71,7 +71,7 @@ read -p MYADMIN
 sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
-sudo echo "$NetBios"'\'"$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios"'\'"$""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios"'\'"domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
@@ -517,7 +517,7 @@ fi
 ################################ Ubuntu 14-18 ###########################################
 UbuntU(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
@@ -615,7 +615,7 @@ fi_auth
 ####################### Setup for Ubuntu server ubuntu 14 #######################################
 ubuntuserver14(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
@@ -794,7 +794,7 @@ exit
 ####################################### Kali ############################################
 kalijoin(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 export whoami
 whoamis=$( whoami )
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
@@ -859,7 +859,7 @@ fi_auth
 ####################################### Debian ##########################################
 debianclient(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 dkpg -l | grep sudo
 if [ $? = 0 ]
 then
@@ -934,7 +934,7 @@ fi_auth
 ####################################### Cent OS #########################################
 CentOS(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
 yum -y install ipa-client
 echo "Looking for domains..."
@@ -989,7 +989,7 @@ exit
 ############################### Raspberry Pi ###################################
 raspberry(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 sudo aptitude install ntp adcli sssd
 sudo mkdir -p /var/lib/samba/private
 sudo aptitude install libsss-sudo
@@ -1030,7 +1030,7 @@ exit
 ############################### Fedora #########################################
 Fedora_fn(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 ping -c 1 "$DOMAIN"
@@ -1071,7 +1071,7 @@ exit
 ############################# Linux Mint #####################################
 LinuxMint(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
@@ -1131,7 +1131,7 @@ exit
 #If you are still using likewise please uncomment lines below and line 33
 #Realmdupdate11(){
 #export HOSTNAME
-#myhost=$( hostname )
+#myhost=$( hostname | cut -d '.' -f1 )
 #echo "This will delete your homefolder and replace it. Please do a BACKUP"
 #echo "Press ctrl C to cancel skript if you wish to make an backup first"
 #sleep 5
@@ -1147,7 +1147,7 @@ exit
 failcheck(){
 clear
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 if [ $? = 1 ]
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1212,7 +1212,7 @@ exit
 failcheck_yum(){
 clear
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 if [ $? = 1 ]
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1277,7 +1277,7 @@ exit
 #################################### ldapsearch #####################################################
 ldaplook(){
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 ldaptools=$( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
 echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server to use this funktion${END}"
 echo "${NUMBER}Remember!please edit in ldap.conf the lines BASE and URI in /etc/ldap/ldap.conf ${END}"
@@ -1673,7 +1673,7 @@ echo "this seems to be a server, swithching to server mode"
 ubuntuserver14
 fi
 export HOSTNAME
-myhost=$( hostname )
+myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
