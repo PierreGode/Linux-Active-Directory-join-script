@@ -6,7 +6,7 @@
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
 #       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
-#Meaby someday I re-do the script and make it "good code"  but overall it has NO shellcheck issues 2019-03-14                                                                   #
+#Meaby someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues                                                                      #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
@@ -50,7 +50,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -63,16 +63,16 @@ sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = '$admins' ? (y/n)?" yn
+read -r -p "Is your current administrator = '$admins' ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
+read -r -p MYADMIN
 sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
@@ -83,7 +83,7 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -92,7 +92,7 @@ echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-read -p "${RED_TEXT}Do you wish to DISABLE password promt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to DISABLE password promt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -257,7 +257,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -p 'Do you wish to enable SSH login.group.allowed (y/n)?' yn
+read -r -p 'Do you wish to enable SSH login.group.allowed (y/n)?' yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -270,11 +270,11 @@ sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = $admins ? (y/n)?" yn
+read -r -p "Is your current administrator = $admins ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
+read -r -p MYADMIN
 sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
@@ -290,7 +290,7 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p 'Do you wish to give users on this machine sudo rights?(y/n)?' yn
+read -r -p 'Do you wish to give users on this machine sudo rights?(y/n)?' yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -299,7 +299,7 @@ echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-read -p 'Do you wish to DISABLE password promt for users in terminal? (y/n)?' yn
+read -r -p 'Do you wish to DISABLE password promt for users in terminal? (y/n)?' yn
    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -542,7 +542,7 @@ if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "";;
 
@@ -571,7 +571,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
 sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 else
    if [ "$var" -eq "16" ]
@@ -583,7 +583,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
    sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
@@ -596,7 +596,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
        sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
        else
        clear
@@ -640,7 +640,7 @@ if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
@@ -676,7 +676,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -689,17 +689,17 @@ sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo ""
 echo ""
-read -p "Is your current administrator = $admins ? (y/n)?" yn
+read -r -p "Is your current administrator = $admins ? (y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
     [Nn]* ) echo "please type name of current administrator"
-read -p MYADMIN
+read -r -p MYADMIN
 sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
     * ) echo "Please answer yes or no.";;
    esac
 sudo echo "$Mysrvgroup" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
 sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
 echo "enabled SSH-allow"
 fi;;
@@ -710,7 +710,7 @@ fi;;
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Cheking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -827,7 +827,7 @@ if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
@@ -844,7 +844,7 @@ fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -902,7 +902,7 @@ if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
 
@@ -919,7 +919,7 @@ fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -946,7 +946,7 @@ if [ $? = 0 ]
 then
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect"
     sudo echo "Please enter AD admin user:"
@@ -1038,7 +1038,7 @@ if [ $? = 0 ]
 then
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Please log in with domain admin to $DOMAIN to connect";;
 
@@ -1082,7 +1082,7 @@ if [ "$?" = "0" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "";;
 
@@ -1099,7 +1099,7 @@ fi
 clear
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
    sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
@@ -1287,7 +1287,7 @@ then
 echo "ldap tool installed.. trying to find this host"
 sudo ldapsearch cn="$myhost'*'"
 echo "Please type what you are looking for"
-read own
+read -r own
 sudo ldapsearch | grep -i "$own"
 exit
 else
@@ -1329,7 +1329,7 @@ else
     exit
     fi
     fi
-read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
+read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover "$DOMAIN"
@@ -1386,7 +1386,7 @@ else
     exit
     fi
     fi
-read -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
+read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover "$DOMAIN"
@@ -1434,7 +1434,7 @@ echo "                          [-l (script output to log file)]"
 echo "                          [-s (Discover domain)]"
 echo "                          [-o (assign OU for computer object (-o OU=Clients,OU=Computers))"
 echo ""
-echo""
+echo ""
 echo "${INTRO_TEXT}           Active directory connection tool                     ${END}"
 echo "${INTRO_TEXT}                          Examples                                      ${END}"
 echo "${INTRO_TEXT}     Domain to join:${RED_TEXT}Example:${RED_TEXT}${NUMBER}mydomain.intra${NUMBER}${END}"
@@ -1474,7 +1474,7 @@ clear
 	echo "${MENU}*${NUMBER} 5)${MENU} Leave Domain             ${END}"
     echo "${NORMAL}                                                    ${END}"
     echo "${ENTER_LINE}Please enter a menu option and enter or ${RED_TEXT}ctrl + c to exit. ${END}"
-	read opt
+	read -r opt
 while [ "$opt" != '' ]
     do
     if [ "$opt" = "" ]; then
@@ -1530,7 +1530,7 @@ clear
 	echo "5) Leave Domain"
     echo ""
     echo "Please enter a menu option and enter or enter to exit."
-	read opt
+	read -r opt
 while [ "$opt" != '' ]
     do
     if [ "$opt" = "" ]; then
@@ -1698,7 +1698,7 @@ if [ $? = 0 ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -p "Do you wish to use it (y/n)?" yn
+read -r -p "Do you wish to use it (y/n)?" yn
    case $yn in
     [Yy]* ) echo "";;
 
@@ -1727,7 +1727,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
 realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
 else
    if [ "$var" -eq "16" ]
@@ -1739,7 +1739,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
    realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN"
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
@@ -1752,7 +1752,7 @@ echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
-read ADMIN
+read -r ADMIN
        realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
        else
        clear
