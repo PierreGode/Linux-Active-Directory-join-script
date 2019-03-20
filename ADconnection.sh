@@ -101,7 +101,7 @@ sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/
 #sudo realm permit --groups "$myhost""sudoers"
 ;;
 
- [Nn]* ) 
+ [Nn]* )
 sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
@@ -213,7 +213,7 @@ else
 echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
 if [ $states1 = 12 ]
-then 
+then
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
@@ -409,7 +409,7 @@ else
 echo "Checking PAM configuration.. FAIL"
 fi
 if [ "$states1" = "12" ]
-then 
+then
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$(grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
@@ -974,7 +974,7 @@ echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 echo "I Please enter AD admin user "
 read -r ADMIN
-fi	
+fi
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
 sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
@@ -1283,7 +1283,7 @@ echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server
 echo "${NUMBER}Remember!please edit in ldap.conf the lines BASE and URI in /etc/ldap/ldap.conf ${END}"
 sleep 3
 if [ "$ldaptools" = dap-uti ]
-then 
+then
 echo "ldap tool installed.. trying to find this host"
 sudo ldapsearch cn="$myhost'*'"
 echo "Please type what you are looking for"
@@ -1421,7 +1421,7 @@ read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
-exit	
+exit
 }
 
 ########################################### info #######################################
@@ -1569,7 +1569,7 @@ while [ "$opt" != '' ]
 fi
 done
 }
-################# Precheck for YUM based OS ################# 
+################# Precheck for YUM based OS #################
 PRECHECK_FN(){
 ## Precheck sends yum based OS to an own menu ##
 TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
@@ -1631,7 +1631,7 @@ while test $# -gt 0; do
                 -s)
                         if test $# -gt 0; then
 			realm < /dev/null > /dev/null 2>&1
-			if [ "$?" = "0" ] 
+			if [ "$?" = "0" ]
 			then
 			sudo realm discover
 		        exit
