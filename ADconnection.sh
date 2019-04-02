@@ -612,10 +612,6 @@ read -r ADMIN
      fi
   fi
 fi
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
-    exit
-fi
 fi_auth
 }
 
@@ -1174,7 +1170,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
 grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ "$grouPs"1 = "$myhost""sudoers" ]
+     if [ "$grouPs1" = "$myhost""sudoers" ]
          then
          echo Checking sudoers user groups.. "${INTRO_TEXT}OK${END}"
          else
@@ -1185,7 +1181,7 @@ echo Checking sudoers file.. "${RED_TEXT}FAIL not configured${END}"
 fi
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
-if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
+if [ "$homedir" -eq "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}OK${END}"
 else
@@ -1239,7 +1235,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file..  OK"
 grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ "$grouPs"1 = "$myhost""sudoers" ]
+     if [ "$grouPs1" = "$myhost""sudoers" ]
          then
          echo "Checking sudoers user groups.. OK"
          else
@@ -1631,18 +1627,17 @@ while test $# -gt 0; do
                         ;;
                 -s)
                         if test $# -gt 0; then
-			realm < /dev/null > /dev/null 2>&1
-			if [ "$?" = "0" ]
+			if ! realm < /dev/null > /dev/null 2>&1
 			then
-			sudo realm discover
-		        exit
-			else
 			clear
 			echo ""
 			echo "realmd is not installed"
 			echo ""
 			exit
-                        fi
+			else
+            sudo realm discover
+		    exit
+            fi
 			else
                         echo ""
                         exit 1
@@ -1771,10 +1766,6 @@ read -r ADMIN
      exit
      fi
   fi
-fi
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe ${END}"
-    exit
 fi
 fi_auth
                         else
