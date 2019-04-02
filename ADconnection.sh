@@ -1278,10 +1278,18 @@ sleep 3
 if [ "$ldaptools" = dap-uti ]
 then
 echo "ldap tool installed.. trying to find this host"
-sudo ldapsearch cn="$myhost'*'"
+if ! sudo ldapsearch cn="$myhost'*'"
+then
+echo "Something went wrong. please check your configuration"
+exit
+fi
 echo "Please type what you are looking for"
 read -r own
-sudo ldapsearch | grep -i "$own"
+if ! sudo ldapsearch | grep -i "$own"
+then
+echo "Something went wrong. please check your configuration"
+exit
+fi
 exit
 else
 sudo apt-get install ldap-utils -y
