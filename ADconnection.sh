@@ -1288,7 +1288,11 @@ sudo apt-get install ldap-utils -y
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
 sudo nano /etc/ldap/ldap.conf
-sudo ldapsearch | grep -i "$myhost"
+if ! sudo ldapsearch | grep -i "$myhost"
+then
+echo "Something went wrong. please check your configuration"
+exit
+fi
 exit
 fi
 }
