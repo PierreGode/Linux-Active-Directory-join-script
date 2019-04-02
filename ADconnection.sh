@@ -1278,6 +1278,7 @@ echo "${NUMBER}your BASE will be the area you will search in${END}"
 sleep 3
 if [ "$ldaptools" = dap-uti ]
 then
+clear
 echo "ldap tool installed.. trying to find this host"
 sudo ldapsearch -x cn="$myhost'*'"
 echo "Please type what you are looking for"
@@ -1285,6 +1286,7 @@ read -r own
 sudo ldapsearch -x | grep -i "$own"
 exit
 else
+clear
 sudo apt-get install ldap-utils -y
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
