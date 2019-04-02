@@ -199,7 +199,7 @@ else
 echo "Checking sudoers file..  ${RED_TEXT}FAIL${END}"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. ${INTRO_TEXT}OK${END}"
 else
@@ -393,7 +393,7 @@ else
 echo "Checking sudoers file.. FAIL"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. OK"
 else
@@ -755,7 +755,7 @@ else
 echo checking sudoers file..  "${RED_TEXT}FAIL not configured${END}"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers users.. ${INTRO_TEXT}OK${END}"
 else
@@ -1163,7 +1163,7 @@ if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
+     if [ "$grouPs" = "$myhost""sudoers" ]
          then
          echo Checking sudoers users.. "${INTRO_TEXT}OK${END}"
          else
@@ -1174,7 +1174,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
 grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ $grouPs1 = "$myhost""sudoers" ]
+     if [ "$grouPs"1 = "$myhost""sudoers" ]
          then
          echo Checking sudoers user groups.. "${INTRO_TEXT}OK${END}"
          else
@@ -1228,7 +1228,7 @@ if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file.. OK"
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
+     if [ "$grouPs" = "$myhost""sudoers" ]
          then
          echo "Checking sudoers users.. OK"
          else
@@ -1239,7 +1239,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file..  OK"
 grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ $grouPs1 = "$myhost""sudoers" ]
+     if [ "$grouPs"1 = "$myhost""sudoers" ]
          then
          echo "Checking sudoers user groups.. OK"
          else
