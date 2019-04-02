@@ -1280,7 +1280,7 @@ if [ "$ldaptools" = dap-uti ]
 then
 clear
 echo "ldap tool installed.. trying to find this host"
-sudo ldapsearch -x cn="$myhost'*'"
+sudo ldapsearch -x cn="$myhost"
 echo "Please type what you are looking for"
 read -r own
 sudo ldapsearch -x | grep -i "$own"
