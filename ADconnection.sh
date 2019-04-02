@@ -1144,6 +1144,7 @@ exit
 failcheck(){
 clear
 export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 if ! hostname | cut -d '.' -f1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1208,6 +1209,7 @@ exit
 failcheck_yum(){
 clear
 export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 if ! hostname | cut -d '.' -f1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
