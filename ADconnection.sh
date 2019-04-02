@@ -173,13 +173,13 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
+
 ################################# Check #######################################
-if [ $? = 0 ]
+if ! sudo service sssd restart
 then
-echo  "Checking sssd config.. OK"
+echo  "Checking sssd config.. FAIL"
 else
-echo "Checking sssd config.. FAIL"
+echo "Checking sssd config.. OK"
 fi
 therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = "no" ]
@@ -369,13 +369,11 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
+
 ####################### Check #########################
-if [ $? = 0 ]
+if ! sudo service sssd restart
 then
-echo  "Checking sssd config.. OK"
-else
-echo "Checking sssd config.. FAIL"
+echo "SSSD failed relading, please see journalctl -xe"
 fi
 therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = "no" ]
@@ -455,7 +453,6 @@ MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /de
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 
-
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
@@ -477,7 +474,6 @@ then
 echo "Ubuntu detected"
 echo ""
 echo "Checking if it is a Desktop or server"
-
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
 if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
 then
@@ -520,26 +516,30 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
-sudo apt-get -qq install realmd adcli sssd -y
-sudo apt-get -qq install ntp -y
-sudo apt-get -qq install -f -y
+if ! sudo apt-get -qq install realmd adcli sssd ntp -y && sudo apt-get -qq install -f -y
+then
+echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
+exit 1
+fi
 clear
-sudo dpkg -l | grep realmd
-if [ $? = 0 ]
+if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 else
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
-exit
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 "$DOMAIN"  >/dev/null
-if [ $? = 0 ]
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -550,11 +550,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
@@ -572,7 +567,11 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
+fi
 else
    if [ "$var" -eq "16" ]
    then
@@ -584,7 +583,11 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-   sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
        then
@@ -597,7 +600,11 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-       sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+       if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+       then
+       echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+       exit
+       fi
        else
        clear
       sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
@@ -606,7 +613,7 @@ read -r ADMIN
   fi
 fi
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
+	echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
     exit
 fi
 fi_auth
@@ -623,21 +630,24 @@ sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 clear
-sudo dpkg -l | grep realmd
-if [ $? = 0 ]
+if ! sudo dpkg -l | grep realmd
 then
-clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
-else
 clear
 sudo echo "${RED_TEXT}Installing pakages failed.. please check connection and dpkg and try again.${END}"
 exit
+else
+clear
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 fi
 sleep 1
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
-ping -c 1 "$DOMAIN"
-if [ $? = 0 ]
+if ! ping -c 1 "$DOMAIN"
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -648,20 +658,15 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}Please type DomainAdmin user:${END}"
 read -r DomainADMIN
-sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
-    exit 1
+if ! sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
 fi
 echo "${NUMBER}Please type groupname in AD for admins${END}"
 read -r Mysrvgroup
@@ -810,21 +815,24 @@ sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f -y
 clear
-sudo dpkg -l | grep realmd
-if [ $? = 0 ]
+if ! sudo dpkg -l | grep realmd
 then
-clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
-else
 clear
 sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
+else
+clear
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 fi
 echo "hostname is $myhost"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 "$DOMAIN"  >/dev/null
-if [ $? = 0 ]
+if ! ping -c 2 "$DOMAIN"  >/dev/null
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -835,11 +843,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
@@ -848,10 +851,10 @@ read -r ADMIN
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
-    exit
+if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
 fi
 fi_auth
 }
@@ -860,12 +863,11 @@ fi_auth
 debianclient(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-dkpg -l | grep sudo
-if [ $? = 0 ]
+if ! dkpg -l | grep sudo
 then
-""
-else
 apt get install sudo -y
+else
+echo ""
 export whoami
 whoamis=$( whoami )
 echo "$whoamis"
@@ -884,22 +886,25 @@ sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f
 clear
-sudo dpkg -l | grep realmd
-if [ $? = 0 ]
+if ! sudo dpkg -l | grep realmd
 then
-clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
-else
 clear
 sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
+else
+clear
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 fi
 echo "hostname is $myhost"
 sleep 1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 "$DOMAIN"  >/dev/null
-if [ $? = 0 ]
+if ! ping -c 2 "$DOMAIN"  >/dev/null
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -910,11 +915,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
@@ -923,10 +923,10 @@ read -r ADMIN
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again${END}"
-    exit
+if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
 fi
 fi_auth
 }
@@ -941,9 +941,15 @@ echo "Looking for domains..."
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 if [ -n "$DOMAIN" ]
 then
-ping -c 1 "$DOMAIN"
-if [ $? = 0 ]
+if ! ping -c 1 "$DOMAIN"
 then
+clear
+echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+echo "I Please enter AD admin user "
+read -r ADMIN
+else
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -959,13 +965,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-echo "I Please enter AD admin user "
-read -r ADMIN
 fi
 else
 clear
@@ -977,10 +976,10 @@ read -r ADMIN
 fi
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
-sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "AD join failed.please check that computer object is already created and test again"
-    exit 1
+if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+then
+echo "AD join failed.please check your errors with journalctl -xe"
+exit
 fi
 fi_auth_yum
 exit
@@ -999,10 +998,10 @@ DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
 echo ""
 echo "please type Domain admin"
 read -r ADMIN
-sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "AD join failed.please check that computer object is already created and test again"
-    exit 1
+if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+then
+echo "AD join failed.please check your errors with journalctl -xe"
+exit
 fi
 sudo systemctl start sssd
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
@@ -1033,9 +1032,15 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
-ping -c 1 "$DOMAIN"
-if [ $? = 0 ]
+if ! ping -c 1 "$DOMAIN"
 then
+clear
+echo "I searched for an available domain and found nothing, please type your domain manually below... "
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+echo "I Please enter AD admin user "
+read -r ADMIN
+else
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -1046,23 +1051,16 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "I searched for an available domain and found nothing, please type your domain manually below... "
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-echo "I Please enter AD admin user "
-read -r ADMIN
 fi
 clear
 sudo echo "Please enter AD admin user:"
 read -r ADMIN
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
-sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
-if [ $? -ne 0 ]; then
-	echo "AD join failed.please check that computer object is already created and test again"
-    exit 1
+if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+then
+echo "AD join failed.please check your errors with journalctl -xe"
+exit
 fi
 fi_auth_yum
 exit
@@ -1077,9 +1075,13 @@ sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 "$DOMAIN"  >/dev/null
-if [ "$?" = "0" ]
+if ! ping -c 2 "$DOMAIN"  >/dev/null
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -1090,11 +1092,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 clear
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
@@ -1102,10 +1099,10 @@ echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
-   sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
-if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
-    exit
+if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
 fi
 allowguest=$( sudo grep manual /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep true | cut -d '=' -f2 | head -1 )
 if [ "$allowguest" = "true" ]
@@ -1147,8 +1144,7 @@ exit
 failcheck(){
 clear
 export HOSTNAME
-myhost=$( hostname | cut -d '.' -f1 )
-if [ $? = 1 ]
+if ! hostname | cut -d '.' -f1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
 read -r DOMAIN
@@ -1212,8 +1208,7 @@ exit
 failcheck_yum(){
 clear
 export HOSTNAME
-myhost=$( hostname | cut -d '.' -f1 )
-if [ $? = 1 ]
+if ! hostname | cut -d '.' -f1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
 read -r DOMAIN
@@ -1621,7 +1616,11 @@ while test $# -gt 0; do
                         ;;
                 -j)
                         if test $# -gt 0; then
-			sudo realm join -v -U "$2" "$3" --install=/
+			if ! sudo realm join -v -U "$2" "$3" --install=/
+            then
+            echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+            exit
+            fi
 			exit
                         else
                         echo ""
@@ -1680,22 +1679,25 @@ sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get install -f -y
 clear
-sudo dpkg -l | grep realmd
-if [ $? = 0 ]
+if ! sudo dpkg -l | grep realmd
 then
-clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
-else
 clear
 sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
+else
+clear
+sudo echo "${INTRO_TEXT}Pakages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-ping -c 2 "$DOMAIN"  >/dev/null
-if [ $? = 0 ]
+if ! ping -c 2 "$DOMAIN"  >/dev/null
 then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
 clear
 echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
 read -r -p "Do you wish to use it (y/n)?" yn
@@ -1706,11 +1708,6 @@ read -r -p "Do you wish to use it (y/n)?" yn
 	read -r DOMAIN;;
     * ) echo 'Please answer yes or no.';;
    esac
-else
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
@@ -1728,7 +1725,11 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
+if ! realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
+fi
 else
    if [ "$var" -eq "16" ]
    then
@@ -1740,8 +1741,12 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-   realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN"
-   else
+    if ! realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN"
+    then
+    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+    exit
+    fi
+    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
        then
        echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
@@ -1753,7 +1758,11 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-       realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
+        if ! realm join -v --user="$ADMIN" --computer-ou="$2" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        exit
+        fi
        else
        clear
       sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
@@ -1762,7 +1771,7 @@ read -r ADMIN
   fi
 fi
 if [ $? -ne 0 ]; then
-	echo "${RED_TEXT}AD join failed.please check that computer object is already created and test again ${END}"
+	echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe ${END}"
     exit
 fi
 fi_auth
