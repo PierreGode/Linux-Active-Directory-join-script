@@ -3,7 +3,7 @@
 #                                           This script is written by Pierre Gode                                                #
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
-# Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
+# Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
 #       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	     #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
@@ -27,7 +27,7 @@
 ################################ fix errors # funktion not called ################
 fixerrors(){
 #this funktion is not called in the script : to activate, uncomment line line 31 #fixerrors
-#This funktion installs additional pakages due to known issues with Joining and the join hangs after the admin auth
+#This funktion installs additional packages due to known issues with Joining and the join hangs after the admin auth
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
 sudo apt-get install packagekit
@@ -52,7 +52,7 @@ cauth="null"
 clear
 read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
 then
 echo "Files seems already to be modified, skipping..."
@@ -85,14 +85,14 @@ echo "--------------------------------------------------------------------------
 echo ""
 read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo ""
 echo "The Sudoers file seems already to be modified, skipping..."
 echo ""
 else
-read -r -p "${RED_TEXT}Do you wish to DISABLE password promt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
+read -r -p "${RED_TEXT}Do you wish to DISABLE password prompt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -259,7 +259,7 @@ cauth="null"
 clear
 read -r -p 'Do you wish to enable SSH login.group.allowed (y/n)?' yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
 then
 echo "Files seems already to be modified, skipping..."
@@ -292,7 +292,7 @@ echo "--------------------------------------------------------------------------
 echo ""
 read -r -p 'Do you wish to give users on this machine sudo rights?(y/n)?' yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo ""
@@ -515,7 +515,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 if ! sudo apt-get -qq install realmd adcli sssd ntp -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
@@ -525,10 +525,10 @@ clear
 if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 else
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
@@ -620,7 +620,7 @@ ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user
@@ -629,11 +629,11 @@ clear
 if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection and dpkg and try again.${END}"
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection and dpkg and try again.${END}"
 exit
 else
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 sleep 1
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
@@ -664,7 +664,7 @@ then
 echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
 exit
 fi
-echo "${NUMBER}Please type groupname in AD for admins${END}"
+echo "${NUMBER}Please type group name in AD for admins${END}"
 read -r Mysrvgroup
 sudo echo "############################"
 sudo echo "Configuratig files.."
@@ -679,7 +679,7 @@ cauth="null"
 clear
 read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
 then
 echo "Files seems already to be modified, skipping..."
@@ -713,11 +713,11 @@ echo "--------------------------------------------------------------------------
 echo ""
 read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
-    [Yy]* ) sudo echo "Cheking if there is any previous configuration"
+    [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo ""
-echo "Sudoersfile seems already to be modified, skipping..."
+echo "Sudoers file seems already to be modified, skipping..."
 echo ""
 else
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -799,7 +799,7 @@ myhost=$( hostname | cut -d '.' -f1 )
 export whoami
 whoamis=$( whoami )
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
@@ -814,11 +814,11 @@ clear
 if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 else
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
@@ -871,7 +871,7 @@ admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
-sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install realmd adcli sssd -y
@@ -885,11 +885,11 @@ clear
 if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 else
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 sleep 1
@@ -1103,7 +1103,7 @@ fi
 allowguest=$( sudo grep manual /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep true | cut -d '=' -f2 | head -1 )
 if [ "$allowguest" = "true" ]
 then
-echo "Lightdm is already confugured.. skipping.."
+echo "Lightdm is already configured.. skipping.."
 else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
 fi
@@ -1115,18 +1115,18 @@ exit
 Realmdupdate(){
 clear
 echo ""
-echo "this secion has been depricated, If you are still using likewise please see code"
+echo "this section has been deprecated, If you are still using likewise please see code"
 echo ""
 exit
 }
 
-#this section has been depricated
+#this section has been deprecated
 #If you are still using likewise please uncomment lines below and line 33
 #Realmdupdate11(){
 #export HOSTNAME
 #myhost=$( hostname | cut -d '.' -f1 )
 #echo "This will delete your homefolder and replace it. Please do a BACKUP"
-#echo "Press ctrl C to cancel skript if you wish to make an backup first"
+#echo "Press ctrl C to cancel script if you wish to make an backup first"
 #sleep 5
 #sudo apt-get update
 #clear
@@ -1668,13 +1668,13 @@ echo ""
 fi
 fi
 else
-echo "this seems to be a server, swithching to server mode"
+echo "this seems to be a server, Switching to server mode"
 ubuntuserver14
 fi
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo echo "${RED_TEXT}Installing pakages do no abort!.......${END}"
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get install -f -y
@@ -1682,11 +1682,11 @@ clear
 if ! sudo dpkg -l | grep realmd
 then
 clear
-sudo echo "${RED_TEXT}Installing pakages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
 exit
 else
 clear
-sudo echo "${INTRO_TEXT}Pakages installed${END}"
+sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
