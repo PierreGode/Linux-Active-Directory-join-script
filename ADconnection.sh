@@ -4,16 +4,16 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on groupname in AD groups  #
-#       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
+#       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	     #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
-#Meaby someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues                                                                      #
+#           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see line 24-25
 #known bugs: see line 27-37
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC.
-# see lines 357-368 for more advanced or specific setups of SSSD
+# see lines 355-371 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
@@ -1364,7 +1364,7 @@ exit
 fi
 }
 
-########################################### Leave Realm ################################
+######################### Leave Realm ################################
 leaves(){
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
@@ -1420,7 +1420,7 @@ read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
 exit
 }
 
-########################################### info #######################################
+################################## info ##################################
 readmes(){
 clear
 echo "Usage: sh ADconnection.sh [--help] "
@@ -1455,7 +1455,7 @@ echo ""
 exit
 }
 
-########################################### Menu #######################################
+############################### Menu ###############################
 MENU_FN(){
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${END}"
@@ -1511,7 +1511,7 @@ fi
 done
 }
 
-########################################### Menu YUM #######################################
+############################### Menu YUM ###############################
 YUM_MENU(){
 clear
     echo "  Active directory connection tool             "
