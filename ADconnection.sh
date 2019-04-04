@@ -181,12 +181,17 @@ echo  "Checking sssd config.. FAIL"
 else
 echo "Checking sssd config.. OK"
 fi
+if ! realm discover
+then
+echo "Realm not installed"
+else
 therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. ${RED_TEXT}FAIL${END}"
 else
 echo "Realm configured?.. ${INTRO_TEXT}OK${END}"
+fi
 fi
 if [ $states = 12 ]
 then
@@ -225,6 +230,10 @@ echo "Checking PAM auth configuration.. ${RED_TEXT}FAIL${END}"
 fi
 fi
 #realm discover $DOMAIN
+if ! realm discover
+then
+echo "realm not found"
+else
 if [ "$therealm" = "no" ]
 then
 echo "${RED_TEXT}Join has Failed${END}"
@@ -234,6 +243,7 @@ echo ""
 echo "${INTRO_TEXT}joined to $lastverify${END}"
 echo ""
 notify-send ADconnection "Joined $lastverify "
+fi
 fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
 exit
@@ -375,12 +385,17 @@ if ! sudo service sssd restart
 then
 echo "SSSD failed relading, please see journalctl -xe"
 fi
+if ! realm discover
+then
+echo "no realm found"
+else
 therealm=$(realm discover "$DOMAIN" | grep -i configured: | cut -d ':' -f2 | sed -e 's/^[[:space:]]*//')
 if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. FAIL"
 else
 echo "Realm configured?.. OK"
+fi
 fi
 if [ "$states" = "12" ]
 then
@@ -419,6 +434,10 @@ echo "Checking PAM auth configuration.. FAIL"
 fi
 fi
 #realm discover $DOMAIN
+if ! realm discover
+then
+echo "realm not found"
+else
 if [ "$therealm" = "no" ]
 then
 echo "Join has Failed"
@@ -428,6 +447,7 @@ echo ""
 echo "joined to $lastverify"
 echo ""
 notify-send ADconnection "Joined $lastverify"
+fi
 fi
 echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
 exit
@@ -736,13 +756,17 @@ fi;;
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-
+if ! realm discover
+then
+echo "Realm not found"
+else
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
 echo Realm configured?.. "${RED_TEXT}FAIL${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}OK${END}"
+fi
 fi
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
@@ -1148,6 +1172,13 @@ read -r DOMAIN
 else
 echo ""
 fi
+echo ""
+echo "-------------------------------------------------------------------------------------"
+if ! realm discover < /dev/null > /dev/null 2>&1
+then
+echo "realm not found"
+else
+echo ""
 therealm=$( realm discover | grep -i configured | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
@@ -1155,30 +1186,19 @@ echo Realm configured?.. "${RED_TEXT}FAIL${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}OK${END}"
 fi
-if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
-then
-echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
-grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ "$grouPs" = "$myhost""sudoers" ]
-         then
-         echo Checking sudoers users.. "${INTRO_TEXT}OK${END}"
-         else
-         echo Checking sudoers users.. "${RED_TEXT}FAIL${END}"
-         fi
-else
+fi
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
-grouPs1=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | head -1)
-     if [ "$grouPs1" = "$myhost""sudoers" ]
-         then
-         echo Checking sudoers user groups.. "${INTRO_TEXT}OK${END}"
-         else
-         echo Checking sudoers user groups.. "${RED_TEXT}FAIL${END}"
-         fi
+grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | sed -e 's/sudoers//g' )
+     if [ $grouPs = "$myhost" ]
+     then
+     echo Checking sudoers users.. "${INTRO_TEXT}OK${END}"
+     else
+     echo Checking sudoers users.. "${RED_TEXT}FAIL${END}"
+     fi
 else
-echo Checking sudoers file.. "${RED_TEXT}FAIL not configured${END}"
-fi
+echo Checking sudoers file.. "${RED_TEXT}FAIL${END}"
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ "$homedir" -eq "0022" ] < /dev/null > /dev/null 2>&1
@@ -1196,8 +1216,6 @@ echo Checking PAM auth configuration.. "${RED_TEXT}SSH security not configured${
 fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
-realm discover
-echo "-------------------------------------------------------------------------------------"
 exit
 }
 
@@ -1213,12 +1231,19 @@ read -r DOMAIN
 else
 echo ""
 fi
+echo "-------------------------------------------------------------------------------------"
+if ! realm dicover
+then
+echo "realm not found"
+else
+echo ""
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. FAIL"
 else
 echo "Realm configured?.. OK"
+fi
 fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
@@ -1260,8 +1285,6 @@ else
 echo "Checking PAM auth configuration.. SSH security not configured"
 fi
 echo ""
-echo "-------------------------------------------------------------------------------------"
-realm discover
 echo "-------------------------------------------------------------------------------------"
 exit
 }
