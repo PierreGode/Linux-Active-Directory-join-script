@@ -16,12 +16,12 @@
 # see lines 355-371 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-    NORMAL=$(printf "\033[m")
-    MENU=$(printf "\033[36m") #Blue
-    NUMBER=$(printf "\033[33m") #yellow
-    RED_TEXT=$(printf "\033[31m") #Red
-    INTRO_TEXT=$(printf "\033[32m") #green and white text
-    END=$(printf "\033[0m")
+    NORMAL="\033[m"
+    MENU="\033[36m" #Blue
+    NUMBER="\033[33m" #yellow
+    RED_TEXT="\033[31m" #Red
+    INTRO_TEXT="\033[32m" #green and white text
+    END="\033[0m"
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
 ################################ fix errors # funktion not called ################
