@@ -1636,7 +1636,7 @@ while test $# -gt 0; do
                 -help|--help)
 			readmes
                         ;;
-                -d)
+                -d|--d)
                         if test $# -gt 0; then
                         linuxclientdebug
                         else
@@ -1644,7 +1644,7 @@ while test $# -gt 0; do
                         exit 1
                         fi
                          ;;
-                -l)
+                -l|--d)
                         if test $? -gt 0; then
                         DATE=$(date +%H:%M)
                         echo "$DATE"
@@ -1654,7 +1654,7 @@ while test $# -gt 0; do
                         exit 1
                         fi
                         ;;
-                -j)
+                -j|--j)
                         if test $# -gt 0; then
 			if ! sudo realm join -v -U "$2" "$3" --install=/
             then
@@ -1667,7 +1667,7 @@ while test $# -gt 0; do
                         exit 1
                         fi
                         ;;
-                -s)
+                -s|--s)
                         if test $# -gt 0; then
 			if ! realm discover < /dev/null > /dev/null 2>&1
 			then
@@ -1685,7 +1685,7 @@ while test $# -gt 0; do
                         exit 1
                         fi
                         ;;
-                -o)
+                -o|--o)
                         if test $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
