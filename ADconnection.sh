@@ -16,12 +16,12 @@
 # see lines 355-371 for more advanced or specific setups of SSSD
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
-    NORMAL="\033[m"
-    MENU="\033[36m" #Blue
-    NUMBER="\033[33m" #yellow
-    RED_TEXT="\033[31m" #Red
-    INTRO_TEXT="\033[32m" #green and white text
-    END="\033[0m"
+    NORMAL=$(printf "\033[m")
+    MENU=$(printf "\033[36m")
+    NUMBER=$(printf "\033[33m")
+    RED_TEXT=$(printf "\033[31m")
+    INTRO_TEXT=$(printf "\033[32m")
+    END=$(printf "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
 ################################ fix errors # funktion not called ################
@@ -173,6 +173,7 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+clear
 
 ################################# Check #######################################
 if ! sudo service sssd restart
@@ -181,7 +182,7 @@ echo  "Checking sssd config.. FAIL"
 else
 echo "Checking sssd config.. OK"
 fi
-if ! realm discover
+if ! realm discover < /dev/null > /dev/null 2>&1
 then
 echo "Realm not installed"
 else
@@ -535,7 +536,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
+sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
 if ! sudo apt-get -qq install realmd adcli sssd ntp -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
@@ -1165,7 +1166,7 @@ failcheck(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-if ! hostname | cut -d '.' -f1
+if ! hostname | cut -d '.' -f1 < /dev/null > /dev/null 2>&1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
 read -r DOMAIN
@@ -1174,9 +1175,10 @@ echo ""
 fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
+echo ""
 if ! realm discover < /dev/null > /dev/null 2>&1
 then
-echo "realm not found"
+echo "Realm not found"
 else
 echo ""
 therealm=$( realm discover | grep -i configured | awk '{print $2}')
@@ -1185,7 +1187,6 @@ then
 echo Realm configured?.. "${RED_TEXT}FAIL${END}"
 else
 echo Realm configured?.. "${INTRO_TEXT}OK${END}"
-fi
 fi
 if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
@@ -1214,6 +1215,7 @@ echo Checking PAM auth configuration.. "${INTRO_TEXT}OK${END}"
 else
 echo Checking PAM auth configuration.. "${RED_TEXT}SSH security not configured${END}"
 fi
+fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
 exit
@@ -1224,7 +1226,7 @@ failcheck_yum(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-if ! hostname | cut -d '.' -f1
+if ! hostname | cut -d '.' -f1 < /dev/null > /dev/null 2>&1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
 read -r DOMAIN
@@ -1232,7 +1234,8 @@ else
 echo ""
 fi
 echo "-------------------------------------------------------------------------------------"
-if ! realm dicover
+echo ""
+if ! realm discover
 then
 echo "realm not found"
 else
@@ -1243,7 +1246,6 @@ then
 echo "Realm configured?.. FAIL"
 else
 echo "Realm configured?.. OK"
-fi
 fi
 if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
@@ -1284,11 +1286,11 @@ echo "Checking PAM auth configuration.. OK"
 else
 echo "Checking PAM auth configuration.. SSH security not configured"
 fi
+fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
 exit
 }
-
 
 #################################### ldapsearch #####################################################
 ldaplook(){
@@ -1310,12 +1312,17 @@ sudo ldapsearch -x | grep -i "$own"
 exit
 else
 clear
-sudo apt-get install ldap-utils -y
+if ! sudo apt-get install ldap-utils -y
+then
+echo "install failed"
+exit
+else
 echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
 sleep 3
 sudo nano /etc/ldap/ldap.conf
 sudo ldapsearch -x | grep -i "$myhost"
 exit
+fi
 fi
 }
 
@@ -1389,10 +1396,17 @@ fi
 
 ######################### Leave Realm ################################
 leaves(){
-LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 )
-DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' )
+clear
+LEFT=$(sudo realm discover | grep configured | awk '{print $2}') < /dev/null > /dev/null 2>&1
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}') < /dev/null > /dev/null 2>&1
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
+DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' ) < /dev/null > /dev/null 2>&1
+if ! realm discover < /dev/null > /dev/null 2>&1
+then
+echo ""
+echo "Realm not found, nothing to leave"
+echo ""
+else
 if [ "$DOMAINlower" = "$SSSD" ] < /dev/null > /dev/null 2>&1
 then
 echo "Detecting realm $SSSD"
@@ -1440,6 +1454,8 @@ read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
+exit
+fi
 exit
 }
 
@@ -1653,7 +1669,7 @@ while test $# -gt 0; do
                         ;;
                 -s)
                         if test $# -gt 0; then
-			if ! realm < /dev/null > /dev/null 2>&1
+			if ! realm discover < /dev/null > /dev/null 2>&1
 			then
 			clear
 			echo ""
