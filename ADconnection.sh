@@ -1141,25 +1141,9 @@ Realmdupdate(){
 clear
 echo ""
 echo "this section has been deprecated, If you are still using likewise please see code"
-echo ""
+echo "leave likewise with sudo domainjoin-cli leave"
 exit
 }
-
-#this section has been deprecated
-#If you are still using likewise please uncomment lines below and line 33
-#Realmdupdate11(){
-#export HOSTNAME
-#myhost=$( hostname | cut -d '.' -f1 )
-#echo "This will delete your homefolder and replace it. Please do a BACKUP"
-#echo "Press ctrl C to cancel script if you wish to make an backup first"
-#sleep 5
-#sudo apt-get update
-#clear
-#echo "Remember to recreate AD computer Object if you have upgraded the OS "versions will now match!"
-#sleep 3
-#sudo domainjoin-cli leave
-#linuxclient
-#}
 
 ############################### Fail check ####################################
 failcheck(){
@@ -1690,7 +1674,6 @@ while test $# -gt 0; do
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-
 if [ "$desktop" = "desktop" ]
 then
 if [ "$rasp" = "Raspbian" ]
