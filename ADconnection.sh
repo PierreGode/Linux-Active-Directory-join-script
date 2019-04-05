@@ -39,6 +39,8 @@ MENU_FN
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 sudo echo "############################"
 sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
@@ -205,7 +207,7 @@ else
 echo "Checking sudoers file..  ${RED_TEXT}FAIL${END}"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. ${INTRO_TEXT}OK${END}"
 else
@@ -257,6 +259,8 @@ exit
 #this section will do the last part, configure sssd, sam files and sudoers# same as final auth
 #but without colors#
 fi_auth_yum(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 sudo echo "############################"
 sudo echo "Configuratig files.."
 sudo echo "Verifying the setup"
@@ -409,7 +413,7 @@ else
 echo "Checking sudoers file.. FAIL"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers user groups.. OK"
 else
@@ -776,7 +780,7 @@ else
 echo checking sudoers file..  "${RED_TEXT}FAIL not configured${END}"
 fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-if [ $grouPs = "$myhost""sudoers" ]
+if [ "$grouPs" = "$myhost""sudoers" ]
 then
 echo "Checking sudoers users.. ${INTRO_TEXT}OK${END}"
 else
@@ -1176,7 +1180,7 @@ if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
 then
 echo Checking sudoers file..  "${INTRO_TEXT}OK${END}"
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g' | sed -e 's/sudoers//g' )
-     if [ $grouPs = "$myhost" ]
+     if [ "$grouPs" = "$myhost" ]
      then
      echo Checking sudoers users.. "${INTRO_TEXT}OK${END}"
      else
@@ -1235,7 +1239,7 @@ if [ -f /etc/sudoers.d/admins ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking sudoers file.. OK"
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/admins | cut -d '%' -f2 | cut -d  '=' -f1 | sed -e 's/\<ALL\>//g')
-     if [ $grouPs = "$myhost""sudoers" ]
+     if [ "$grouPs" = "$myhost""sudoers" ]
          then
          echo "Checking sudoers users.. OK"
          else
@@ -1312,6 +1316,8 @@ fi
 
 ############################### Reauth ##########################################
 Reauthenticate(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 whoelse=$( who -ut | grep -v old | awk '{print $1}' )
 homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
 homes=$( find /home/"$homeshome" -maxdepth 1 -mindepth 1 | head -1 | cut -d '/' -f4  )
@@ -1380,6 +1386,8 @@ fi
 
 ######################### Leave Realm ################################
 leaves(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
 clear
 LEFT=$(sudo realm discover | grep configured | awk '{print $2}') < /dev/null > /dev/null 2>&1
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}') < /dev/null > /dev/null 2>&1
