@@ -180,9 +180,9 @@ clear
 ################################# Check #######################################
 if ! sudo service sssd restart
 then
-echo  "Checking sssd config.. FAIL"
+echo "sssd config.. ${RED_TEXT}FAIL${END}"
 else
-echo "Checking sssd config.. OK"
+echo "sssd config.. ${INTRO_TEXT}OK${END}"
 fi
 if ! realm discover < /dev/null > /dev/null 2>&1
 then
@@ -209,16 +209,16 @@ fi
 grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print $1}' | head -1)
 if [ "$grouPs" = "$myhost""sudoers" ]
 then
-echo "Checking sudoers user groups.. ${INTRO_TEXT}OK${END}"
+echo "Checking sudoers groups.. ${INTRO_TEXT}OK${END}"
 else
-echo "Checking sudoers user groups.. ${RED_TEXT}FAIL${END}"
+echo "Checking sudoers groups.. ${RED_TEXT}FAIL${END}"
 fi
 homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
 if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
-echo "Checking PAM configuration.. ${INTRO_TEXT}OK${END}"
+echo "Checking PAM session configuration.. ${INTRO_TEXT}OK${END}"
 else
-echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
+echo "Checking PAM session configuration.. ${RED_TEXT}FAIL${END}"
 fi
 if [ $states1 = 12 ]
 then
