@@ -146,6 +146,7 @@ enumerate = true
 subdomain_enumerate = all
 cache_credentials = true
 
+How to change AD password in linux (ubuntu example): open settings, users click on password field, set new password.
 
 How to git?
 
