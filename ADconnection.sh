@@ -1318,7 +1318,7 @@ fi
 Reauthenticate(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-whoelse=$( who -ut | grep -v old | awk '{print $1}' )
+whoelse=$( who -ut | grep -v old | awk '{print $1}' | head -1 )
 homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
 homes=$( find /home/"$homeshome" -maxdepth 1 -mindepth 1 | head -1 | cut -d '/' -f4  )
 if [ "$homes" = "$whoelse" ]
