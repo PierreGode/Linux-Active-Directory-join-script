@@ -1707,6 +1707,7 @@ while test $# -gt 0; do
                         if test $# -gt 0; then
                         checkuser
                         exit
+                        fi
                         ;;
                 -o|--o)
                         if test $# -gt 0; then
