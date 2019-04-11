@@ -1458,11 +1458,10 @@ checkuser(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-#DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
-DOMAIN=lalala
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
 if [ -d /home/"$DOMAIN" ]
 then
-        ls /home/$DOMAIN/ | while read user
+        ls /home/"$DOMAIN"/ | while read -r user
         do
         id "$user" | grep "$myhost"
         echo "___________________________________________________________________________"
