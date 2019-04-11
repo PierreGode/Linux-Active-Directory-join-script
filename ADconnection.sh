@@ -1454,6 +1454,27 @@ exit
 fi
 exit
 }
+checkuser(){
+clear
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+#DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
+DOMAIN=lalala
+if [ -d /home/"$DOMAIN" ]
+then
+        ls /home/$DOMAIN/ | while read user
+        do
+        id "$user" | grep "$myhost"
+        echo "___________________________________________________________________________"
+echo ""
+done
+else
+echo "no user found on this system. try typing the user:"
+read -r user
+id "$user" | grep "$myhost"
+fi
+exit
+}
 
 ################################## info ##################################
 readmes(){
@@ -1464,6 +1485,7 @@ echo "                          [-j admin domain (Simple direct join) ADconnecti
 echo "                          [-l (script output to log file)]"
 echo "                          [-s (Discover domain)]"
 echo "                          [-o (assign OU for computer object (-o OU=Clients,OU=Computers))"
+echo "                          [-u (check user (looks up if computer can get user from AD))"
 echo ""
 echo ""
 echo "${INTRO_TEXT}           Active directory connection tool                     ${END}"
@@ -1680,6 +1702,11 @@ while test $# -gt 0; do
                         echo ""
                         exit 1
                         fi
+                        ;;
+                -u|--u)
+                        if test $# -gt 0; then
+                        checkuser
+                        exit
                         ;;
                 -o|--o)
                         if test $# -gt 0; then
