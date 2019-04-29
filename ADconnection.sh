@@ -1459,6 +1459,8 @@ clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
+if [ -z $1 ]
+then
 if [ -d /home/"$DOMAIN" ]
 then
         ls /home/"$DOMAIN"/ | while read -r user
@@ -1471,6 +1473,9 @@ else
 echo "no user found on this system. try typing the user:"
 read -r user
 id "$user" | grep "$myhost"
+fi
+else
+id "$1"
 fi
 exit
 }
