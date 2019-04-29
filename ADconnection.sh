@@ -1463,7 +1463,7 @@ if [ -d /home/"$DOMAIN" ]
 then
         ls /home/"$DOMAIN"/ | while read -r user
         do
-        id "$user" "$2"
+        id "$user"
         echo "___________________________________________________________________________"
 echo ""
 done
