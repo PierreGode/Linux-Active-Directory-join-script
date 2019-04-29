@@ -1454,12 +1454,13 @@ exit
 fi
 exit
 }
+############################## Chech User ######################################3
 checkuser(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
-if [ -z $2 ]
+if [ -z "$2 $3" ]
 then
 if [ -d /home/"$DOMAIN" ]
 then
