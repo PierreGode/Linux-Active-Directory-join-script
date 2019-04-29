@@ -1459,7 +1459,7 @@ clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
-if [ -z $1 ]
+if [ -z $2 ]
 then
 if [ -d /home/"$DOMAIN" ]
 then
@@ -1475,7 +1475,7 @@ read -r user
 id "$user" | grep "$myhost"
 fi
 else
-id "$1"
+id "$2"
 fi
 exit
 }
