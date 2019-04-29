@@ -1463,7 +1463,7 @@ if [ -d /home/"$DOMAIN" ]
 then
         ls /home/"$DOMAIN"/ | while read -r user
         do
-        id "$user" | grep "$myhost"
+        id "$user" "$2"
         echo "___________________________________________________________________________"
 echo ""
 done
