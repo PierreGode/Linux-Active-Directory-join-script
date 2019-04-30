@@ -1454,32 +1454,6 @@ exit
 fi
 exit
 }
-############################## Chech User ######################################3
-checkuser(){
-clear
-export HOSTNAME
-myhost=$( hostname | cut -d '.' -f1 )
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
-if [ -z "$2" ]
-then
-if [ -d /home/"$DOMAIN" ]
-then
-        ls /home/"$DOMAIN"/ | while read -r user
-        do
-        id "$user"
-        echo "___________________________________________________________________________"
-echo ""
-done
-else
-echo "no user found on this system. try typing the user:"
-read -r user
-id "$user" | grep "$myhost"
-fi
-else
-id "$2"
-fi
-exit
-}
 
 ################################## info ##################################
 readmes(){
@@ -1710,8 +1684,29 @@ while test $# -gt 0; do
                         ;;
                 -u|--u)
                         if test $# -gt 0; then
-                        checkuser
-                        exit
+                        clear
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
+if [ -z "$2" ]
+then
+if [ -d /home/"$DOMAIN" ]
+then
+        ls /home/"$DOMAIN"/ | while read -r user
+        do
+        id "$user"
+        echo "___________________________________________________________________________"
+echo ""
+done
+else
+echo "no user found on this system. try typing the user:"
+read -r user
+id "$user" | grep "$myhost"
+fi
+else
+id "$2"
+fi
+exit
                         fi
                         ;;
                 -o|--o)
