@@ -1464,7 +1464,7 @@ echo "                          [-j admin domain (Simple direct join) ADconnecti
 echo "                          [-l (script output to log file)]"
 echo "                          [-s (Discover domain)]"
 echo "                          [-o (assign OU for computer object (-o OU=Clients,OU=Computers))"
-echo "                          [-u (check user (looks up if computer can get user from AD))"
+echo "                          [-u (sh ADconnection -u (autodetect) or -u user (looks up if computer can get user from AD))"
 echo ""
 echo ""
 echo "${INTRO_TEXT}           Active directory connection tool                     ${END}"
