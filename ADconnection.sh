@@ -14,6 +14,7 @@
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC.
 # see lines 355-371 for more advanced or specific setups of SSSD
+#more Distros will be added during 2019
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
