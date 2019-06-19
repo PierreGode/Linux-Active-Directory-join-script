@@ -4,7 +4,7 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
-#       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	     #
+#       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
