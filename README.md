@@ -10,7 +10,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 <H4>But why?</H4>
 <p>Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
 as you expect, like: </p>
-<p>Getting an "empty login prompt for ADusers" at the login promt</p>
+<p>Getting an "empty login prompt for new ADusers" at the login promt</p>
 <p>Setting sudo permissions</p>
 <p>Settings for mobile account in sam</p>
 <p>Better security with ssh login allowence</p>
