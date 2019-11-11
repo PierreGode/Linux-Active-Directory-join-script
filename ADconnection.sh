@@ -1816,6 +1816,12 @@ read -r ADMIN
        echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
           sleep 1
    clear
+if [ "$var -eq "19" ]
+then
+echo "fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+sudo add-apt-repository ppa:aroth/ppa
+sudo apt-get update
+fi
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
