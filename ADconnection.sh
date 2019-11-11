@@ -623,9 +623,14 @@ read -r ADMIN
    clear
 if [ "$var" -eq "19" ]
 then
+echo""
 echo "fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
+echo ""
+echo "If the script fails please run sudo apt-get upgrade to update adcli and run the script again"
+echo ""
 fi
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
