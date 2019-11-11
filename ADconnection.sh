@@ -1810,7 +1810,7 @@ read -r ADMIN
     exit
     fi
     else
-       if [ "$var" -eq "17" ] || [ "$var" -eq "18" ]
+       if [ "$var" -eq "17" ] || [ "$var" -eq "18" ] || [ "$var" -eq "19" ]
        then
        echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
           sleep 1
