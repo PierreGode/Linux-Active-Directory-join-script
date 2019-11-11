@@ -15,7 +15,7 @@
 #and on DC.
 # see lines 355-371 for more advanced or specific setups of SSSD
 #more Distros will be added during 2019
-#support added for ubutnu 19 2019-11-11
+#support added for ubutnu 19.04 2019-11-11
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
