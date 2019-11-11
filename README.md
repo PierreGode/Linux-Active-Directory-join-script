@@ -1,4 +1,4 @@
-# Linux-Active-Directory-join-script By Pierre 2018
+# Linux-Active-Directory-join-script By Pierre 2017-19
 
 Supported OS's: Ubuntu 14-19.04 + mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint and Kali
 
