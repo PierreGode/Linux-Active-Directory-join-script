@@ -1,6 +1,6 @@
 # Linux-Active-Directory-join-script By Pierre 2017-19
 
-Supported OS's: Ubuntu 14-19.04 + mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint and Kali
+Supported OS's: Ubuntu 14-19.10 + mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint and Kali
 
 This is a script for Active Directory join with realmd.
 and is a result of a lot of small upgrades according as needs has emerged.
