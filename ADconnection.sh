@@ -623,6 +623,10 @@ read -r ADMIN
    clear
 if [ "$var" -eq "19" ]
 then
+if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
+sudo apt-get update
+sudo apt-get --only-upgrade install adcli
+else
 echo""
 echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
 echo ""
@@ -632,8 +636,7 @@ sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 sudo apt-get --only-upgrade install adcli
 echo ""
-echo "If the script fails please run sudo apt-get upgrade to update adcli and run the script again"
-echo ""
+fi
 fi
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
@@ -1832,6 +1835,11 @@ read -r ADMIN
    clear
 if [ "$var" -eq "19" ]
 then
+if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
+sudo apt-get update
+sudo apt-get --only-upgrade install adcli
+else
+echo""
 echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
 echo ""
 echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
@@ -1839,6 +1847,8 @@ echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 sudo apt-get --only-upgrade install adcli
+echo ""
+fi
 fi
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
