@@ -624,6 +624,7 @@ read -r ADMIN
 if [ "$var" -eq "19" ]
 then
 if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
+then
 sudo apt-get update
 sudo apt-get --only-upgrade install adcli
 else
@@ -1836,6 +1837,7 @@ read -r ADMIN
 if [ "$var" -eq "19" ]
 then
 if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
+then
 sudo apt-get update
 sudo apt-get --only-upgrade install adcli
 else
