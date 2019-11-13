@@ -602,7 +602,7 @@ fi
 else
    if [ "$var" -eq "16" ]
    then
-   echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+   echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
    clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
@@ -618,13 +618,15 @@ read -r ADMIN
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ] || [ "$var" -eq "19" ]
        then
-       echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+       echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
           sleep 1
    clear
 if [ "$var" -eq "19" ]
 then
 echo""
-echo "fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo ""
+echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
 echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
@@ -646,7 +648,7 @@ read -r ADMIN
        fi
        else
        clear
-      sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
+      sudo echo "${RED_TEXT}I am having issues to detect your Ubuntu version${END}"
      exit
      fi
   fi
@@ -1809,7 +1811,7 @@ fi
 else
    if [ "$var" -eq "16" ]
    then
-   echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+   echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
    clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
@@ -1825,12 +1827,15 @@ read -r ADMIN
     else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ] || [ "$var" -eq "19" ]
        then
-       echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+       echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
           sleep 1
    clear
 if [ "$var" -eq "19" ]
 then
-echo "fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo ""
+echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
+echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 sudo apt-get --only-upgrade install adcli
@@ -1848,7 +1853,7 @@ read -r ADMIN
         fi
        else
        clear
-      sudo echo "${RED_TEXT}I am having issuers to detect your Ubuntu version${END}"
+      sudo echo "${RED_TEXT}I am having issues to detect your Ubuntu version${END}"
      exit
      fi
   fi
