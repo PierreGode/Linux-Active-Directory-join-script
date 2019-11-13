@@ -639,6 +639,7 @@ sudo apt-get --only-upgrade install adcli
 echo ""
 fi
 fi
+clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
@@ -1852,6 +1853,7 @@ sudo apt-get --only-upgrade install adcli
 echo ""
 fi
 fi
+clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
