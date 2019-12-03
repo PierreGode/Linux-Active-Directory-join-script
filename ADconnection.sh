@@ -1235,6 +1235,7 @@ failcheck_yum(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
+therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
 if ! hostname | cut -d '.' -f1 < /dev/null > /dev/null 2>&1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -1244,13 +1245,13 @@ echo ""
 fi
 echo "-------------------------------------------------------------------------------------"
 echo ""
-if ! realm discover
+if ! realm discover $therealm
 then
 echo "realm not found"
 else
 echo ""
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ "$therealm" = "no" ]
+if [ "$therealm" = "no" ] 0
 then
 echo "Realm configured?.. FAIL"
 else
@@ -1335,6 +1336,39 @@ fi
 fi
 }
 
+#################################### ldapsearchyum #####################################################
+ldaplookyum(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+ldaptools=$( sudo dpkg -l | grep -i ldap-utils | cut -d 's' -f1 | cut -d 'l' -f2 )
+echo "${NUMBER}Remember!you must be logged in with AD admin on the client/server to use this funktion${END}"
+echo "${NUMBER}Remember!please edit in ldap.conf the lines BASE and URI in /etc/ldap/ldap.conf ${END}"
+echo "${NUMBER}your BASE will be the area you will search in${END}"
+sleep 3
+if [ "$ldaptools" = dap-uti ]
+then
+clear
+echo "ldap tool installed.. trying to find this host"
+sudo ldapsearch -x cn="$myhost"
+echo "Please type what you are looking for"
+read -r own
+sudo ldapsearch -x | grep -i "$own"
+exit
+else
+clear
+if ! sudo yum install ldap-utils -y
+then
+echo "install failed"
+exit
+else
+echo "${NUMBER}please edit in ldap.conf the lines BASE and URI ${END}"
+sleep 3
+sudo nano /etc/ldap/ldap.conf
+sudo ldapsearch -x | grep -i "$myhost"
+exit
+fi
+fi
+}
 ############################### Reauth ##########################################
 Reauthenticate(){
 export HOSTNAME
@@ -1545,7 +1579,7 @@ while [ "$opt" != '' ]
              ;;
 	3) clear;
 	     echo "Check in Ldap"
-	     ldaplook
+	     ldaplookyum
              ;;
 	4) clear;
 	    echo "Rejoin to AD"
@@ -1600,7 +1634,8 @@ while [ "$opt" != '' ]
              ;;
 	3) clear;
 	     echo "Check in Ldap"
-	     ldaplook
+	     
+         
              ;;
 	4) clear;
 	    echo "Rejoin to AD"
@@ -1608,7 +1643,7 @@ while [ "$opt" != '' ]
             ;;
 	5) clear;
 	echo "Leave domain"
-	leave
+	leaves
 	;;
         x)exit;
         ;;
