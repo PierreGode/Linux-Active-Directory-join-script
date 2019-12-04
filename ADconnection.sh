@@ -1251,7 +1251,7 @@ echo "realm not found"
 else
 echo ""
 therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
-if [ "$therealm" = "no" ] 0
+if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. FAIL"
 else
