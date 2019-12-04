@@ -1289,12 +1289,11 @@ echo "Checking PAM configuration.. OK"
 else
 echo "Checking PAM configuration.. FAIL"
 fi
-cauth=$(grep required /etc/pam.d/system-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
-if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
+if [ -f /etc/ssh/login.group.allowed ]
 then
-echo "Checking PAM auth configuration.. OK"
+echo "Checking login.group.allowed configuration.. OK"
 else
-echo "Checking PAM auth configuration.. SSH security not configured"
+echo "Checking login.group.allowed.. SSH security not configured"
 fi
 fi
 echo ""
