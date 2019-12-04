@@ -259,7 +259,7 @@ exit
 
 ####################### final auth yum ##################################################################
 #this section will do the last part, configure sssd, sam files and sudoers# same as final auth
-#but without colors#
+#Fixes to CentOS 2019/12#
 fi_auth_yum(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
