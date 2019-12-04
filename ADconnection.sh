@@ -1231,7 +1231,7 @@ exit
 }
 
 ############################### Fail check Yum ####################################
-#Fixes 2019/12#
+###Fixes 2019/12###
 failcheck_yum(){
 clear
 export HOSTNAME
