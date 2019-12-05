@@ -479,7 +479,7 @@ TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev
 MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&1
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-
+clear
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
@@ -1634,8 +1634,6 @@ while [ "$opt" != '' ]
              ;;
 	3) clear;
 	     echo "Check in Ldap"
-	     
-         
              ;;
 	4) clear;
 	    echo "Rejoin to AD"
@@ -1657,6 +1655,7 @@ while [ "$opt" != '' ]
 fi
 done
 }
+
 ################# Precheck for YUM based OS #################
 PRECHECK_FN(){
 ## Precheck sends yum based OS to an own menu ##
@@ -1697,11 +1696,19 @@ while test $# -gt 0; do
                         exit 1
                         fi
                          ;;
-                -l|--d)
+                -l|--l)
                         if test $? -gt 0; then
                         DATE=$(date +%H:%M)
                         echo "$DATE"
 			MENU_FN 2>&1 | sudo tee adconnection.log
+                        else
+                        echo ""
+                        exit 1
+                        fi
+                        ;;
+                -f|--f)
+                        if test $? -gt 0; then
+                        answerfile
                         else
                         echo ""
                         exit 1
