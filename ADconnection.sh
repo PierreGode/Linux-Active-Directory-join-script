@@ -4,16 +4,16 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
-#       Supported OS's: Ubuntu 14-18 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
+#       Supported OS's: Ubuntu 14-19 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-# a couple of times. if it still is not working see line 24-25
-#known bugs: see line 27-37
+# a couple of times. if it still is not working see lines 30-39
+#known bugs: see line 31-32
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
-#and on DC.
-# see lines 355-371 for more advanced or specific setups of SSSD
+#and on DC, also check that searchname has your domain
+# see lines 370-388 for more advanced or specific setups of SSSD
 #more Distros will be added during 2019
 #support added for ubutnu 19.04 2019-11-11
 
