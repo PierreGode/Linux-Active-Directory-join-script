@@ -1163,7 +1163,7 @@ if [ "$allowguest" = "true" ]
 then
 echo "Lightdm is already configured.. skipping.."
 else
-sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
+sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/40-io.elementary.greeter.conf
 fi
 fi_auth
 exit
