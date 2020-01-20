@@ -523,6 +523,7 @@ echo "${INTRO_TEXT}Detecting Kali linux${END}"
 else
 if [ "$elementary" = "elementary" ]
 then
+echo "${INTRO_TEXT}Detected Elementary${END}"
 UbuntU
 else
 if [ "$MintOS" = Mint ]
