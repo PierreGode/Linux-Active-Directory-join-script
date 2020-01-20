@@ -37,7 +37,7 @@ MENU_FN
 }
 #fixerrors
 #Realmdupdate11
-
+#Added support for elementary 01/2020
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
