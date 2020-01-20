@@ -11,7 +11,7 @@ Future development: I will add support for an (answer file) in early 2020
                   : Focus on security and enable secure ldap (ldaps) in early 2020
                   : Add support for Elementary OS in early 2020
 <H4>But why?</H4>
-<p>Joining to domain is fairly easy, but then you have all the configuration around it to get everything to work
+<p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
 as you expect, like: </p>
 <p>Getting an "empty login prompt for new ADusers" at the login promt</p>
 <p>Setting sudo permissions</p>
