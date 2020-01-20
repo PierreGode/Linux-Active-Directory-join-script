@@ -10,7 +10,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 Future development: I will add support for an (answer file) in early 2020 
                   : Focus on security and enable secure ldap (ldaps) in early 2020
                   : Add support for Elementary OS in early 2020
-<H4>But why?</H4>
+<H4>But why a script?</H4>
 <p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
 as you expect, like: </p>
 <p>Getting an "empty login prompt for new ADusers" at the login promt</p>
