@@ -525,7 +525,8 @@ else
 if [ "$elementary" = "elementary" ]
 then
 echo "${INTRO_TEXT}Detected Elementary${END}"
-UbuntU
+sleep 1
+elemntary_fn
 else
 if [ "$MintOS" = Mint ]
 then
@@ -1116,6 +1117,55 @@ echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
 fi_auth_yum
+exit
+}
+
+############################# Elemntary #####################################
+elemntary_fn(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -f -y
+echo "hostname is $myhost"
+echo "Looking for Realms.. please wait"
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+if ! ping -c 2 "$DOMAIN"  >/dev/null
+then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -r -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+	read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+fi
+clear
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
+clear
+if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
+fi
+allowguest=$( sudo grep manual /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf | grep true | cut -d '=' -f2 | head -1 )
+if [ "$allowguest" = "true" ]
+then
+echo "Lightdm is already configured.. skipping.."
+else
+sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
+fi
+fi_auth
 exit
 }
 
