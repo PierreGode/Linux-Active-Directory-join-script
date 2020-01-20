@@ -521,6 +521,10 @@ then
 echo "${INTRO_TEXT}Detecting Kali linux${END}"
  kalijoin
 else
+if [ "$elementary" = "elementary" ]
+then
+UbuntU
+else
 if [ "$MintOS" = Mint ]
 then
 echo "Detecting Linux Mint"
@@ -528,6 +532,7 @@ LinuxMint
 else
 echo "No compatible System found"
 exit
+fi
 fi
 fi
 fi
