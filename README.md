@@ -28,7 +28,6 @@ as you expect, like: </p>
 computer objct = HOSTNAME .
 sudo group = HOSTNAMEsudoers = ADgroup
 
-
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
 Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
                           [-j admin domain (Simple direct join)
