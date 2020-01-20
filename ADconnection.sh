@@ -479,6 +479,7 @@ TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev
 MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&1
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+elementary=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 clear
 #### OS detection ####
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
