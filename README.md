@@ -1,6 +1,6 @@
 # Linux-Active-Directory-join-script By Pierre 2017-2020
 
-Supported OS's: Ubuntu 14-19.10 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
+Supported OS's: Ubuntu 14-20 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
 
 This is a script for Active Directory join with realmd.
 and is a result of a lot of small upgrades according as needs has emerged.
@@ -57,7 +57,7 @@ Or if you want to manage sudo users by a new group then create a group name LINU
 
 4. git clone this script and run
 
-Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16,17, 18, 19, mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint or Kali
+Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16,17, 18, 19,20, mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint or Kali
 the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
 If there are issues finding the domain please dubblecheck your dns configuration on the domain controller.
 
