@@ -4,7 +4,7 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
-#       Supported OS's: Ubuntu 14-20 + mate,Debian ,Cent OS,Rasbian ,Fedora.Linux Mint and Kali ( autodetect function ) 	 #
+#       Supported OS's: Ubuntu 14-20 + mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint,Elementary OS and Kali ( autodetect function ) 	 #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
@@ -1682,7 +1682,7 @@ clear
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${END}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${END}"
     echo "${NORMAL}                                                    ${END}"
-    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora/Debian)    ${END}"
+    echo "${MENU}*${NUMBER} 1)${MENU} Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora/Debian/Elementary OS/)    ${END}"
     echo "${MENU}*${NUMBER} 2)${MENU} Check for errors    ${END}"
     echo "${MENU}*${NUMBER} 3)${MENU} Search with ldap              ${END}"
 	echo "${MENU}*${NUMBER} 4)${MENU} Reauthenticate   ${END}"
@@ -1738,7 +1738,7 @@ clear
 	echo " This script will edit several critical files.. "
 	echo "  DO NOT attempt this without expert knowledge  "
     echo ""
-    echo "1) Join to AD on Linux (Ubuntu/Rasbian/Kali/Fedora)"
+    echo "1) Join to AD on Linux"
     echo "2) Check for errors"
     echo "3) Search with ldap"
 	echo "4) Reauthenticate"
