@@ -10,9 +10,9 @@ and is a result of a lot of small upgrades according as needs has emerged.
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
 
 <p>Future development:</p> 
-<p>I will add support for an (answer file) in early 2020 checked # [checkbox:unchecked]</p> 
-<p>Focus on security and enable secure ldap (ldaps) in early 2020 checked # [checkbox:checked]</p>
-<p>Add support for Elementary OS in early 2020 checked # [checkbox:checked]</p>
+<p>I will add support for an (answer file) in early 2020</p> 
+<p>Focus on security and enable secure ldap (ldaps) in early 2020</p>
+<p>Add support for Elementary OS in early 2020</p>
 
 <H4>But why a script?</H4>
 <p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
