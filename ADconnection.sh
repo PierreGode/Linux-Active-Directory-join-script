@@ -200,8 +200,8 @@ tlsca=$( cat /etc/sssd/sssd.conf | grep ldap_tls_cacert | awk '{print $1}' )
  echo "ldap_tls_cacert already in file"
  exit 1
  else
- sed -i "/krb5_realm = TOBII.INTRA/a ldap_uri = ldaps://SE-JAR-DC-11.tobii.intra:636" /etc/sssd/sssd.conf
- sed -i "/krb5_realm = TOBII.INTRA/a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_uri = ldaps://SE-JAR-DC-11.tobii.intra:636" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
  sudo service sssd restart
  fi;;
     [Nn]* )echo "";;
