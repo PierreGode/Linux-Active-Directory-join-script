@@ -2,6 +2,8 @@
 
 Supported OS's: Ubuntu 14-20 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
 
+Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
+
 This is a script for Active Directory join with realmd.
 and is a result of a lot of small upgrades according as needs has emerged.
 
