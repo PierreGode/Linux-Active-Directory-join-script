@@ -178,6 +178,7 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sleep 1
 clear
 read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
    case $yn in
