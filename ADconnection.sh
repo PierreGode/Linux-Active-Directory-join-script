@@ -209,6 +209,8 @@ tlsca=$( cat /etc/sssd/sssd.conf | grep ldap_tls_cacert | awk '{print $1}' )
     [Nn]* )echo "";;
     * ) echo "Please answer yes or no.";;
    esac
+else
+echo "No certificate found"
 fi;;
     [Nn]* )echo "";;
     * ) echo "Please answer yes or no.";;
@@ -420,7 +422,42 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-
+clear
+echo "For SASL put you company root-ca.cer in /usr/share/ca-certificates/root/ folder"
+read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
+   case $yn in
+    [Yy]* )
+if [ -f /usr/share/ca-certificates/root/*.cer ]
+then
+cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
+echo "Type in address of your Domaincontroller: ex: dc01.com"
+read -r yourDC
+clear
+LdapsDC=$( echo "ldaps://"$yourDC":636" )
+echo "DC sssd configuration will be $LdapsDC"
+echo "Found certificate $cacert"
+read -r -p "Is this information correct (y/n)?" yn
+   case $yn in
+    [Yy]* )
+tlsca=$( cat /etc/sssd/sssd.conf | grep ldap_tls_cacert | awk '{print $1}' )
+ if [ "$tlsca" = "ldap_tls_cacert" ]
+ then
+ echo "ldap_tls_cacert already in file"
+ exit 1
+ else
+ sed -i "/krb5_realm = /a ldap_uri = ldaps://SE-JAR-DC-11.tobii.intra:636" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+ sudo service sssd restart
+ fi;;
+    [Nn]* )echo "";;
+    * ) echo "Please answer yes or no.";;
+   esac
+else
+echo "No certificate found"
+fi;;
+    [Nn]* )echo "";;
+    * ) echo "Please answer yes or no.";;
+   esac
 ####################### Check #########################
 if ! sudo service sssd restart
 then
