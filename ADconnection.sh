@@ -180,6 +180,7 @@ entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sleep 1
 clear
+echo "For SASL put you company root-ca.cer in /usr/share/ca-certificates/root/ folder"
 read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
    case $yn in
     [Yy]* )
