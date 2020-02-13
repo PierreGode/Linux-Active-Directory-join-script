@@ -617,7 +617,7 @@ fi
 fi
 }
 
-################################ Ubuntu 14-18 ###########################################
+################################ Ubuntu 14-20 ###########################################
 UbuntU(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
@@ -741,7 +741,7 @@ fi
 fi_auth
 }
 
-####################### Setup for Ubuntu server ubuntu 14 #######################################
+####################### Setup for Ubuntu server ubuntu 14-20 #######################################
 ubuntuserver14(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
@@ -1061,7 +1061,7 @@ fi_auth
 CentOS(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common heimdal-clients msktutil
 yum -y install ipa-client
 echo "Looking for domains..."
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
@@ -1107,6 +1107,7 @@ then
 echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
+echo "session required        pam_unix.so" | sudo tee -a /etc/pam.d/common-session
 fi_auth_yum
 exit
 }
