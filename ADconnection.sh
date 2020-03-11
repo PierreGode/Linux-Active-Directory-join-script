@@ -205,7 +205,7 @@ tlsca=$( cat /etc/sssd/sssd.conf | grep ldap_tls_cacert | awk '{print $1}' )
  else
  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
-  sed -i -e 's/id_provider = ad/id_provider = ldap/g' /etc/sssd/sssd.conf
+ #sed -i -e 's/id_provider = ad/id_provider = ldap/g' /etc/sssd/sssd.conf # failing line: giving no on configured: and user is unable to update password.
  sudo service sssd restart
  fi;;
     [Nn]* )echo "";;
