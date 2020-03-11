@@ -1,5 +1,8 @@
 # Linux-Active-Directory-join-script By Pierre 2017-2020
 
+New: removed line failing SASL config and blocking user to update password.: investigation started 03/11
+   : For users beeing unable to update password please do a git pull and run option 4: Rejoin to fix.
+
 Supported OS's: Ubuntu 14-20 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
 
 Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
