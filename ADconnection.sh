@@ -164,8 +164,9 @@ sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 600
-#entry_cache_user_timeout = 5400
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+
+sudo echo "#entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
 ### Added to help with group mapping
@@ -177,7 +178,9 @@ entry_cache_timeout = 600
 #ldap_search_base = DC=$NetBios,DC=$coms
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+entry_cache_timeout = 600
+entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
+
 sudo service sssd restart
 sleep 1
 clear
