@@ -165,7 +165,8 @@ filter_groups = root
 filter_users = root
 reconnection_retries = 3
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-
+sudo sed -i '/krb5_realm =/a entry_cache_group_timeout = 5400' /etc/sssd/sssd.conf
+sudo sed -i '/krb5_realm =/a entry_cache_user_timeout = 5400' /etc/sssd/sssd.conf
 sudo echo "#entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
