@@ -1,0 +1,5 @@
+2020-03-24 # Work in progress
+SASL = null  # Address of domaincontroller
+SUDOERS = null # yes or no for adding group in sudoers
+SSHSECURE = null # yes or no for for Blocking anyone but aprooved users
+SUDOPROMT = null # yes or no for disable sudo promt in terminal
