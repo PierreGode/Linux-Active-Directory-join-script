@@ -55,50 +55,108 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
-   case $yn in
-    [Yy]* ) sudo echo "Checking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
-sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-echo ""
-echo ""
-read -r -p "Is your current administrator = '$admins' ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -r -p MYADMIN
-sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1="12";;
-    * ) echo "Please answer yes or no.";;
-   esac
+sshsec=$( cat readfile | grep SSHSECURE  | awk '{print $3}' )
+if [ "$sshsec" = "yes" ]
+then
+  if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
+  then
+  echo "SSHsecurity Files seems already to be modified, skipping..."
+  else
+  echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+  sudo touch /etc/ssh/login.group.allowed
+  localadmin=$( cat readfile | grep LOCALADMIN  | awk '{print $3}' )
+    if [ "$localadmin" = "null" ]
+    then
+    localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+    else
+    sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+    echo "enabled SSH-allow"
+    fi
+  fi
+else
+if [ "$sshsec" = "no" ]
+then
+echo "Skipping SSHSecurity config"
+else
+      read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
+    case $yn in
+        [Yy]* ) sudo echo "Checking if there is any previous configuration"
+        if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
+        then
+        echo " SSHsecurityFiles seems already to be modified, skipping..."
+        else
+        echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+        echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+        sudo touch /etc/ssh/login.group.allowed
+        sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+        echo "enabled SSH-allow"
+        echo ""
+        echo ""
+        fi
+;;
+        [Nn]* ) echo "Skipped ssh config"
+        states1="12";;
+    esac
+fi
+fi
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
+givesudo=$( cat readfile | grep SUDOERS  | awk '{print $3}' )
+if [ "$givesudo" = "yes" ]
+then
+	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
+    then
+    echo ""
+    echo "sudoers.d/sudoers file seems already to be modified, skipping..."
+    echo ""
+    else
+      disssu=$( cat readfile | grep DISSPROMT  | awk '{print $3}' )
+      if [ "$disssu" = "yes" ]
+      then
+      sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+      sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+      sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+      #sudo realm permit --groups "$myhost""sudoers"
+      else
+        if [ "$disssu" = "no" ]
+        then
+        sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+        #sudo realm permit --groups "$myhost""sudoers"
+        else
+        echo "error in readfile config"
+        sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        fi
+      fi
+    fi
+else
+  if [ "$givesudo" = "no" ]
+  then
+  echo "Not giving a sudo"
+  sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+  echo "Skipping"
+  states="12"
+  else
+   read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
-then
-echo ""
-echo "The Sudoers file seems already to be modified, skipping..."
-echo ""
-else
-read -r -p "${RED_TEXT}Do you wish to DISABLE password prompt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
-   case $yn in
+    then
+    echo ""
+    echo "The Sudoers file seems already to be modified, skipping..."
+    echo ""
+    else
+    read -r -p "${RED_TEXT}Do you wish to DISABLE password prompt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
+    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -125,6 +183,8 @@ fi
     * ) echo "Please answer yes or no."
 	;;
 	esac
+fi
+fi
 homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
 if [ "$homedir" = "0022" ]
 then
@@ -337,50 +397,108 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-read -r -p 'Do you wish to enable SSH login.group.allowed (y/n)?' yn
-   case $yn in
-    [Yy]* ) sudo echo "Checking if there is any previous configuration"
-	if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
-then
-echo "Files seems already to be modified, skipping..."
-else
-echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
-echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/sshd
-sudo touch /etc/ssh/login.group.allowed
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-echo ""
-echo ""
-read -r -p "Is your current administrator = $admins ? (y/n)?" yn
-   case $yn in
-    [Yy]* ) sudo echo "$admins"  | sudo tee -a /etc/ssh/login.group.allowed;;
-    [Nn]* ) echo "please type name of current administrator"
-read -r -p MYADMIN
-sudo echo "$MYADMIN" | sudo tee -a /etc/ssh/login.group.allowed;;
-    * ) echo "Please answer yes or no.";;
-   esac
-sudo echo "$myhost""sudoers" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
-sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-echo "enabled SSH-allow"
-fi;;
-    [Nn]* ) echo "Disabled SSH login.group.allowed"
-    states1="12";;
-    * ) echo "Please answer yes or no.";;
-   esac
+sshsec=$( cat readfile | grep SSHSECURE  | awk '{print $3}' )
+if [ "$sshsec" = "yes" ]
+then
+  if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
+  then
+  echo "SSHsecurity Files seems already to be modified, skipping..."
+  else
+  echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+  sudo touch /etc/ssh/login.group.allowed
+  localadmin=$( cat readfile | grep LOCALADMIN  | awk '{print $3}' )
+    if [ "$localadmin" = "null" ]
+    then
+    localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+    else
+    sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+    sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+    echo "enabled SSH-allow"
+    fi
+  fi
+else
+if [ "$sshsec" = "no" ]
+then
+echo "Skipping SSHSecurity config"
+else
+      read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
+    case $yn in
+        [Yy]* ) sudo echo "Checking if there is any previous configuration"
+        if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
+        then
+        echo " SSHsecurityFiles seems already to be modified, skipping..."
+        else
+        echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+        echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
+        sudo touch /etc/ssh/login.group.allowed
+        sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
+        sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+        echo "enabled SSH-allow"
+        echo ""
+        echo ""
+        fi
+;;
+        [Nn]* ) echo "Skipped ssh config"
+        states1="12";;
+    esac
+fi
+fi
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-read -r -p 'Do you wish to give users on this machine sudo rights?(y/n)?' yn
+givesudo=$( cat readfile | grep SUDOERS  | awk '{print $3}' )
+if [ "$givesudo" = "yes" ]
+then
+	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
+    then
+    echo ""
+    echo "sudoers.d/sudoers file seems already to be modified, skipping..."
+    echo ""
+    else
+      disssu=$( cat readfile | grep DISSPROMT  | awk '{print $3}' )
+      if [ "$disssu" = "yes" ]
+      then
+      sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+      sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
+      sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+      #sudo realm permit --groups "$myhost""sudoers"
+      else
+        if [ "$disssu" = "no" ]
+        then
+        sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
+        #sudo realm permit --groups "$myhost""sudoers"
+        else
+        echo "error in readfile config"
+        sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+        fi
+      fi
+    fi
+else
+  if [ "$givesudo" = "no" ]
+  then
+  echo "Not giving a sudo"
+  sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+  echo "Skipping"
+  states="12"
+  else
+   read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
    case $yn in
     [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
-then
-echo ""
-echo "The Sudoers file seems already to be modified, skipping..."
-echo ""
-else
-read -r -p 'Do you wish to DISABLE password promt for users in terminal? (y/n)?' yn
-   case $yn in
+    then
+    echo ""
+    echo "The Sudoers file seems already to be modified, skipping..."
+    echo ""
+    else
+    read -r -p "${RED_TEXT}Do you wish to DISABLE password prompt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
+    case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -388,20 +506,27 @@ sudo echo "%DOMAIN\ admins ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/
 #sudo realm permit --groups "$myhost""sudoers"
 ;;
 
- [Nn]* ) sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+ [Nn]* )
+sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
 #sudo realm permit --groups "$myhost""sudoers"
 ;;
     * ) echo "Please answer yes or no.";;
    esac
-fi;;
-    [Nn]* ) echo "Disabled sudo rights for users on this machine"
+fi
+;;
+    [Nn]* )
+            sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
+    	    echo "Disabled sudo rights for users on this machine"
     	    echo ""
 	    echo ""
 	    states="12";;
-    * ) echo 'Please answer yes or no.';;
-   esac
+    * ) echo "Please answer yes or no."
+	;;
+	esac
+fi
+fi
 homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
 if [ "$homedir" = "0022" ]
 then
