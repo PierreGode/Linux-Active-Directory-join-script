@@ -449,12 +449,34 @@ entry_cache_timeout = 600
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sudo service sssd restart
 clear
+usesasl=$( cat readfile | grep USESASL | awk '{print $3}')
+if [ "$usesasl" = "yes" ]
+then
+sasl=$( cat readfile | grep LDAPS | awk '{print $3}' )
+  if [ "$sasl" = "null" ]
+  then
+  echo "You need to specify domaincontroller in readfile"
+  exit
+  else
+  echo "$sasl"
+  cacer=$( cat readfile | grep CACERT | awk '{print $3}' )
+  if ! ls $cacer
+  then echo "No root CA found, check your path to file"
+  else
+  echo "Applied config from readfile"
+  #sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
+  #sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+  echo "Applied config from readfile"
+  fi
+  fi
+else
 echo "For SASL put you company root-ca.cer in /usr/share/ca-certificates/root/ folder"
 read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
    case $yn in
     [Yy]* )
-if [ -f /usr/share/ca-certificates/root/*.cer ]
+if [ -f "/usr/share/ca-certificates/root/*.cer" ]
 then
 cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
 echo "Type in address of your Domaincontroller: ex: dc01.com"
@@ -474,6 +496,7 @@ tlsca=$( cat /etc/sssd/sssd.conf | grep ldap_tls_cacert | awk '{print $1}' )
  else
  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+ #sed -i -e 's/id_provider = ad/id_provider = ldap/g' /etc/sssd/sssd.conf # failing line: giving no on configured: and user is unable to update password.
  sudo service sssd restart
  fi;;
     [Nn]* )echo "";;
@@ -485,6 +508,7 @@ fi;;
     [Nn]* )echo "";;
     * ) echo "Please answer yes or no.";;
    esac
+fi
 ####################### Check #########################
 if ! sudo service sssd restart
 then
