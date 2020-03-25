@@ -424,7 +424,7 @@ if [ "$sshsec" = "no" ]
 then
 echo "Skipping SSHSecurity config"
 else
-      read -r -p "${RED_TEXT}Do you wish to enable SSH login.group.allowed${END}${NUMBER}(y/n)?${END}" yn
+      read -r -p "Do you wish to enable SSH login.group.allowed(y/n)?" yn
     case $yn in
         [Yy]* ) sudo echo "Checking if there is any previous configuration"
         if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -475,7 +475,6 @@ then
         sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
         #sudo realm permit --groups "$myhost""sudoers"
         else
-        echo "error in readfile config"
         sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
         fi
       fi
@@ -488,7 +487,7 @@ else
   echo "Skipping"
   states="12"
   else
-   read -r -p "${RED_TEXT}Do you wish to give users on this machine sudo rights?${END}${NUMBER}(y/n)?${END}" yn
+   read -r -p "Do you wish to give users on this machine sudo rights?(y/n)?" yn
    case $yn in
     [Yy]* ) sudo echo "Checking if there is any previous configuration"
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -497,7 +496,7 @@ else
     echo "The Sudoers file seems already to be modified, skipping..."
     echo ""
     else
-    read -r -p "${RED_TEXT}Do you wish to DISABLE password prompt for users in terminal?${END}${NUMBER}(y/n)?${END}" yn
+    read -r -p "Do you wish to DISABLE password prompt for users in terminal?(y/n)?" yn
     case $yn in
     [Yy]* )
 sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
