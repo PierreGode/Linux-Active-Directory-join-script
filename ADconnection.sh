@@ -54,7 +54,7 @@ therealm="null"
 cauth="null"
 clear
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-sshsec=$( cat readfile | grep SSHSECURE  | awk '{print $3}' )
+sshsec=$( sudo grep SSHSECURE readfile | awk '{print $3}' )
 if [ "$sshsec" = "yes" ]
 then
   if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -63,7 +63,7 @@ then
   else
   echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
   sudo touch /etc/ssh/login.group.allowed
-  localadmin=$( cat readfile | grep LOCALADMIN  | awk '{print $3}' )
+  localadmin=$( sudo grep LOCALADMIN readfile | awk '{print $3}' )
     if [ "$localadmin" = "null" ]
     then
     localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
@@ -107,7 +107,7 @@ fi
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-givesudo=$( cat readfile | grep SUDOERS  | awk '{print $3}' )
+givesudo=$( sudo grep SUDOERS readfile | awk '{print $3}' )
 if [ "$givesudo" = "yes" ]
 then
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -116,7 +116,7 @@ then
     echo "sudoers.d/sudoers file seems already to be modified, skipping..."
     echo ""
     else
-      disssu=$( cat readfile | grep DISSPROMT  | awk '{print $3}' )
+      disssu=$( sudo grep DISSPROMT readfile | awk '{print $3}' )
       if [ "$disssu" = "yes" ]
       then
       sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -242,7 +242,7 @@ entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
 sudo service sssd restart
 sleep 1
 clear
-usesasl=$( cat readfile | grep USESASL | awk '{print $3}')
+usesasl=$( sudo grep USESASL readfile | awk '{print $3}' )
 if [ "$usesasl" = "yes" ]
 then
 sasl=$( cat readfile | grep LDAPS | awk '{print $3}' )
@@ -252,7 +252,7 @@ sasl=$( cat readfile | grep LDAPS | awk '{print $3}' )
   exit
   else
   echo "$sasl"
-  cacer=$( cat readfile | grep CACERT | awk '{print $3}' )
+  cacer=$( sudo grep CACERT readfile | awk '{print $3}' )
   if ! ls $cacer
   then echo "No root CA found, check your path to file"
   else
@@ -396,7 +396,7 @@ therealm="null"
 cauth="null"
 clear
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
-sshsec=$( cat readfile | grep SSHSECURE  | awk '{print $3}' )
+sshsec=$( sudo grep SSHSECURE readfile | awk '{print $3}' )
 if [ "$sshsec" = "yes" ]
 then
   if [ -f /etc/ssh/login.group.allowed ] < /dev/null > /dev/null 2>&1
@@ -405,7 +405,7 @@ then
   else
   echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
   sudo touch /etc/ssh/login.group.allowed
-  localadmin=$( cat readfile | grep LOCALADMIN  | awk '{print $3}' )
+  localadmin=$( sudo grep LOCALADMIN readfile | awk '{print $3}' )
     if [ "$localadmin" = "null" ]
     then
     localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
@@ -449,7 +449,7 @@ fi
 echo ""
 echo "-------------------------------------------------------------------------------------------"
 echo ""
-givesudo=$( cat readfile | grep SUDOERS  | awk '{print $3}' )
+givesudo=$( sudo grep SUDOERS readfile | awk '{print $3}' )
 if [ "$givesudo" = "yes" ]
 then
 	if [ -f /etc/sudoers.d/sudoers ] < /dev/null > /dev/null 2>&1
@@ -458,7 +458,7 @@ then
     echo "sudoers.d/sudoers file seems already to be modified, skipping..."
     echo ""
     else
-      disssu=$( cat readfile | grep DISSPROMT  | awk '{print $3}' )
+      disssu=$( sudo grep DISSPROMT readfile | awk '{print $3}' )
       if [ "$disssu" = "yes" ]
       then
       sudo echo "administrator ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
@@ -552,13 +552,15 @@ sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
-sudo grep -i override /etc/sssd/sssd.conf
+sudo sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
 filter_groups = root
 filter_users = root
 reconnection_retries = 3
-entry_cache_timeout = 600
-#entry_cache_user_timeout = 5400
+entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+sudo sed -i '/krb5_realm =/a entry_cache_group_timeout = 5400' /etc/sssd/sssd.conf
+sudo sed -i '/krb5_realm =/a entry_cache_user_timeout = 5400' /etc/sssd/sssd.conf
+sudo echo "#entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
 ### Added to help with group mapping
@@ -570,7 +572,8 @@ entry_cache_timeout = 600
 #ldap_search_base = DC=$NetBios,DC=$coms
 #ldap_group_member = uniquemember
 #ad_enable_gc = False
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+entry_cache_timeout = 600
+entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
 sudo service sssd restart
 clear
 usesasl=$( cat readfile | grep USESASL | awk '{print $3}')
