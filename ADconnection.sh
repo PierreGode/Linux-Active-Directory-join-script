@@ -10,12 +10,13 @@
 ##################################################################################################################################
 #known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
 # a couple of times. if it still is not working see lines 30-39
-#known bugs: see line 31-32
+#known bugs: see line 32-33
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC, also check that searchname has your domain
-# see lines 370-388 for more advanced or specific setups of SSSD
-#more Distros will be added during 2019
-#support added for ubutnu 19.04 2019-11-11
+# /etc/sssd/sssd.alternatives for more advanced or specific setups of SSSD
+#more Distros will be added during 2020
+#Added support for elementary 01/2020
+#Added support for Ubuntu 20 02/2020
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
@@ -28,17 +29,14 @@
 
 ################################ fix errors # funktion not called ################
 fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 31 #fixerrors
+#this funktion is not called in the script : to activate, uncomment line line 38 #fixerrors
 #This funktion installs additional packages due to known issues with Joining and the join hangs after the admin auth
 sudo add-apt-repository ppa:xtrusia/packagekit-fix
 sudo apt-get update
 sudo apt-get install packagekit
-MENU_FN
-}
+PRECHECK_FN
 #fixerrors
-#Realmdupdate11
-#Added support for elementary 01/2020
-#Added support for Ubuntu 20 02/2020
+}
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
