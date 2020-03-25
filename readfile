@@ -3,7 +3,8 @@
 USESASL = null # yes or null to use SASL
 LDAPS = null  # Address of domaincontroller
 CACERT = null # full path and file to CAroot like: /usr/share/ca-certificates/root/myCA.cer
-################ sudo config  ####################
+################ auth config  ####################
+LOCALADMIN = null # name of the user for the local account # like :administrator #null sets administrator as default user
 SUDOERS = null # yes or no for adding group in sudoers #null for manual setup
 SSHSECURE = null # yes or no for for Blocking anyone but aprooved users #null for manual setup
 SUDOPROMT = null # yes or no for disable sudo promt in terminal #null for manual setup
