@@ -253,7 +253,7 @@ sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   else
   echo "$sasl"
   cacer=$( sudo grep CACERT readfile | awk '{print $3}' )
-  if ! ls $cacer
+  if ! ls "$cacer"
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
@@ -587,7 +587,7 @@ sasl=$( grep LDAPS readfile | awk '{print $3}' )
   else
   echo "$sasl"
   cacer=$( grep CACERT readfile | awk '{print $3}' )
-  if ! ls $cacer
+  if ! ls "$cacer"
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
@@ -1551,7 +1551,7 @@ echo ""
 fi
 echo "-------------------------------------------------------------------------------------"
 echo ""
-if ! realm discover $therealm
+if ! realm discover "$therealm"
 then
 echo "realm not found"
 else
