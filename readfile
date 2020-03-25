@@ -4,6 +4,6 @@ USESASL = null # yes or null to use SASL
 LDAPS = null  # Address of domaincontroller
 CACERT = null # full path and file to CAroot like: /usr/share/ca-certificates/root/myCA.cer
 ################ sudo config  ####################
-SUDOERS = null # yes or null for adding group in sudoers
-SSHSECURE = null # yes or null for for Blocking anyone but aprooved users
-SUDOPROMT = null # yes or null for disable sudo promt in terminal
+SUDOERS = null # yes or no for adding group in sudoers #null for manual setup
+SSHSECURE = null # yes or no for for Blocking anyone but aprooved users #null for manual setup
+SUDOPROMT = null # yes or no for disable sudo promt in terminal #null for manual setup
