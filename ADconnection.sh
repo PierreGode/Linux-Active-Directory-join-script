@@ -243,6 +243,10 @@ sudo service sssd restart
 sleep 1
 clear
 usesasl=$( sudo grep USESASL readfile | awk '{print $3}' )
+if [ "$usesasl" = "no" ]
+then
+echo "Skipping SASL"
+else
 if [ "$usesasl" = "yes" ]
 then
 sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
@@ -299,6 +303,7 @@ fi;;
     [Nn]* )echo "";;
     * ) echo "Please answer yes or no.";;
    esac
+fi
 fi
 ################################# Check #######################################
 if ! sudo service sssd restart
@@ -576,17 +581,21 @@ entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
 sudo service sssd restart
 clear
-usesasl=$( grep USESASL readfile | awk '{print $3}' )
+usesasl=$( sudo grep USESASL readfile | awk '{print $3}' )
+if [ "$usesasl" = "no" ]
+then
+echo "Skipping SASL"
+else
 if [ "$usesasl" = "yes" ]
 then
-sasl=$( grep LDAPS readfile | awk '{print $3}' )
+sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   if [ "$sasl" = "null" ]
   then
   echo "You need to specify domaincontroller in readfile"
   exit
   else
   echo "$sasl"
-  cacer=$( grep CACERT readfile | awk '{print $3}' )
+  cacer=$( sudo grep CACERT readfile | awk '{print $3}' )
   if ! ls "$cacer"
   then echo "No root CA found, check your path to file"
   else
@@ -613,7 +622,7 @@ echo "Found certificate $cacert"
 read -r -p "Is this information correct (y/n)?" yn
    case $yn in
     [Yy]* )
-tlsca=$( grep ldap_tls_cacert /etc/sssd/sssd.conf | awk '{print $1}' )
+tlsca=$( sudo grep ldap_tls_cacert /etc/sssd/sssd.conf | awk '{print $1}' )
  if [ "$tlsca" = "ldap_tls_cacert" ]
  then
  echo "ldap_tls_cacert already in file"
@@ -633,6 +642,7 @@ fi;;
     [Nn]* )echo "";;
     * ) echo "Please answer yes or no.";;
    esac
+fi
 fi
 ####################### Check #########################
 if ! sudo service sssd restart
