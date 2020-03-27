@@ -1,4 +1,4 @@
-# "null" is for manual setup and will result in promts. 
+# "null" is for manual setup and will result in promts. misconfuguration will result in skipping that config and giving promts.
 ################ ldaps config ####################
 USESASL = null # yes or no to use SASL
 LDAPS = null  # Address of domaincontroller
