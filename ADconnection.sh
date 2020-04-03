@@ -824,25 +824,32 @@ sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
-then
-clear
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi                                                                                                                    
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
@@ -947,25 +954,32 @@ clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 sleep 1
-DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
-if ! ping -c 1 "$DOMAIN"
-then
-clear
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi                                                                                                                    
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}Please type DomainAdmin user:${END}"
@@ -1136,25 +1150,32 @@ clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"  >/dev/null
-then
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi                                                                                                                    
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1208,25 +1229,32 @@ sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 sleep 1
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"  >/dev/null
-then
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found $DOMAIN ${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi                                                                                                                    
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1386,25 +1414,32 @@ sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"  >/dev/null
-then
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
+echo "I searched for an available domain and found nothing, please type your domain manually below..."
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "I searched for an available domain and found>>> $DOMAIN  <<<"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi 
 clear
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1435,25 +1470,32 @@ sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"  >/dev/null
-then
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
+echo "I searched for an available domain and found nothing, please type your domain manually below..."
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "I searched for an available domain and found>>> $DOMAIN  <<<"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi 
 clear
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -2130,25 +2172,32 @@ sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"  >/dev/null
-then
-clear
-echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below...${END}"
-echo "Please enter the domain you wish to join:"
-read -r DOMAIN
-else
-clear
-echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
-read -r -p "Do you wish to use it (y/n)?" yn
-   case $yn in
-    [Yy]* ) echo "";;
-
-    [Nn]* ) echo "Please enter the domain you wish to join:"
-	read -r DOMAIN;;
-    * ) echo 'Please answer yes or no.';;
-   esac
-fi
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )                                                               
+if [ "$REALM" = "null" ]                                                                                              
+then                                                                                                                  
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')                                                      
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1                                                               
+then                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"                                                                      
+read -r DOMAIN                                                                                                        
+else                                                                                                                  
+clear                                                                                                                 
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"                      
+read -r -p "Do you wish to use it (y/n)?" yn                                                                          
+   case $yn in                                                                                                        
+    [Yy]* ) echo "";;                                                                                                 
+                                                                                                                      
+    [Nn]* ) echo "Please enter the domain you wish to join:"                                                          
+        read -r DOMAIN;;                                                                                              
+    * ) echo 'Please answer yes or no.';;                                                                             
+   esac                                                                                                               
+fi                                                                                                                    
+else                                                                                                                  
+echo "Using Domain: $REALM"                                                                                           
+DOMAIN=$(echo "$REALM")                                                                                               
+fi   
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
