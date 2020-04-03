@@ -183,7 +183,7 @@ fi
 	esac
 fi
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ]
 then
 echo "pam_mkhomedir.so configured"
@@ -341,7 +341,7 @@ echo "Checking sudoers groups.. ${INTRO_TEXT}OK${END}"
 else
 echo "Checking sudoers groups.. ${RED_TEXT}FAIL${END}"
 fi
-homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM session configuration.. ${INTRO_TEXT}OK${END}"
@@ -352,7 +352,7 @@ if [ $states1 = 12 ]
 then
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}' | head -1 )
 if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. ${INTRO_TEXT}OK${END}"
@@ -529,7 +529,7 @@ fi
 	esac
 fi
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 )
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ]
 then
 echo "pam_mkhomedir.so configured"
@@ -678,7 +678,7 @@ echo "Checking sudoers user groups.. OK"
 else
 echo "Checking sudoers user groups.. FAIL"
 fi
-homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
@@ -689,7 +689,7 @@ if [ "$states1" = "12" ]
 then
 echo "Disabled SSH login.group.allowed"
 else
-cauth=$(grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}')
+cauth=$( grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}' | head -1 )
 if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
@@ -1072,14 +1072,14 @@ echo "Checking sudoers users.. ${INTRO_TEXT}OK${END}"
 else
 echo "Checking sudoers users.. ${RED_TEXT}FAIL${END}"
 fi
-homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. ${INTRO_TEXT}OK${END}"
 else
 echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
-cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1 | head -1 )
 if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration..${INTRO_TEXT}OK${END}"
@@ -1525,14 +1525,14 @@ grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print
 else
 echo Checking sudoers file.. "${RED_TEXT}FAIL${END}"
 fi
-homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" -eq "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}OK${END}"
 else
 echo Checking PAM configuration.. "${RED_TEXT}FAIL${END}"
 fi
-cauth=$(grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1)
+cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1 | head -1 )
 if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}OK${END}"
@@ -1598,7 +1598,7 @@ else
 echo "Checking sudoers file.. FAIL not configured"
 fi
 fi
-homedir=$(grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3)
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
 if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
