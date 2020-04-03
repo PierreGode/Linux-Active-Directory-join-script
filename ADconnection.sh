@@ -1080,7 +1080,7 @@ else
 echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
 cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1 | head -1 )
-if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
+if [ $cauth = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration..${INTRO_TEXT}OK${END}"
 else
