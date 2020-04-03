@@ -1,4 +1,6 @@
 # "null" is for manual setup and will result in promts. misconfuguration will result in skipping that config and giving promts.
+################  Config      ####################
+DOMAIN = null # insert domain name ex:domain.com leave null for autodiscover ( promt )
 ################ ldaps config ####################
 USESASL = null # yes or no to use SASL
 LDAPS = null  # Address of domaincontroller
