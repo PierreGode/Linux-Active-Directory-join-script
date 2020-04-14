@@ -10,3 +10,5 @@ LOCALADMIN = null # name of the user for the local account # like :administrator
 SUDOERS = null # yes or no for adding group in sudoers #null for manual setup
 SSHSECURE = null # yes or no for for Blocking anyone but aprooved users #null for manual setup
 DISSPROMT = null # yes or no for disable sudo promt in terminal
+############### read encrypted passwd ############
+ENCRYPTEDPASSWD = null # yes or no # Use sh ADconnection.sh -p to generate encrypted passwd and store Private key in a safe place. 
