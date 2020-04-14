@@ -130,6 +130,11 @@ you are sudo user if added to sudoes file, but the account is a standard account
 run in terminal: sudo usermod -a -G sudo user
 
 
+<p>Encrypted Password?:</p>
+I have added the option for readfie and also a way to encrypt ADadmin password for those that don´t want to use one-time passwords.
+sudo sh ADconnection.sh -p will promt you for a password that will be encrypted. pubic key, privat.key and a encrypted.dat files will be generated. find a way to store a least your private key and only place them in Linux-Active-Directory-join-script folder during join.
+
+
 Note. make sure dns works so it can properly find ldap server
 If you are using multiple domain servers or have a backup domain server, see example below
 [sssd]
