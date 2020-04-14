@@ -1866,7 +1866,28 @@ exit
 fi
 exit
 }
-
+################################## encrypt pwd ###############################
+encrypt(){
+echo "This will create 3 files public key, private key and encrypted file"
+echo "make sure to store private file"
+sudo openssl genrsa -out private_key.pem 2048
+sudo openssl rsa -in private_key.pem -out public_key.pem -outform PEM -pubout
+echo "Please type password to encrypt"
+stty -echo
+read  pass
+echo "$pass" > encryptpwd.txt
+stty echo
+if [ -z "$pass" ]
+then
+echo "passwd is empty"
+exit
+else
+sudo openssl rsautl -encrypt -inkey public_key.pem -pubin -in encryptpwd.txt -out encrypted.dat
+sudo rm -rf encryptpwd.txt
+ls
+fi
+exit
+}
 ################################## info ##################################
 readmes(){
 clear
@@ -2053,6 +2074,14 @@ while test $# -gt 0; do
                         exit 1
                         fi
                          ;;
+	       -p|--p)
+                        if test $? -gt 0; then
+                        encrypt
+                        else
+                        echo ""
+                        exit 1
+                        fi
+                        ;;
                 -l|--l)
                         if test $? -gt 0; then
                         DATE=$(date +%H:%M)
