@@ -2075,7 +2075,7 @@ while test $# -gt 0; do
                         fi
                          ;;
 	       -p|--p)
-                        if test $? -gt 0; then
+                        if test $# -gt 0; then
                         encrypt
                         else
                         echo ""
