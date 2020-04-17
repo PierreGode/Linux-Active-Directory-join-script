@@ -866,10 +866,35 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+echo "error in readfile"
 exit
+fi
 fi
 else
    if [ "$var" -eq "16" ]
@@ -882,11 +907,36 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
+then
    if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
    fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN"
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+echo "error in readfile"
+exit
+fi
+fi
    else
        if [ "$var" -eq "17" ] || [ "$var" -eq "18" ] || [ "$var" -eq "19" ] || [ "$var" -eq "20" ]
        then
@@ -918,11 +968,36 @@ echo ""
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
-       if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
-       then
-       echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
-       exit
-       fi
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
+then
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+echo "error in readfile"
+exit
+fi
+fi
        else
        clear
       sudo echo "${RED_TEXT}I am having issues to detect your Ubuntu version${END}"
@@ -984,10 +1059,35 @@ sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
 echo "${INTRO_TEXT}Please type DomainAdmin user:${END}"
 read -r DomainADMIN
-if ! sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   if ! sudo realm join --verbose --user="$DomainADMIN" "$DOMAIN"
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null) < /dev/null > /dev/null 2>&1
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+echo "error in readfile"
 exit
+fi
 fi
 echo "${NUMBER}Please type group name in AD for admins${END}"
 read -r Mysrvgroup
