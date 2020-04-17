@@ -1,6 +1,8 @@
 # Linux-Active-Directory-join-script By Pierre 2017-2020
 
-New: removed line failing SASL config and blocking user to update password.: investigation started 03/11
+New: Added support for readfile for Ubuntu.
+
+   : removed line failing SASL config and blocking user to update password.: investigation started 03/11
    : For users beeing unable to update password please do a git pull and run option 4: Reauthenticate to fix.
 
 Supported OS's: Ubuntu 14-20 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
@@ -14,6 +16,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 
 <p>Future development:</p> 
 <p>I will add support for an (answer file) in early 2020 in progress 2020-02-13</p> 
+<p>Major rework of the script will be made during 2020 right now it is very messy but working, (a lot of parts that are uneccessary parts are repeated in the script</p>
 
 <H4>But why a script?</H4>
 <p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
