@@ -2229,6 +2229,7 @@ done
 
 ################# Precheck for YUM based OS #################
 PRECHECK_FN(){
+## curl your private key in this line
 ## Precheck sends yum based OS to an own menu ##
 TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 if [ "$TheOS" = "Fedora" ]
