@@ -863,9 +863,15 @@ echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
@@ -904,9 +910,15 @@ else
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
@@ -965,9 +977,15 @@ clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
@@ -1057,8 +1075,15 @@ DOMAIN=$(echo "$REALM")
 fi
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
-echo "${INTRO_TEXT}Please type DomainAdmin user:${END}"
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r DomainADMIN
+else
+DomainADMIN=$( echo $admin )
+fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
@@ -1278,8 +1303,15 @@ DOMAIN=$(echo "$REALM")
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -1357,8 +1389,15 @@ DOMAIN=$(echo "$REALM")
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -1386,8 +1425,15 @@ clear
 echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "I Please enter AD admin user "
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "Please log in with domain admin to $DOMAIN to connect"
+echo "Please type Admin user:"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 else
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
@@ -1399,8 +1445,15 @@ read -r -p "Do you wish to use it (y/n)?" yn
     ;;
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN
-	sudo echo "Please enter AD admin user:"
-        read -r ADMIN
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 	;;
     * ) echo 'Please answer yes or no.';;
    esac
@@ -1410,8 +1463,15 @@ clear
 echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "I Please enter AD admin user "
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "Please log in with domain admin to $DOMAIN to connect"
+echo "Please type Admin user:"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 fi
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
@@ -1436,8 +1496,15 @@ sudo systemctl enable sssd
 clear
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
 echo ""
-echo "please type Domain admin"
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 then
 echo "AD join failed.please check your errors with journalctl -xe"
@@ -1478,8 +1545,15 @@ clear
 echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-echo "I Please enter AD admin user "
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 else
 clear
 echo "I searched for an available domain and found >>> $DOMAIN  <<<"
@@ -1493,8 +1567,15 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 clear
-sudo echo "Please enter AD admin user:"
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 sudo echo "Realm= $DOMAIN"
 sudo echo ""
 if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
@@ -1541,9 +1622,15 @@ echo "Using Domain: $REALM"
 DOMAIN=$(echo "$REALM")
 fi
 clear
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
@@ -1597,9 +1684,15 @@ echo "Using Domain: $REALM"
 DOMAIN=$(echo "$REALM")
 fi
 clear
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
 echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
