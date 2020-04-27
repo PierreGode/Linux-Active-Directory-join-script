@@ -261,8 +261,8 @@ sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
-  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
-  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_uri = $sasl" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacer" /etc/sssd/sssd.conf
   echo "Applied config from readfile"
   fi
   fi
@@ -277,9 +277,9 @@ cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
 echo "Type in address of your Domaincontroller: ex: dc01.com"
 read -r yourDC
 clear
-LdapsDC=$( echo "ldaps://"$yourDC":636" )
-echo "DC sssd configuration will be $LdapsDC"
-echo "Found certificate $cacert"
+sasl=$( echo "ldaps://"$yourDC":636" )
+echo "DC sssd configuration will be $sasl"
+echo "Found certificate $cacer"
 read -r -p "Is this information correct (y/n)?" yn
    case $yn in
     [Yy]* )
@@ -289,8 +289,8 @@ tlsca=$( sudo grep ldap_tls_cacert /etc/sssd/sssd.conf | awk '{print $1}' )
  echo "ldap_tls_cacert already in file"
  exit 1
  else
- sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
- sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_uri = $sasl" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_tls_cacert = $cacer" /etc/sssd/sssd.conf
  #sed -i -e 's/id_provider = ad/id_provider = ldap/g' /etc/sssd/sssd.conf # failing line: giving no on configured: and user is unable to update password.
  sudo service sssd restart
  fi;;
@@ -600,8 +600,8 @@ sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
-  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
-  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_uri = $sasl" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacer" /etc/sssd/sssd.conf
   echo "Applied config from readfile"
   fi
   fi
@@ -616,9 +616,9 @@ cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
 echo "Type in address of your Domaincontroller: ex: dc01.com"
 read -r yourDC
 clear
-LdapsDC=$( echo "ldaps://"$yourDC":636" )
-echo "DC sssd configuration will be $LdapsDC"
-echo "Found certificate $cacert"
+sasl=$( echo "ldaps://"$yourDC":636" )
+echo "DC sssd configuration will be $sasl"
+echo "Found certificate $cacer"
 read -r -p "Is this information correct (y/n)?" yn
    case $yn in
     [Yy]* )
@@ -628,8 +628,8 @@ tlsca=$( sudo grep ldap_tls_cacert /etc/sssd/sssd.conf | awk '{print $1}' )
  echo "ldap_tls_cacert already in file"
  exit 1
  else
- sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
- sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_uri = $sasl" /etc/sssd/sssd.conf
+ sed -i "/krb5_realm = /a ldap_tls_cacert = $cacer" /etc/sssd/sssd.conf
  #sed -i -e 's/id_provider = ad/id_provider = ldap/g' /etc/sssd/sssd.conf # failing line: giving no on configured: and user is unable to update password.
  sudo service sssd restart
  fi;;
