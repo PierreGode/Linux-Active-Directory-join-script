@@ -261,8 +261,8 @@ sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
-  #sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
-  #sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
   echo "Applied config from readfile"
   fi
   fi
@@ -600,8 +600,8 @@ sasl=$( sudo grep LDAPS readfile | awk '{print $3}' )
   then echo "No root CA found, check your path to file"
   else
   echo "Applied config from readfile"
-  #sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
-  #sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_uri = $LdapsDC" /etc/sssd/sssd.conf
+  sed -i "/krb5_realm = /a ldap_tls_cacert = $cacert" /etc/sssd/sssd.conf
   echo "Applied config from readfile"
   fi
   fi
