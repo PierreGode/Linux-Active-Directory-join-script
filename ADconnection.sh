@@ -1087,7 +1087,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$DomainADMIN" "$DOMAIN"
+   if ! sudo realm join --verbose --user="$DomainADMIN" "$DOMAIN" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
