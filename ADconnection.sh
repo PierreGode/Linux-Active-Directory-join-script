@@ -218,13 +218,15 @@ sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.con
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo sudo grep -i override /etc/sssd/sssd.conf
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+#sudo echo "[nss]
+#filter_groups = root
+#filter_users = root
+#reconnection_retries = 3
+#entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo sed -i '/krb5_realm =/a entry_cache_group_timeout = 5400' /etc/sssd/sssd.conf
 sudo sed -i '/krb5_realm =/a entry_cache_user_timeout = 5400' /etc/sssd/sssd.conf
+
+#######################################################################################
 sudo echo "#entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
@@ -239,6 +241,8 @@ sudo echo "#entry_cache_user_timeout = 5400
 #ad_enable_gc = False
 entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
+#######################################################################################
+
 sudo service sssd restart
 sleep 1
 clear
@@ -558,11 +562,11 @@ sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.con
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo sudo grep -i override /etc/sssd/sssd.conf
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+#sudo echo "[nss]
+#filter_groups = root
+#filter_users = root
+#reconnection_retries = 3
+#entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo sed -i '/krb5_realm =/a entry_cache_group_timeout = 5400' /etc/sssd/sssd.conf
 sudo sed -i '/krb5_realm =/a entry_cache_user_timeout = 5400' /etc/sssd/sssd.conf
 sudo echo "#entry_cache_user_timeout = 5400
@@ -1231,15 +1235,15 @@ sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.con
 sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
 echo "override_homedir = /home/%d/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo grep -i override /etc/sssd/sssd.conf
-sudo echo "[nss]
-filter_groups = root
-filter_users = root
-reconnection_retries = 3
-entry_cache_timeout = 600
+#sudo echo "[nss]
+#filter_groups = root
+#filter_users = root
+#reconnection_retries = 3
+#entry_cache_timeout = 600
 #entry_cache_user_timeout = 5400
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
-entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
+#entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
 sudo service sssd restart
 realm discover "$DOMAIN"
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${END}"
