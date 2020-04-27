@@ -875,7 +875,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -922,7 +922,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -933,7 +933,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN"
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -989,7 +989,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
