@@ -851,7 +851,7 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-REALM=$( realm discover
+REALM=$( realm discover )
 echo "Using Domain: $REALM"
 DOMAIN=$(echo "$REALM")
 fi
@@ -1055,7 +1055,7 @@ sleep 1
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+DOMAIN=$(realm discover| grep -i realm.name | awk '{print $2}')
 if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
 then
 clear
