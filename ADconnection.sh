@@ -851,6 +851,7 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
+REALM=$( realm discover
 echo "Using Domain: $REALM"
 DOMAIN=$(echo "$REALM")
 fi
@@ -1302,8 +1303,9 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
@@ -1388,8 +1390,9 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
@@ -1622,8 +1625,9 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
 fi
 clear
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
@@ -1684,8 +1688,9 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
 fi
 clear
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
@@ -2422,8 +2427,9 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
