@@ -872,6 +872,8 @@ echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
+if [ -z readfile ]
+then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
 then
@@ -880,6 +882,10 @@ echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
 ADMIN=$( echo $admin )
+fi
+else
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
 fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
