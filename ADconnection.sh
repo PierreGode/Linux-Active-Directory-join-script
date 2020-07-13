@@ -131,7 +131,7 @@ then
         sudo echo "%DOMAIN\ admins ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/domain_admins
         #sudo realm permit --groups "$myhost""sudoers"
         else
-        echo "error in readfile config"
+        echo "error in readfile config, setting to default"
         sudo echo "administrator ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers.d/sudoers
         fi
       fi
@@ -242,7 +242,8 @@ sudo echo "#entry_cache_user_timeout = 5400
 entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
 #######################################################################################
-
+if [ -z readfile ]
+then
 sudo service sssd restart
 sleep 1
 clear
@@ -308,6 +309,9 @@ fi;;
     * ) echo "Please answer yes or no.";;
    esac
 fi
+fi
+else
+echo "Skipped ldaps"
 fi
 ################################# Check #######################################
 if ! sudo service sssd restart
