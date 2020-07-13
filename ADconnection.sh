@@ -954,7 +954,11 @@ then
         exit
     fi
 else
-echo "error in readfile"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
 exit
 fi
 fi
@@ -1021,7 +1025,11 @@ then
         exit
     fi
 else
-echo "error in readfile"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
 exit
 fi
 fi
@@ -1119,7 +1127,11 @@ then
         exit
     fi
 else
-echo "error in readfile"
+   if ! sudo realm join --verbose --user="$DomainADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
 exit
 fi
 fi
