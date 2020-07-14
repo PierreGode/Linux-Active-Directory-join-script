@@ -242,7 +242,7 @@ sudo echo "#entry_cache_user_timeout = 5400
 entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
 #######################################################################################
-if [ -z readfile ]
+if [ -f readfile ]
 then
 sudo service sssd restart
 sleep 1
