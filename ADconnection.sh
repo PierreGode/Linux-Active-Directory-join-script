@@ -872,7 +872,7 @@ echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -930,7 +930,7 @@ else
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1007,7 +1007,7 @@ clear
 sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
 echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
 echo ""
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1348,7 +1348,7 @@ echo "Using Domain: $DOMAIN"
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1441,7 +1441,7 @@ echo "Using Domain: $DOMAIN"
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 echo ""
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1483,7 +1483,7 @@ clear
 echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1509,7 +1509,7 @@ read -r -p "Do you wish to use it (y/n)?" yn
     ;;
     [Nn]* ) echo "Please enter the domain you wish to join:"
 	read -r DOMAIN
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1533,7 +1533,7 @@ clear
 echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1621,7 +1621,7 @@ clear
 echo "I searched for an available domain and found nothing, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1649,7 +1649,7 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 clear
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1711,7 +1711,7 @@ echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
 clear
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1780,7 +1780,7 @@ echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
 clear
-if [ -z readfile ]
+if [ -f readfile ]
 then
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
