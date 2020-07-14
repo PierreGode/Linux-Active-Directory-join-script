@@ -882,6 +882,7 @@ echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
 ADMIN=$( echo $admin )
+echo "Admin is $ADMIN"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
