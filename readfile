@@ -1,0 +1,15 @@
+# "null" is for manual setup and will result in promts. misconfuguration will result in skipping that config and giving promts.
+################  Config      ####################
+DOMAIN = null     #     Insert domain name ex:domain.com leave null for autodiscover ( promt )
+################ ldaps config ####################
+USESASL = null    #     yes or no to use SASL
+LDAPS = null      #     Address of domaincontroller
+CACERT = null     #     Full path and file to CAroot like: /usr/share/ca-certificates/root/myCA.cer
+################ auth config  ####################
+ADADMIN = null #         Set the name of domain admin of service user for authenticating the domain join
+LOCALADMIN = null #     Name of the user for the local account # like :administrator #null sets administrator as default user
+SUDOERS = null    #     yes or no for adding group in sudoers #null for manual setup
+SSHSECURE = null  #     yes or no for for Blocking anyone but aprooved users #null for manual setup
+DISSPROMT = null  #     yes or no for disable sudo promt in terminal
+############### read encrypted passwd ############
+ENCRYPTEDPASSWD = null #yes or no # Use sh ADconnection.sh -p to generate encrypted passwd and store Private key in a safe place. 

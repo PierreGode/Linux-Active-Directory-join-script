@@ -1,5 +1,10 @@
 # Linux-Active-Directory-join-script By Pierre 2017-2020
 
+New: Added support for readfile for Ubuntu.
+
+   : removed line failing SASL config and blocking user to update password.: investigation started 03/11
+   : For users beeing unable to update password please do a git pull and run option 4: Reauthenticate to fix.
+
 Supported OS's: Ubuntu 14-20 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali and Elemantary OS
 
 Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
@@ -11,6 +16,10 @@ and is a result of a lot of small upgrades according as needs has emerged.
 
 <p>Future development:</p> 
 <p>I will add support for an (answer file) in early 2020 in progress 2020-02-13</p> 
+
+<p>Major rework of the script will be made during 2020 right now it is very messy but working, (a lot of parts that are uneccessary repeated in the script</p>
+
+
 
 <H4>But why a script?</H4>
 <p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
@@ -125,6 +134,11 @@ If you have issues with slow replies from the domain controller i have added lin
 4. I am a member of sudores but programs require administrator to login..
 you are sudo user if added to sudoes file, but the account is a standard account. to give full administration priviligies
 run in terminal: sudo usermod -a -G sudo user
+
+
+<p>Encrypted Password?:</p>
+I have added the option for readfie and also a way to encrypt ADadmin password for those that don´t want to use one-time passwords.
+sudo sh ADconnection.sh -p will promt you for a password that will be encrypted. pubic key, privat.key and a encrypted.dat files will be generated. find a way to store a least your private key and only place them in Linux-Active-Directory-join-script folder during join.
 
 
 Note. make sure dns works so it can properly find ldap server
