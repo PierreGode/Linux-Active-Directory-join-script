@@ -816,7 +816,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
-if ! sudo apt-get -qq install realmd adcli sssd ntp -y && sudo apt-get -qq install -f -y
+if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
 exit 1
@@ -865,7 +865,7 @@ var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "Installing additional dependencies"
-sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y realmd sssd curl sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 clear
 echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
@@ -1074,7 +1074,7 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
-sudo apt-get -qq install -y sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y sssd-tools samba-common krb5-user curl
 sudo apt-get -qq install -f -y
 clear
 if ! sudo dpkg -l | grep realmd
@@ -1302,7 +1302,7 @@ sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
 sudo apt-get -qq install realmd adcli sssd -y
-sudo apt-get -qq install ntp -y
+sudo apt-get -qq install ntp curl -y
 sudo apt-get -qq install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
@@ -1393,7 +1393,7 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
-sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install realmd adcli sssd curl -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
@@ -1679,7 +1679,7 @@ exit
 elemntary_fn(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
@@ -1748,7 +1748,7 @@ exit
 LinuxMint(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
@@ -1974,7 +1974,7 @@ sudo ldapsearch -x | grep -i "$own"
 exit
 else
 clear
-if ! sudo apt-get install ldap-utils -y
+if ! sudo apt-get install ldap-utils curl -y
 then
 echo "install failed"
 exit
@@ -2482,7 +2482,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
-sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install realmd curl adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get install -f -y
 clear
@@ -2530,7 +2530,7 @@ var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
 if [ "$var" -eq "14" ]
 then
 echo "Installing additional dependencies"
-sudo apt-get -qq install -y realmd sssd sssd-tools samba-common krb5-user
+sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 sudo apt-get install -f -y
 clear
 echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
