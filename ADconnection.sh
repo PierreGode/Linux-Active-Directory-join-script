@@ -985,7 +985,7 @@ fi
        echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
           sleep 1
    clear
-if [ "$var" -eq "19" ]
+if [ "$var" -eq "19" ] || [ "$var" -eq "20" ]
 then
 if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
 then
@@ -993,7 +993,7 @@ sudo apt-get update
 sudo apt-get --only-upgrade install adcli
 else
 echo""
-echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
+echo "Fixing krb5.keytab: Bad encryption type for ubuntu  19.10 - 20.04"
 echo ""
 echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
 echo ""
