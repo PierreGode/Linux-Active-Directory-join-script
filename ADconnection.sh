@@ -815,6 +815,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
+sudo apt install adcli=0.8.2-1 -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
 if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
 then
@@ -1072,6 +1073,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
+sudo apt install adcli=0.8.2-1 -y
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user curl
@@ -1298,6 +1300,7 @@ export whoami
 whoamis=$( whoami )
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
+sudo apt install adcli=0.8.2-1 -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
@@ -1391,6 +1394,7 @@ echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
+sudo apt install adcli=0.8.2-1 -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install realmd adcli sssd curl -y
@@ -1472,6 +1476,7 @@ CentOS(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common heimdal-clients msktutil
+yum -y install adcli=0.8.2-1 -y
 yum -y install ipa-client
 echo "Looking for domains..."
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
@@ -1750,6 +1755,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
+sudo apt install adcli=0.8.2-1 -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
@@ -2484,6 +2490,7 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd curl adcli sssd -y
 sudo apt-get -qq install ntp -y
+sudo apt install adcli=0.8.2-1 -y
 sudo apt-get install -f -y
 clear
 if ! sudo dpkg -l | grep realmd
@@ -2531,6 +2538,7 @@ if [ "$var" -eq "14" ]
 then
 echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
+sudo apt install adcli=0.8.2-1 -y
 sudo apt-get install -f -y
 clear
 echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
