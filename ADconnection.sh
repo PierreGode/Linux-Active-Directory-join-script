@@ -71,7 +71,10 @@ then
     sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
     sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
     sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-    sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+    #sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+    cat /etc/passwd | grep home | while read locaussh
+    do echo $locaussh | grep home | grep bash | cut -d ':' -f1 | sudo tee -a sudo tee -a /etc/ssh/login.group.allowed
+    done
     echo "enabled SSH-allow"
     fi
   fi
@@ -93,8 +96,11 @@ else
         sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
         sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
         sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
-        sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
-        echo "enabled SSH-allow"
+        #sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
+        cat /etc/passwd | grep home | while read locaussh
+        do echo $locaussh | grep home | grep bash | cut -d ':' -f1 | sudo tee -a sudo tee -a /etc/ssh/login.group.allowed
+        done
+	echo "enabled SSH-allow"
         echo ""
         echo ""
         fi
