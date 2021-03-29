@@ -997,7 +997,8 @@ then
 if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
 then
 sudo apt-get update
-sudo apt-get --only-upgrade install adcli
+#sudo apt-get --only-upgrade install adcli
+sudo apt install adcli=0.8.2-1 -y --allow-downgrades
 else
 echo""
 echo "Fixing krb5.keytab: Bad encryption type for ubuntu  19.10 - 20.04"
@@ -1006,7 +1007,8 @@ echo "To avoid encryption error with adcli please accept PPA below for an adcli 
 echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
-sudo apt-get --only-upgrade install adcli
+#sudo apt-get --only-upgrade install adcli
+sudo apt install adcli=0.8.2-1 -y --allow-downgrades
 echo ""
 fi
 fi
