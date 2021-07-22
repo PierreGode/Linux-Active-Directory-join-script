@@ -760,6 +760,10 @@ kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/nu
 elementary=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 clear
 #### OS detection ####
+if [ "$TheOS" = "Zorin" ] < /dev/null > /dev/null 2>&1
+then
+Zorin_os
+else
 if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
 then
 echo "Fedora detected"
@@ -813,6 +817,7 @@ LinuxMint
 else
 echo "No compatible System found"
 exit
+fi
 fi
 fi
 fi
@@ -1075,6 +1080,264 @@ fi
        else
        clear
       sudo echo "${RED_TEXT}I am having issues to detect your Ubuntu version${END}"
+     exit
+     fi
+  fi
+fi
+fi_auth
+}
+
+################################ Zorin ###########################################
+Zorin_os(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+clear
+sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
+if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
+then
+echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
+exit 1
+fi
+clear
+if ! sudo dpkg -l | grep realmd
+then
+clear
+sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg and apt-get update then try again.${END}"
+else
+clear
+sudo echo "${INTRO_TEXT}packages installed${END}"
+fi
+echo "hostname is $myhost"
+echo "Looking for Realms.. please wait"
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
+if [ "$REALM" = "null" ]
+then
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -r -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+        read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+fi
+else
+REALM=$( realm discover | grep domain | awk '{print $2}' )
+echo "Using Domain: $REALM"
+DOMAIN=$(echo "$REALM")
+fi
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
+clear
+var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
+if [ "$var" -eq "14" ]
+then
+echo "Installing additional dependencies"
+sudo apt-get -qq install -y realmd sssd curl sssd-tools samba-common krb5-user
+sudo apt-get -qq install -f -y
+clear
+echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
+echo ""
+if [ -f readfile ]
+then
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+else
+ADMIN=$( echo $admin )
+echo "Admin is $ADMIN"
+fi
+else
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+fi
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
+then
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+echo "No readfile"
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+fi
+fi
+else
+   if [ "$var" -eq "16" ]
+   then
+   echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
+   clear
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
+echo ""
+if [ -f readfile ]
+then
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
+else
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+fi
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
+then
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+exit
+fi
+fi
+   else
+       if [ "$var" -eq "14" ] || [ "$var" -eq "15" ] || [ "$var" -eq "16" ] || [ "$var" -eq "17" ]
+       then
+       echo "${INTRO_TEXT}Detected Zorin ${END}"
+          sleep 1
+   clear
+if [ "$var" -eq "15" ] || [ "$var" -eq "16" ]
+then
+if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
+then
+sudo apt-get update
+#sudo apt-get --only-upgrade install adcli
+sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+else
+echo""
+echo ""
+echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
+echo ""
+sudo add-apt-repository ppa:aroth/ppa
+sudo apt-get update
+#sudo apt-get --only-upgrade install adcli
+sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+echo ""
+fi
+fi
+clear
+sudo echo "${INTRO_TEXT}Realm=$DOMAIN${END}"
+echo "${INTRO_TEXT}Joining Ubuntu $var${END}"
+echo ""
+if [ -f readfile ]
+then
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
+else
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+fi
+encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
+if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
+then
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+else
+if [ "$encrypt" = "yes" ]
+then
+    if [ -f  private_key.pem ] && [ -f public_key.pem ]
+    then
+        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        then
+        echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+        enc=$(null)
+        exit
+        fi
+    else
+        echo "No files found, please try again"
+        enc=$(null)
+        exit
+    fi
+else
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   then
+   echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+   exit
+   fi
+exit
+fi
+fi
+       else
+       clear
+      sudo echo "${RED_TEXT}I am having issues to detect your Zorin version${END}"
      exit
      fi
   fi
