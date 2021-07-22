@@ -247,7 +247,8 @@ sudo echo "#entry_cache_user_timeout = 5400
 #ad_enable_gc = False
 entry_cache_timeout = 600
 entry_cache_nowait_percentage = 75 " | sudo tee -a /etc/sssd/sssd.alternatives
-#######################################################################################
+
+############################## load from readfile to sssd ##########################################
 if [ -f readfile ]
 then
 sudo service sssd restart
@@ -319,6 +320,12 @@ fi
 else
 echo "Skipped ldaps"
 fi
+
+############################## altSecurityIdentities ###############################################
+#sudo echo "
+#ldap_user_extra_attrs = altSecurityIdentities:altSecurityIdentities
+#ldap_user_ssh_public_key = altSecurityIdentities" | sudo tee -a /etc/sssd/sssd.conf
+
 ################################# Check #######################################
 if ! sudo service sssd restart
 then
