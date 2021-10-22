@@ -1668,7 +1668,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
-sudo zypper -n install realmd adcli sssd curl
+sudo zypper -n install realmd adcli sssd curl krb5-client
 sudo zypper -n in sssd-ad
 clear
 echo "hostname is $myhost"
