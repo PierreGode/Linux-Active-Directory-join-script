@@ -758,6 +758,7 @@ MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /de
 rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 elementary=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+SUSE=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
 clear
 #### OS detection ####
 if [ "$TheOS" = "Zorin" ] < /dev/null > /dev/null 2>&1
@@ -778,6 +779,11 @@ if [ "$TheOS" = "Debian" ] < /dev/null > /dev/null 2>&1
 then
 echo "Debian detected"
 debianclient
+else
+if [ "$TheOS" = "SUSE" ] < /dev/null > /dev/null 2>&1
+then
+echo "SUSE detected"
+SUSEclient
 else
 if [ "$TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
 then
@@ -817,6 +823,7 @@ LinuxMint
 else
 echo "No compatible System found"
 exit
+fi
 fi
 fi
 fi
@@ -1600,6 +1607,77 @@ clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 echo "hostname is $myhost"
+REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
+if [ "$REALM" = "null" ]
+then
+DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
+if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+then
+clear
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+else
+clear
+echo "${NUMBER}I searched for an available domain and found ${MENU}>>> $DOMAIN  <<<${END}${END}"
+read -r -p "Do you wish to use it (y/n)?" yn
+   case $yn in
+    [Yy]* ) echo "";;
+
+    [Nn]* ) echo "Please enter the domain you wish to join:"
+        read -r DOMAIN;;
+    * ) echo 'Please answer yes or no.';;
+   esac
+fi
+else
+DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+echo "Using Domain: $DOMAIN"
+#DOMAIN=$(echo "$REALM")
+fi
+NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
+echo ""
+if [ -f readfile ]
+then
+admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
+if [ "$admin" = "null" ]
+then
+echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+else
+ADMIN=$( echo $admin )
+fi
+else
+echo "${INTRO_TEXT}Please type Admin user:${END}"
+read -r ADMIN
+fi
+clear
+sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
+sudo echo "${NORMAL}${NORMAL}"
+if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+then
+echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
+exit
+fi
+fi_auth
+}
+
+####################################### SUSE ##########################################
+SUSEclient(){
+export HOSTNAME
+myhost=$( hostname | cut -d '.' -f1 )
+clear
+sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
+sudo zypper -n install adcli
+sudo zypper -nupdate
+sudo zypper -n install libsss-sudo
+sudo zypper -n install realmd adcli sssd curl
+sudo zypper -n install ntp
+sudo zypper -n install realmd adcli sssd
+sudo zypper -n install ntp
+clear
+echo "hostname is $myhost"
+sleep 1
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
