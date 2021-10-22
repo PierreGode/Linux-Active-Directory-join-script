@@ -1719,6 +1719,7 @@ fi
 clear
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
+sudo echo "" | sudo tee /etc/sssd/sssd.conf
 if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
 then
 echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
