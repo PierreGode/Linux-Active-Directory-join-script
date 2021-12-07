@@ -17,6 +17,7 @@
 #more Distros will be added during 2020
 #Added support for elementary 01/2020
 #Added support for Ubuntu 20 02/2020
+#Planned support for ubuntu 22
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
