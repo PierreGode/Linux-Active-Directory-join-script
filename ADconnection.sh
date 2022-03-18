@@ -2407,6 +2407,7 @@ else
     then
     echo ""
     echo "$DOMAIN has not been configured"
+    echo "you could try to leave manually with, sudo realm leave $SSSD"
     echo ""
     exit
     fi
