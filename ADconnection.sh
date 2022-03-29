@@ -2404,6 +2404,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "has left $SSSD"
+    PRECHECK_FN
     echo ""
     notify-send ADconnection "Left $SSSD "
     else
