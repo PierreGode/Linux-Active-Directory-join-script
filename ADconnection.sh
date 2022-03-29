@@ -2384,52 +2384,34 @@ fi
 Reauthenticate(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-whoelse=$( who -ut | grep -v old | awk '{print $1}' | head -1 )
-homeshome=$( sudo realm list | grep domain-name | awk '{print $2}' )
-homes=$( find /home/"$homeshome" -maxdepth 1 -mindepth 1 | head -1 | cut -d '/' -f4  )
-if [ "$homes" = "$whoelse" ]
+clear
+SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
+DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' ) < /dev/null > /dev/null 2>&1
+if [ -f /etc/sssd/sssd.conf ]
 then
-echo ""
-echo "you are logged in as an AD user.. canceling request"
-echo "only administrator has permissions"
-echo ""
-exit
-else
-LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-SSSD=$( sudo grep domain /etc/sssd/sssd.conf | awk '{print $3}' | head -1 )
-DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' )
-if [ "$DOMAINlower" = "$SSSD" ]
-then
-echo "Detecting realm $SSSD"
-else
-    if [ "$LEFT" = "no" ]
-    then
-    echo ""
-    echo "$DOMAIN has not been configured"
-    echo "you could try to leave manually with, sudo realm leave $SSSD"
-    echo ""
-    exit
-    fi
-    fi
-read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
+read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
-    sudo realm discover "$DOMAIN"
-    sudo realm leave "$DOMAIN"
+    sudo realm discover "$SSSD" | grep realm | head -1
+    if ! sudo realm leave "$SSSD"
+    then
+    echo "failed Nothing to leave"
+    exit 0
+    else
     LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
-    echo "$DOMAIN has been left"
+    echo "has left $SSSD"
     echo ""
-    notify-send ADconnection "Left $DOMAIN "
-    linuxclient
+    notify-send ADconnection "Left $SSSD "
     else
     echo "something went wrong, try to leave manually"
-    	read -r DOMAIN
-	sudo realm leave "$DOMAIN"
+    echo ""
+    echo "Please type domain you wish to leave"
+        read -r DOMAIN
+        sudo realm leave "$DOMAIN"
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
@@ -2437,20 +2419,22 @@ read -r -p "Do you really want to leave the domain: $DOMAIN (y/n)?" yn
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     echo ""
-    notify-send ADconnection "Left $DOMAIN "
-    linuxclient
+    notify-send ADconnection "Left $SSSD "
+    PRECHECK_FN
     else
     echo "something went wrong"
     fi
     fi
+    fi
     ;;
-    [Nn]* ) echo "Bye"
-	exit
-	;;
+    [Nn]* ) echo "Not leaving $SSSD"
+        exit
+        ;;
     * ) echo 'Please answer yes or no.';;
    esac
 exit
 fi
+exit
 }
 
 ######################### Leave Realm ################################
