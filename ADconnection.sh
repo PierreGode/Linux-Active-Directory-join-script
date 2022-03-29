@@ -2465,7 +2465,7 @@ then
 read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
-    #sudo realm discover "$SSSD"
+    sudo realm discover "$SSSD" | grep realm | head -1
     if ! sudo realm leave "$SSSD"
     then
     echo "failed Nothing to leave"
