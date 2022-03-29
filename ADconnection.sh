@@ -2507,6 +2507,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
 exit
 fi
 exit
+}
 ################################## encrypt pwd ###############################
 encrypt(){
 echo "This will create 3 files public key, private key and encrypted file"
