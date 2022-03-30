@@ -2393,7 +2393,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover "$SSSD" | grep realm | head -1
-    if ! sudo realm leave "$SSSD"
+    if ! sudo realm leave "$SSSD" --remove
     then
     echo "failed Nothing to leave"
     exit 0
@@ -2412,7 +2412,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
     echo ""
     echo "Please type domain you wish to leave"
         read -r DOMAIN
-        sudo realm leave "$DOMAIN"
+        sudo realm leave "$DOMAIN" --remove
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
@@ -2451,7 +2451,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
    case $yn in
     [Yy]* ) echo "Listing domain"
     sudo realm discover "$SSSD" | grep realm | head -1
-    if ! sudo realm leave "$SSSD"
+    if ! sudo realm leave "$SSSD" --remove
     then
     echo "failed Nothing to leave"
     exit 0
@@ -2469,7 +2469,7 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
     echo ""
     echo "Please type domain you wish to leave"
         read -r DOMAIN
-        sudo realm leave "$DOMAIN"
+        sudo realm leave "$DOMAIN" --remove
     left=$(sudo realm discover | grep configured | awk '{print $2}')
     if [ "$left" = "no" ]
     then
