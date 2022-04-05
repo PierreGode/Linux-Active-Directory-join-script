@@ -1,4 +1,4 @@
-# Linux-Active-Directory-join-script By Pierre 2017-2021
+# Linux-Active-Directory-join-script By Pierre 2017-2022
 
 New: Added support for readfile for Ubuntu.
 
