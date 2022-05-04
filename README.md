@@ -49,8 +49,13 @@ Usage:
                           
                           
 
-Usage of the script: sudo sh ADconnection.sh or sudo ./ADconnection.sh
-for ./ADconnection.sh do a sudo chmod +x ADconnection.sh first.
+Usage of the script:
+
+    sudo sh ADconnection.sh or sudo ./ADconnection.sh
+for ./ADconnection.sh do a 
+
+     sudo chmod +x ADconnection.sh  
+first.
 
 Complete steps
 
