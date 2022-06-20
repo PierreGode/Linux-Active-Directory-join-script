@@ -1,4 +1,4 @@
-# Linux-Active-Directory-join-script By Pierre 2017-2020
+# Linux-Active-Directory-join-script By Pierre 2017-2022
 
 New: Added support for readfile for Ubuntu.
 
@@ -40,15 +40,22 @@ computer objct = HOSTNAME .
 sudo group = HOSTNAMEsudoers = ADgroup
 
 update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
-Usage: sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
-                          [-j admin domain (Simple direct join)
-                          [-l (script output to log file)]
-                          [-s (Discover domain)]
+Usage: 
+
+    sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
+      [-j admin domain (Simple direct join
+      [-l (script output to log file)]
+      [-s (Discover domain)]
                           
                           
 
-Usage of the script: sudo sh ADconnection.sh or sudo ./ADconnection.sh
-for ./ADconnection.sh do a sudo chmod +x ADconnection.sh first.
+Usage of the script:
+
+    sudo sh ADconnection.sh or sudo ./ADconnection.sh
+for ./ADconnection.sh do a 
+
+     sudo chmod +x ADconnection.sh  
+first.
 
 Complete steps
 
