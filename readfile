@@ -13,3 +13,4 @@ SSHSECURE = null  #     yes or no for for Blocking anyone but aprooved users #nu
 DISSPROMT = null  #     yes or no for disable sudo promt in terminal
 ############### read encrypted passwd ############
 ENCRYPTEDPASSWD = null #yes or no # Use sh ADconnection.sh -p to generate encrypted passwd and store Private key in a safe place. 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
