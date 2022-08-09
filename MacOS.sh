@@ -10,7 +10,7 @@ DOMAIN=$(test.com)	    		              ## Domain
 admin=$(admin)			      	              ## AD admin //Note this user can med active directory admin or a user with permission to join domain.
 pass=$(password)		      	              ## AD admin pass //Note this row is NOT encrypted, coution using this, password might be stored in logs.
 adgroup=$(whatevergroup)                              ## this is to give admin privileges to a group in the active directory ex: MacAdmins
-ADcomputer=$(MACagent01 )			     ## desired computer object name ( this will only be the name of the computer object in Active Directory, hostname is still the same as default)
+ADcomputer=$(MACagent01 )			      ## desired computer object name ( this will only be the name of the computer object in Active Directory, hostname is still the same as default)
 OU=$(OU=Computers Mac,DC=domain,DC=com)		      ## desired OU were the computer object is created
 
 sudo dsconfigad -add $DOMAIN -mobile enable -mobileconfirm disable -localhome enable -protocol smb -shell '/bin/bash' -username $admin -password $pass -groups $adgroup -computer $ADcomputer -ou $OU
