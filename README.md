@@ -1,5 +1,6 @@
 ##### Linux-Active-Directory-join-script By Pierre 2017-2022
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 New: Added support for readfile for Ubuntu.
 
    : removed line failing SASL config and blocking user to update password.: investigation started 03/11
