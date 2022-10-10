@@ -841,7 +841,7 @@ UbuntU(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
 if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
 then
@@ -928,7 +928,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -985,7 +985,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1018,17 +1018,17 @@ if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
 then
 sudo apt-get update
 #sudo apt-get --only-upgrade install adcli
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+#sudo apt install adcli -y
 else
 echo""
 echo "Fixing krb5.keytab: Bad encryption type for ubuntu  19.10 - 20.04"
 echo ""
 echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
 echo ""
-sudo add-apt-repository ppa:aroth/ppa
+#sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 #sudo apt-get --only-upgrade install adcli
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 echo ""
 fi
 fi
@@ -1064,7 +1064,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1100,7 +1100,7 @@ Zorin_os(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
 if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
 then
@@ -1187,7 +1187,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1244,7 +1244,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1277,7 +1277,7 @@ if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
 then
 sudo apt-get update
 #sudo apt-get --only-upgrade install adcli
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 else
 echo""
 echo ""
@@ -1286,7 +1286,7 @@ echo ""
 sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 #sudo apt-get --only-upgrade install adcli
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 echo ""
 fi
 fi
@@ -1322,7 +1322,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1359,7 +1359,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user curl
@@ -1425,7 +1425,7 @@ if [ "$encrypt" = "yes" ]
 then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
-        enc=$(sudo openssl rsautl -decrypt -inkey private_key.pem -in encrypted.dat )
+        enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
         if ! echo $enc | sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
@@ -1586,7 +1586,7 @@ export whoami
 whoamis=$( whoami )
 admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
@@ -1747,7 +1747,7 @@ echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install realmd adcli sssd curl -y
@@ -2108,7 +2108,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 sudo apt-get -qq install -f -y
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
@@ -2509,7 +2509,7 @@ then
 echo "passwd is empty"
 exit
 else
-sudo openssl rsautl -encrypt -inkey public_key.pem -pubin -in encryptpwd.txt -out encrypted.dat
+sudo openssl pkeyutl -encrypt -inkey public_key.pem -pubin -in encryptpwd.txt -out encrypted.dat
 sudo rm -rf encryptpwd.txt
 ls
 fi
@@ -2816,7 +2816,7 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd curl adcli sssd -y
 sudo apt-get -qq install ntp -y
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo apt-get install -f -y
 clear
 if ! sudo dpkg -l | grep realmd
@@ -2864,7 +2864,7 @@ if [ "$var" -eq "14" ]
 then
 echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades
+sudo apt install adcli -y
 sudo apt-get install -f -y
 clear
 echo "${INTRO_TEXT}Detecting Ubuntu $var${END}"
@@ -2906,7 +2906,7 @@ then
 if [ -f /etc/apt/sources.list.d/aroth-ubuntu-ppa-eoan.list ]
 then
 sudo apt-get update
-sudo apt install adcli=0.8.2-1 -y --allow-downgrades --allow-downgrades
+sudo apt install adcli -y --allow-downgrades
 else
 echo""
 echo "Fixing krb5.keytab: Bad encryption type for ubuntu 19.10"
