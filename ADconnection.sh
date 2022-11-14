@@ -190,13 +190,13 @@ fi
 	esac
 fi
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ]
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ]
 then
 echo "pam_mkhomedir.so configured"
 sleep 1
 else
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077" | sudo tee -a /etc/pam.d/common-session
 fi
 Arm=$( sudo hostnamectl | grep Architecture | awk '{print $2}' )
 if [ "$Arm" = "arm" ]
@@ -363,8 +363,8 @@ echo "Checking sudoers groups.. ${INTRO_TEXT}OK${END}"
 else
 echo "Checking sudoers groups.. ${RED_TEXT}FAIL${END}"
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM session configuration.. ${INTRO_TEXT}OK${END}"
 else
@@ -551,13 +551,13 @@ fi
 	esac
 fi
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ]
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ]
 then
 echo "pam_mkhomedir.so configured"
 sleep 1
 else
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077" | sudo tee -a /etc/pam.d/common-session
 fi
 logintrue=$( grep -i -m1 "login" /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf )
 if [ -f /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf ]
@@ -700,8 +700,8 @@ echo "Checking sudoers user groups.. OK"
 else
 echo "Checking sudoers user groups.. FAIL"
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
 else
@@ -1515,7 +1515,7 @@ fi;;
 	    states="12";;
     * ) echo 'Please answer yes or no.';;
    esac
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077" | sudo tee -a /etc/pam.d/common-session
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 if ! realm discover
@@ -1543,8 +1543,8 @@ echo "Checking sudoers users.. ${INTRO_TEXT}OK${END}"
 else
 echo "Checking sudoers users.. ${RED_TEXT}FAIL${END}"
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. ${INTRO_TEXT}OK${END}"
 else
@@ -1945,7 +1945,7 @@ echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
 sudo systemctl start sssd
-echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0022" | sudo tee -a /etc/pam.d/common-session
+echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077" | sudo tee -a /etc/pam.d/common-session
 sudo echo "pi ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/sudoers
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
@@ -2221,8 +2221,8 @@ grouPs=$(grep -i "$myhost" /etc/sudoers.d/sudoers | cut -d '%' -f2 | awk '{print
 else
 echo Checking sudoers file.. "${RED_TEXT}FAIL${END}"
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" -eq "0022" ] < /dev/null > /dev/null 2>&1
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" -eq "0077" ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM configuration.. "${INTRO_TEXT}OK${END}"
 else
@@ -2294,8 +2294,8 @@ else
 echo "Checking sudoers file.. FAIL not configured"
 fi
 fi
-homedir=$( grep homedir /etc/pam.d/common-session | grep 0022 | cut -d '=' -f3 | head -1 )
-if [ "$homedir" = "0022" ] < /dev/null > /dev/null 2>&1
+homedir=$( grep homedir /etc/pam.d/common-session | grep 0077 | cut -d '=' -f3 | head -1 )
+if [ "$homedir" = "0077" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM configuration.. OK"
 else
