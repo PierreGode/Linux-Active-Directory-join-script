@@ -3,6 +3,7 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 
 <p>
+If you like this project please star it, that will also encourage me with updates.
 New: Added support for readfile for Ubuntu.
 
    : removed line failing SASL config and blocking user to update password.: investigation started 03/11
