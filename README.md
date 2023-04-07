@@ -27,18 +27,24 @@ and is a result of a lot of small upgrades according as needs has emerged.
 
 
 <H4>But why a script?</H4>
-<p>Joining to a domain is fairly easy, but then you have all the configuration around it to get everything to work
-as you expect, like: </p>
-<p>Getting an "empty login prompt for new ADusers" at the login promt</p>
-<p>Setting sudo permissions</p>
-<p>Settings for mobile account in sam</p>
-<p>Better security with ssh login allowence</p>
-<p>Additional configuration to sssd.conf</p>
-<p>this script allows you to join a domain very easly just awnsering a couple of questions</p>
-<p>. It autodetects 7 different distros</p>
-<p>. It autodetects your domain</p>
-<p>. It generates and/or edit nessesery files</p>
-<p>built in failcheck</p>
+Here's an improved version of the text for your GitHub readme file:
+
+<p>Joining a domain can be a simple process, but configuring everything to function properly can be quite challenging. This includes tasks such as:</p>
+<ul>
+<li>Resolving issues with empty login prompts for new AD users</li>
+<li>Setting up sudo permissions</li>
+<li>Configuring settings for mobile accounts in SAM</li>
+<li>Strengthening security with SSH login allowances</li>
+<li>Making additional configurations to sssd.conf</li>
+</ul>
+<p>Fortunately, this script simplifies the process by allowing you to easily join a domain with just a few questions. Some key features of the script include:</p>
+<ul>
+<li>Autodetection of seven different Linux distributions</li>
+<li>Autodetection of your domain</li>
+<li>Generation and editing of necessary files</li>
+<li>Built-in failcheck to ensure success</li>
+</ul>
+<p>With this script, joining a domain and customizing your settings to meet your needs has never been easier!</p>
 
 <H4>What is the setup then?</H4>
 computer objct = HOSTNAME .
