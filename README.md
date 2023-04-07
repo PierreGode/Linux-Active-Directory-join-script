@@ -27,7 +27,6 @@ and is a result of a lot of small upgrades according as needs has emerged.
 
 
 <H4>But why a script?</H4>
-Here's an improved version of the text for your GitHub readme file:
 
 <p>Joining a domain can be a simple process, but configuring everything to function properly can be quite challenging. This includes tasks such as:</p>
 <ul>
