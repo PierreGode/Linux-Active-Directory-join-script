@@ -1,17 +1,42 @@
-#this is a very simple scipt to automate MacOS AD join
-#Note that Apple is going away from AD
-#Recomended solution is Nomad https://nomad.menu/products/#nomad
-echo "this script needs to be configured to funktion"
-echo "if you already did it then edit this file and uncomment row 6 with a # in the beginning"
-exit
-# to automate ADjoin check the variables below and find a solution to get from you AD or just type the name of next object in list "next computer object"
+#!/bin/bash
 
-DOMAIN=$(test.com)	    		              ## Domain
-admin=$(admin)			      	              ## AD admin //Note this user can med active directory admin or a user with permission to join domain.
-pass=$(password)		      	              ## AD admin pass //Note this row is NOT encrypted, coution using this, password might be stored in logs.
-adgroup=$(whatevergroup)                              ## this is to give admin privileges to a group in the active directory ex: MacAdmins
-ADcomputer=$(MACagent01 )			      ## desired computer object name ( this will only be the name of the computer object in Active Directory, hostname is still the same as default)
-OU=$(OU=Computers Mac,DC=domain,DC=com)		      ## desired OU were the computer object is created
+# Set variables
+DOMAIN="test.com"                   # Active Directory domain name
+ADMIN="admin"                       # AD admin username
+PASS="password"                     # AD admin password (not encrypted, use with caution)
+ADGROUP="whatevergroup"             # AD group to add computer to (e.g. MacAdmins)
+ADCOMPUTER="MACagent01"             # Name of the computer object in Active Directory
+OU="OU=Computers Mac,DC=domain,DC=com" # OU where the computer object will be created
 
-sudo dsconfigad -add $DOMAIN -mobile enable -mobileconfirm disable -localhome enable -protocol smb -shell '/bin/bash' -username $admin -password $pass -groups $adgroup -computer $ADcomputer -ou $OU
+# Prompt user for input
+read -p "Enter Active Directory domain name: " DOMAIN
+read -p "Enter AD admin username: " ADMIN
+read -s -p "Enter AD admin password: " PASS
+echo
+read -p "Enter AD group to add computer to: " ADGROUP
+read -p "Enter name of the computer object in Active Directory: " ADCOMPUTER
+read -p "Enter OU where the computer object will be created: " OU
+
+# Join computer to Active Directory
+sudo dsconfigad -add "$DOMAIN" \
+                -mobile enable \
+                -mobileconfirm disable \
+                -localhome enable \
+                -protocol smb \
+                -shell '/bin/bash' \
+                -username "$ADMIN" \
+                -password "$PASS" \
+                -groups "$ADGROUP" \
+                -computer "$ADCOMPUTER" \
+                -ou "$OU"
+if [ $? -ne 0 ]; then
+    echo "Error joining computer to Active Directory"
+    exit 1
+fi
+
+# Show Active Directory configuration
 sudo dsconfig -show
+if [ $? -ne 0 ]; then
+    echo "Error displaying Active Directory configuration"
+    exit 1
+fi
