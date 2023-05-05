@@ -1,6 +1,6 @@
 ##### Linux-Active-Directory-join-script By Pierre 2017-2022
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y2L0QCA)
 
 <p>
 If you like this project please star it, that will also encourage me with updates.
