@@ -6,8 +6,6 @@ If you like this project please star it, that will also encourage me with update
 <p>
 New: Added support for readfile for Ubuntu.
 
-   : removed line failing SASL config and blocking user to update password.: investigation started 03/11
-   : For users beeing unable to update password please do a git pull and run option 4: Reauthenticate to fix.
 
 Supported OS's: Ubuntu 14-22 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali, Zorin and Elemantary OS
 
@@ -17,13 +15,6 @@ This is a script for Active Directory join with realmd.
 and is a result of a lot of small upgrades according as needs has emerged.
 
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
-
-<p>Future development:</p> 
-<p>I will add support for an (answer file) in early 2020 in progress 2020-02-13</p> 
-
-<p>Major rework of the script will be made during 2020 right now it is very messy but working, (a lot of parts that are uneccessary repeated in the script</p>
-
-
 
 <H4>But why a script?</H4>
 
