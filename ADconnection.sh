@@ -857,6 +857,7 @@ else
 clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
+pointtoou=$( sudo grep OUSPECIFIED readfile | awk '{print $3}' )
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
@@ -918,7 +919,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -929,7 +930,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -942,7 +943,7 @@ then
     fi
 else
 echo "No readfile"
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -975,7 +976,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -986,7 +987,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -998,7 +999,7 @@ then
         exit
     fi
 else
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1021,10 +1022,6 @@ sudo apt-get update
 #sudo apt install adcli -y
 else
 echo""
-echo "Fixing krb5.keytab: Bad encryption type for ubuntu  19.10 - 20.04"
-echo ""
-echo "To avoid encryption error with adcli please accept PPA below for an adcli update"
-echo ""
 #sudo add-apt-repository ppa:aroth/ppa
 sudo apt-get update
 #sudo apt-get --only-upgrade install adcli
@@ -1054,7 +1051,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1065,7 +1062,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1077,7 +1074,7 @@ then
         exit
     fi
 else
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
