@@ -858,6 +858,10 @@ clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
 pointtoou=$( sudo grep OUSPECIFIED readfile | awk '{print $3}' )
+    if [ "$pointtoou" = "null" ]
+    then
+    pointtoou=$(echo="" )
+    fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
