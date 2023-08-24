@@ -1,4 +1,4 @@
-##### Linux-Active-Directory-join-script By Pierre 2017-2022
+##### Linux-Active-Directory-join-script By Pierre 2017-2023
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 <p>
