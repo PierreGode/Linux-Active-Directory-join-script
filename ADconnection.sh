@@ -1,6 +1,8 @@
 #!/bin/bash
 ##################################################################################################################################
-#                                           This script is written by Pierre Gode                                                #
+#                                                                                                                                #
+#                           This script is written by Pierre Gode   https://github.com/PierreGode                                #    
+#                                                                                                                                #
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
@@ -8,16 +10,10 @@
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
-#known bugs: Sometimes the script bugs after AD administrator tries to authenticate, temporary solution is running the script again
-# a couple of times. if it still is not working see lines 30-39
-#known bugs: see line 32-33
+
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC, also check that searchname has your domain
 # /etc/sssd/sssd.alternatives for more advanced or specific setups of SSSD
-#more Distros will be added during 2020
-#Added support for elementary 01/2020
-#Added support for Ubuntu 20 02/2020
-#Added support for ubuntu 22 10/2022
 
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
     NORMAL=$(printf "\033[m")
@@ -2527,7 +2523,7 @@ echo "                          [-o (assign OU for computer object (-o OU=Client
 echo "                          [-u (sh ADconnection -u (autodetect) or -u user (looks up if computer can get user from AD))"
 echo ""
 echo ""
-echo "${INTRO_TEXT}           Active directory connection tool                     ${END}"
+echo "${INTRO_TEXT}     Active directory connection tool, written by Pierre Gode   https://github.com/PierreGode                    ${END}"
 echo "${INTRO_TEXT}                          Examples                                      ${END}"
 echo "${INTRO_TEXT}     Domain to join:${RED_TEXT}Example:${RED_TEXT}${NUMBER}mydomain.intra${NUMBER}${END}"
 echo "${INTRO_TEXT}                                                            ${END}"
@@ -2807,7 +2803,7 @@ echo ""
 fi
 fi
 else
-echo "this seems to be a server, Switching to server mode"
+echo "This seems to be a server, Switching to server mode"
 ubuntuserver14
 fi
 export HOSTNAME
@@ -2826,7 +2822,7 @@ sudo echo "${RED_TEXT}Installing packages failed.. please check connection ,dpkg
 exit
 else
 clear
-sudo echo "${INTRO_TEXT}packages installed${END}"
+sudo echo "${INTRO_TEXT}Packages installed${END}"
 fi
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
@@ -2948,4 +2944,5 @@ fi_auth
                         ;;
         esac
 done
+# This script is written by Pierre Gode   https://github.com/PierreGode #
 PRECHECK_FN
