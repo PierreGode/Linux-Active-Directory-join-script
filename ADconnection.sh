@@ -24,16 +24,6 @@
     END=$(printf "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
-################################ fix errors # funktion not called ################
-fixerrors(){
-#this funktion is not called in the script : to activate, uncomment line line 38 #fixerrors
-#This funktion installs additional packages due to known issues with Joining and the join hangs after the admin auth
-sudo add-apt-repository ppa:xtrusia/packagekit-fix
-sudo apt-get update
-sudo apt-get install packagekit
-PRECHECK_FN
-#fixerrors
-}
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
