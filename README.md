@@ -1,4 +1,4 @@
-##### Linux-Active-Directory-join-script By Pierre 2017-2023
+##### Linux-Active-Directory-join-script By Pierre 2017-2024
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 <p>
@@ -16,7 +16,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 
 <p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
 
-<H4>But why a script?</H4>
+### But why a script?
 
 <p>Joining a domain can be a simple process, but configuring everything to function properly can be quite challenging. This includes tasks such as:</p>
 <ul>
