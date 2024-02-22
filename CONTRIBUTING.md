@@ -19,7 +19,7 @@ The preferred way to contribute is to fork the
 2. Clone this copy to your local disk:
 
         $ git clone git@github.com:YourLogin/Linux-Active-Directory-join-script
-        $ cd system-design-primer
+        $ cd Linux-Active-Directory-join-script
 
 3. Create a branch to hold your changes and start making changes. Don't work in the `master` branch!
 
