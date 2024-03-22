@@ -7,8 +7,19 @@ If you like this project please star it, that will also encourage me with update
 New: Added support for readfile for Ubuntu.
 
 
-Supported OS's: Ubuntu 14-22 + mate, Debian ,Cent OS,Rasbian ,Fedora, Linux Mint, Kali, Zorin and Elemantary OS
+Supported OS's:<p>
+<li>Ubuntu 14-22 + mate</li>
+<li>Debian 8-12</li>
+<li>Cent OS</li>
+<li>Rasbian</li>
+<li>Fedora</li>
+<li>Linux Mint</li>
+<li>Kali</li>
+<li>Zorin </li>
+<li>Elemantary OS</li>
+<p></p>
 
+    
 Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
 
 This is a script for Active Directory join with realmd.
@@ -145,10 +156,10 @@ run in terminal: sudo usermod -a -G sudo user
 
 <p>Encrypted Password?:</p>
 I have added the option for readfie and also a way to encrypt ADadmin password for those that don´t want to use one-time passwords.
-sudo sh ADconnection.sh -p will promt you for a password that will be encrypted. pubic key, privat.key and a encrypted.dat files will be generated. find a way to store a least your private key and only place them in Linux-Active-Directory-join-script folder during join.
+sudo sh ADconnection.sh -p will promt you for a password that will be encrypted. pubic key, privat.key and a encrypted.dat files will be generated. find a way to store your private key and only place them in Linux-Active-Directory-join-script folder during join.
 
-
-Note. make sure dns works so it can properly find ldap server
+<p>
+Note. Make sure dns works so it can properly find ldap server
 If you are using multiple domain servers or have a backup domain server, see example below
 [sssd]
 services = nss, pam
