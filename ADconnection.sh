@@ -2542,7 +2542,7 @@ exit
 MENU_FN(){
 clear
     echo "${INTRO_TEXT}   Active directory connection tool             ${END}"
-    echo "${INTRO_TEXT}       Created by Pierre Goude                  ${END}"
+    echo "${INTRO_TEXT}       Created by Pierre gode                  ${END}"
 	echo "${INTRO_TEXT} This script will edit several critical files.. ${END}"
 	echo "${INTRO_TEXT}  DO NOT attempt this without expert knowledge  ${END}"
     echo "${NORMAL}                                                    ${END}"
@@ -2598,7 +2598,7 @@ done
 YUM_MENU(){
 clear
     echo "  Active directory connection tool             "
-    echo "      Created by Pierre Goude                 "
+    echo "      Created by Pierre gode                 "
 	echo " This script will edit several critical files.. "
 	echo "  DO NOT attempt this without expert knowledge  "
     echo ""
