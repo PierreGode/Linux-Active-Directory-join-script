@@ -1,4 +1,4 @@
-#!/bin/bashes
+#!/bin/bas
 ##################################################################################################################################
 #                                                                                                                                #
 #                           This script is written by Pierre Gode   https://github.com/PierreGode                                #    
