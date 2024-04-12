@@ -2847,7 +2847,7 @@ fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
 var=$(lsb_release -a | grep -i release | awk '{print $2}' | cut -d '.' -f1)
-if [ "$var" -eq "14" ]
+if [ "$var" -eq "00" ]
 then
 echo "Installing additional dependencies"
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
@@ -2867,7 +2867,7 @@ echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${EN
 exit
 fi
 else
-   if [ "$var" -eq "16" ]
+   if [ "$var" -eq "00" ]
    then
    echo "${INTRO_TEXT}Detected Ubuntu $var${END}"
    clear
@@ -2935,5 +2935,7 @@ fi_auth
                         ;;
         esac
 done
-# This script is written by Pierre Gode   https://github.com/PierreGode #
+
+# This script is written by Pierre Gode https://github.com/PierreGode #
+
 PRECHECK_FN
