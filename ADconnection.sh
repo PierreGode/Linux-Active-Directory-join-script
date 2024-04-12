@@ -11,6 +11,8 @@
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
 
+#updated 2024
+
 #known bugs:sometimes domain discovery fails, it can help canceling the script and re-running it, if not verify dns setting on client,
 #and on DC, also check that searchname has your domain
 # /etc/sssd/sssd.alternatives for more advanced or specific setups of SSSD
