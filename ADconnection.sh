@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bashfelfelfel
 ##################################################################################################################################
 #                                                                                                                                #
 #                           This script is written by Pierre Gode   https://github.com/PierreGode                                #    
