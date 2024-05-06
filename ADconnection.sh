@@ -77,7 +77,7 @@ else
         then
         echo " SSHsecurityFiles seems already to be modified, skipping..."
         else
-        echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
+        echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure your local user is in it you you could be banned from login"
         echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
         sudo touch /etc/ssh/login.group.allowed
         sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
