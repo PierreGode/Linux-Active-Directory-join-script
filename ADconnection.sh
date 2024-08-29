@@ -2481,26 +2481,31 @@ fi
 exit
 }
 ################################## encrypt pwd ###############################
+Enkla svaret är ja. men det beror på hur man vill använda det. har en grej jag byggde för 6 år sen.. 
+
+################################## encrypt pwd ###############################
 encrypt(){
-echo "This will create 3 files public key, private key and encrypted file"
-echo "make sure to store private file"
-sudo openssl genrsa -out private_key.pem 2048
-sudo openssl rsa -in private_key.pem -out public_key.pem -outform PEM -pubout
-echo "Please type password to encrypt"
-stty -echo
-read  pass
-echo "$pass" > encryptpwd.txt
-stty echo
-if [ -z "$pass" ]
-then
-echo "passwd is empty"
-exit
-else
-sudo openssl pkeyutl -encrypt -inkey public_key.pem -pubin -in encryptpwd.txt -out encrypted.dat
-sudo rm -rf encryptpwd.txt
-ls
-fi
-exit
+    echo "This will create 3 files: public key, private key, and encrypted file."
+    echo "Make sure to store the private key file securely."
+    sudo openssl genrsa -out private_key.pem 2048
+    sudo openssl rsa -in private_key.pem -out public_key.pem -outform PEM -pubout
+    
+    echo "Please type the password to encrypt:"
+    stty -echo
+    read pass
+    stty echo
+    
+    if [ -z "$pass" ]; then
+        echo "Password is empty"
+        exit 1
+    else
+        echo -n "$pass" | sudo openssl pkeyutl -encrypt -inkey public_key.pem -pubin -out encrypted.dat
+        pass=""
+        
+        echo "Encryption complete. Files created:"
+        ls
+    fi
+    exit
 }
 ################################## info ##################################
 readmes(){
