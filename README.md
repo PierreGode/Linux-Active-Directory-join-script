@@ -1,6 +1,7 @@
 ##### Linux-Active-Directory-join-script By Pierre Gode 2017-2024
 
-![Watchers](https://img.shields.io/github/watchers/github/linguist)
+[![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers)
+
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 <p>
