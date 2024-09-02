@@ -12,7 +12,7 @@ New: Added support for readfile for Ubuntu.
 
 
 Supported OS's:<p>
-<li>Ubuntu 14-22 + mate</li>
+<li>Ubuntu 14-24 + mate</li>
 <li>Debian 8-12</li>
 <li>Cent OS</li>
 <li>Rasbian</li>
