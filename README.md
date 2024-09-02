@@ -1,5 +1,7 @@
 ##### Linux-Active-Directory-join-script By Pierre Gode 2017-2024
 
+![Watchers](https://img.shields.io/github/watchers/github/linguist)
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
 <p>
 If you like this project please star it, that will also encourage me with updates.
