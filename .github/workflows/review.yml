@@ -1,4 +1,4 @@
-name: GPTcode-reviwer
+name: GPTcode-reviewer
 
 on:
   pull_request:
@@ -13,8 +13,8 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: GPTcode-reviwer
-        uses: PierreGode/GPTcode-reviwer@main
+      - name: GPTcode-reviewer
+        uses: PierreGode/GPTcode-reviewer@main
         with:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
