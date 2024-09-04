@@ -1,6 +1,6 @@
 ##### Linux-Active-Directory-join-script By Pierre Gode 2017-2024
 
-[![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers) [![Commits per Month](https://img.shields.io/github/commit-activity/m/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/commits/main) ![Tech Stack](https://img.shields.io/badge/stack-Bash%20%7C%20Python%20%7C%20Shell-brightgreen) [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://shields.io/)
+[![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers) [![Commits per Month](https://img.shields.io/github/commit-activity/m/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/commits/main) ![Tech Stack](https://img.shields.io/badge/stack-Bash%20%7C%20Python%20%7C%20Shell-brightgreen) [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://shields.io/) ![GitHub Workflow Status](https://github.com/PierreGode/workflows/actions/workflows/review.yml/badge.svg)
 
 
 
