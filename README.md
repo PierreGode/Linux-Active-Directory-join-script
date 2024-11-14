@@ -2,7 +2,7 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers) [![Commits per Month](https://img.shields.io/github/commit-activity/m/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/commits/main) ![Tech Stack](https://img.shields.io/badge/stack-Bash%20%7C%20Python%20%7C%20Shell-brightgreen) [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://shields.io/) ![GitHub Workflow Status](https://github.com/PierreGode/Linux-Active-Directory-join-script/actions/workflows/review.yml/badge.svg) ![Visitor Count](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/PierreGode/Linux-Active-Directory-join-script&title=Visitors)
 
-
+aertaer
 
 
 
@@ -13,7 +13,7 @@ If you like this project please star it, that will also encourage me with update
 New: Added support for readfile for Ubuntu.
 
 
-Supported OS's:<p>
+Suppsdforted OS's:<p>
 <li>Ubuntu 14-24 + mate</li>
 <li>Debian 8-12</li>
 <li>Cent OS</li>
