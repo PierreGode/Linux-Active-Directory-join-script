@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set variables
-DOMAIN="test.com"                   # Active Directory domain name
+DOMAIN="test.com"                   # Domain name
 ADMIN="admin"                       # AD admin username
 PASS="password"                     # AD admin password (not encrypted, use with caution)
 ADGROUP="whatevergroup"             # AD group to add computer to (e.g. MacAdmins)
