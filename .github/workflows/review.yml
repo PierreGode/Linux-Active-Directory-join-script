@@ -23,7 +23,7 @@ jobs:
       - name: Run AI Analysis
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python - <<EOF
           import os
@@ -56,8 +56,8 @@ jobs:
           diff_url = event['pull_request']['url'] + "/files"
           pr_files = requests.get(diff_url, headers=headers).json()
 
-          diff_text = ""
           inline_comments = []  # Collect inline comments to post
+          diff_text = ""
 
           for fdata in pr_files:
               filename = fdata['filename']
@@ -107,7 +107,7 @@ jobs:
                                                headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'},
                                                json=review_data)
               review_response.raise_for_status()
-              print("Review comments posted successfully.")
+              print("Inline review comments posted successfully.")
           else:
               print("No critical issues found in the code.")
 
