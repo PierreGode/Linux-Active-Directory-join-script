@@ -23,7 +23,7 @@ jobs:
       - name: Run AI Analysis
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: |
           python - <<EOF
           import os
