@@ -64,13 +64,23 @@ jobs:
               patch = fdata.get('patch', '')
 
               # Call OpenAI for inline code analysis
-              issues_prompt = f"""Analyze the following code changes for syntax errors, typos, and critical issues. Provide comments for specific errors with the line number where they occur:
-              \n\n{patch}"""
+              issues_prompt = f"""
+              Review the following code patch for errors and issues such as:
+              - Syntax errors
+              - Logical errors
+              - Typos or misconfigurations
+              Provide specific inline comments that include:
+              - The exact line number
+              - A clear explanation of the issue
+              - A suggested fix (if possible)
+              Patch to analyze:
+              {patch}
+              """
               ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
               data_issues = {
                   "model": "gpt-4o-mini",
                   "messages": [{"role": "user", "content": issues_prompt}],
-                  "temperature": 0.7
+                  "temperature": 0.5
               }
               issues_response = requests.post("https://api.openai.com/v1/chat/completions", headers=ai_headers, json=data_issues)
               issues_response.raise_for_status()
