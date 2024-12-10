@@ -69,15 +69,15 @@ jobs:
 
               # Call OpenAI for inline code analysis
               issues_prompt = f"""
-              Review the following code patch for errors and issues such as:
+              You are a code reviewer. Analyze the following code patch for issues such as:
               - Syntax errors
               - Logical errors
-              - Typos or misconfigurations
+              - Best practices
               Provide specific inline comments that include:
               - The exact line number
               - A clear explanation of the issue
-              - A suggested fix (if possible)
-              Only analyze the code in this patch:
+              - A suggested fix
+              Analyze only the provided code:
               {patch}
               """
               ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
@@ -89,6 +89,9 @@ jobs:
               issues_response = requests.post("https://api.openai.com/v1/chat/completions", headers=ai_headers, json=data_issues)
               issues_response.raise_for_status()
               issues = issues_response.json()['choices'][0]['message']['content'].strip()
+
+              # Debug: Log the AI's response
+              print(f"AI Response:\n{issues}")
 
               # Parse issues for inline comments
               if issues and "no issues found" not in issues.lower():
