@@ -23,108 +23,91 @@ jobs:
       - name: Run Code Review
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python - <<EOF
           import os
           import requests
           import json
 
-          # Helper function to extract valid line numbers
           def extract_line_number(line_info):
               try:
                   return int(line_info.split(" ")[1])  # Extract integer after "Line"
               except (IndexError, ValueError):
                   return None  # Return None if conversion fails
 
-          # Gather GitHub event details
           event_path = os.environ.get('GITHUB_EVENT_PATH')
           with open(event_path, 'r') as f:
               event = json.load(f)
 
-          # Extract PR and repo details
           pr_number = event['pull_request']['number']
           repo_full_name = event['repository']['full_name']
           token = os.environ.get('GITHUB_TOKEN')
           openai_key = os.environ.get('OPENAI_API_KEY')
 
-          # Get PR diff
-          headers = {
-              'Authorization': f'token {token}',
-              'Accept': 'application/vnd.github.v3.diff',
-          }
+          headers = {'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3.diff'}
           diff_url = event['pull_request']['url'] + "/files"
           pr_files = requests.get(diff_url, headers=headers).json()
 
-          inline_comments = []  # Collect inline comments to post
+          inline_comments = []
 
-          # Loop through the files in the PR
           for fdata in pr_files:
               filename = fdata['filename']
               patch = fdata.get('patch', '')
 
-              # Debug: Log the patch content to ensure it's being sent correctly
+              # Log patch for debugging
               print(f"Reviewing file: {filename}")
               print(f"Patch:\n{patch}")
 
-              # Call OpenAI for inline code analysis
               issues_prompt = f"""
-              You are a code reviewer. Analyze the following code patch for issues such as:
+              Review the following code patch for issues:
               - Syntax errors
-              - Logical errors
-              - Best practices
-              Provide specific inline comments that include:
-              - The exact line number
-              - A clear explanation of the issue
-              - A suggested fix
-              Analyze only the provided code:
+              - Logical issues
+              - Security vulnerabilities
+              Provide feedback for each issue, including:
+              - Line number
+              - Problem description
+              - Suggested fix
+
+              Analyze only the following patch:
               {patch}
               """
+
               ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
-              data_issues = {
-                  "model": "gpt-4o-mini",
-                  "messages": [{"role": "user", "content": issues_prompt}],
-                  "temperature": 0.5
-              }
+              data_issues = {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": issues_prompt}], "temperature": 0.5}
+
               issues_response = requests.post("https://api.openai.com/v1/chat/completions", headers=ai_headers, json=data_issues)
               issues_response.raise_for_status()
               issues = issues_response.json()['choices'][0]['message']['content'].strip()
 
-              # Debug: Log the AI's response
-              print(f"AI Response:\n{issues}")
+              # Log AI response for debugging
+              print("Raw AI response:")
+              print(issues)
 
-              # Parse issues for inline comments
               if issues and "no issues found" not in issues.lower():
                   for issue in issues.split("\\n- "):
                       if issue.strip():
-                          # Example issue format: "Line X: Description of issue"
                           if "Line " in issue:
                               parts = issue.split(":")
                               line_info = parts[0].strip()
                               description = ":".join(parts[1:]).strip()
 
-                              # Extract valid line number
                               line_number = extract_line_number(line_info)
                               if line_number is not None:
                                   inline_comments.append({
                                       "path": filename,
                                       "line": line_number,
-                                      "side": "RIGHT",  # Changes are always on the "RIGHT" side in the diff
+                                      "side": "RIGHT",
                                       "body": f"**AI Code Review:**\n{description}"
                                   })
 
-          # Post inline comments as a single review
           if inline_comments:
-              review_data = {
-                  "body": "AI-generated review comments for code issues.",
-                  "event": "COMMENT",
-                  "comments": inline_comments
-              }
+              review_data = {"body": "AI-generated review comments.", "event": "COMMENT", "comments": inline_comments}
               review_response = requests.post(f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/reviews",
                                                headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'},
                                                json=review_data)
               review_response.raise_for_status()
-              print("Inline review comments posted successfully.")
+              print("Comments posted successfully.")
           else:
               print("No issues found in the code.")
           EOF
