@@ -63,6 +63,10 @@ jobs:
               filename = fdata['filename']
               patch = fdata.get('patch', '')
 
+              # Debug: Log the patch content to ensure it's being sent correctly
+              print(f"Reviewing file: {filename}")
+              print(f"Patch:\n{patch}")
+
               # Call OpenAI for inline code analysis
               issues_prompt = f"""
               Review the following code patch for errors and issues such as:
@@ -73,7 +77,7 @@ jobs:
               - The exact line number
               - A clear explanation of the issue
               - A suggested fix (if possible)
-              Patch to analyze:
+              Only analyze the code in this patch:
               {patch}
               """
               ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
