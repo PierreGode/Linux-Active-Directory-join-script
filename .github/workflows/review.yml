@@ -1,27 +1,39 @@
-name: Code Review Pipeline
+name: PR Summary and Code Review
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
-  code_review:
+  pr_summary:
     runs-on: ubuntu-latest
     steps:
+      # Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Set up Python for PR summaries
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
+      # Install Python dependencies
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run Code Review
+      # Run AI Analysis (PR Summary Only)
+      - name: Generate PR Summary
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
@@ -31,99 +43,66 @@ jobs:
           import requests
           import json
 
-          # Helper function to extract line numbers
-          def extract_line_number(issue_text):
-              try:
-                  if "Line" in issue_text:
-                      line_part = issue_text.split("Line")[1].split(":")[0].strip()
-                      return int(line_part)
-              except (ValueError, IndexError):
-                  pass
-              return None
-
-          # Load GitHub event data
-          event_path = os.getenv("GITHUB_EVENT_PATH")
+          # Gather GitHub event details
+          event_path = os.environ.get('GITHUB_EVENT_PATH')
           with open(event_path, 'r') as f:
               event = json.load(f)
 
-          pr_number = event["pull_request"]["number"]
-          repo_full_name = event["repository"]["full_name"]
+          # Extract PR and repo details
+          pr_number = event['pull_request']['number']
+          repo_full_name = event['repository']['full_name']
+          token = os.environ.get('GITHUB_TOKEN')
+          openai_key = os.environ.get('OPENAI_API_KEY')
 
-          # Fetch PR diff
+          # Get PR diff
           headers = {
-              "Authorization": f'token {os.getenv("GITHUB_TOKEN")}',
-              "Accept": "application/vnd.github.v3.diff",
+              'Authorization': f'token {token}',
+              'Accept': 'application/vnd.github.v3.diff',
           }
-          diff_url = event["pull_request"]["url"] + "/files"
+          diff_url = event['pull_request']['url'] + "/files"
           pr_files = requests.get(diff_url, headers=headers).json()
 
-          # Prepare inline comments
-          inline_comments = []
+          diff_text = ""
+          for fdata in pr_files:
+              filename = fdata['filename']
+              patch = fdata.get('patch', '')
+              diff_text += f"File: {filename}\\nPatch:\\n{patch}\\n\\n"
 
-          for file in pr_files:
-              filename = file["filename"]
-              patch = file.get("patch", "")
+          # Generate PR summary using OpenAI
+          summary_prompt = f"Summarize the following pull request changes in a concise, technical manner:\\n\\n{diff_text}"
+          ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
+          data_summary = {
+              "model": "gpt-4o-mini",
+              "messages": [{"role": "user", "content": summary_prompt}],
+              "temperature": 0.7
+          }
+          summary_response = requests.post("https://api.openai.com/v1/chat/completions", headers=ai_headers, json=data_summary)
+          summary_response.raise_for_status()
+          summary = summary_response.json()['choices'][0]['message']['content'].strip()
 
-              if not patch.strip():
-                  continue
+          # Post AI Pull Request Summary
+          comment_url = f"https://api.github.com/repos/{repo_full_name}/issues/{pr_number}/comments"
+          summary_comment = {
+              "body": f"**AI Pull Request Summary:**\\n{summary}"
+          }
+          summary_comment_response = requests.post(comment_url, headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}, json=summary_comment)
+          summary_comment_response.raise_for_status()
 
-              # Send patch to OpenAI for review
-              prompt = f"""
-              Analyze the following code patch and find:
-              - Syntax errors
-              - Logical issues
-              - Security vulnerabilities
-              For each issue, specify:
-              - Line number
-              - Problem description
-              - Suggested fix
-
-              Patch:
-              {patch}
-              """
-              openai_headers = {
-                  "Authorization": f'Bearer {os.getenv("OPENAI_API_KEY")}',
-                  "Content-Type": "application/json",
-              }
-              openai_payload = {
-                  "model": "gpt-4o-mini",
-                  "messages": [{"role": "user", "content": prompt}],
-                  "temperature": 0.3,
-              }
-              response = requests.post(
-                  "https://api.openai.com/v1/chat/completions",
-                  headers=openai_headers,
-                  json=openai_payload,
-              )
-              response.raise_for_status()
-              ai_output = response.json()["choices"][0]["message"]["content"]
-
-              # Process AI output
-              for issue in ai_output.split("\n"):
-                  if "Line" in issue:
-                      line_number = extract_line_number(issue)
-                      if line_number:
-                          description = issue.split(": ", 1)[-1].strip()
-                          inline_comments.append(
-                              {
-                                  "path": filename,
-                                  "line": line_number,
-                                  "side": "RIGHT",
-                                  "body": f"**AI Code Review:**\n{description}",
-                              }
-                          )
-
-          # Submit review comments
-          if inline_comments:
-              review_url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/reviews"
-              review_data = {
-                  "event": "COMMENT",
-                  "body": "AI-generated inline comments for code review.",
-                  "comments": inline_comments,
-              }
-              review_response = requests.post(review_url, headers=headers, json=review_data)
-              review_response.raise_for_status()
-              print("Code review comments posted successfully.")
-          else:
-              print("No issues found in the code.")
+          print("PR Summary posted successfully.")
           EOF
+
+  code_review:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Run GPT Code Reviewer (handles all code review tasks)
+      - name: Run GPT Code Reviewer
+        uses: PierreGode/GPTcode-reviewer@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_MODEL: "gpt-4o-mini"
+          exclude: "**/*.json, **/*.md"
