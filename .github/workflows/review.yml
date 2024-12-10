@@ -30,6 +30,13 @@ jobs:
           import requests
           import json
 
+          # Helper function to extract valid line numbers
+          def extract_line_number(line_info):
+              try:
+                  return int(line_info.split(" ")[1])  # Extract integer after "Line"
+              except (IndexError, ValueError):
+                  return None  # Return None if conversion fails
+
           # Gather GitHub event details
           event_path = os.environ.get('GITHUB_EVENT_PATH')
           with open(event_path, 'r') as f:
@@ -79,8 +86,9 @@ jobs:
                               line_info = parts[0].strip()
                               description = ":".join(parts[1:]).strip()
 
-                              if "Line" in line_info:
-                                  line_number = int(line_info.split(" ")[1])  # Extract line number
+                              # Extract valid line number
+                              line_number = extract_line_number(line_info)
+                              if line_number is not None:
                                   inline_comments.append({
                                       "path": filename,
                                       "line": line_number,
