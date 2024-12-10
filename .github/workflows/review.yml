@@ -1,10 +1,10 @@
-name: PR Summary and Inline Issues Check
+name: Code Review Pipeline
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  summarize_and_check:
+  code_review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -20,7 +20,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Run AI Analysis
+      - name: Run Code Review
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
@@ -57,16 +57,15 @@ jobs:
           pr_files = requests.get(diff_url, headers=headers).json()
 
           inline_comments = []  # Collect inline comments to post
-          diff_text = ""
 
           # Loop through the files in the PR
           for fdata in pr_files:
               filename = fdata['filename']
               patch = fdata.get('patch', '')
-              diff_text += f"File: {filename}\\nPatch:\\n{patch}\\n\\n"
 
               # Call OpenAI for inline code analysis
-              issues_prompt = f"Review the following code changes for critical issues (e.g., syntax errors, undefined variables, broken imports). Provide specific inline comments for each issue with the corresponding line number from this diff:\n\n{patch}"
+              issues_prompt = f"""Analyze the following code changes for syntax errors, typos, and critical issues. Provide comments for specific errors with the line number where they occur:
+              \n\n{patch}"""
               ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
               data_issues = {
                   "model": "gpt-4o-mini",
@@ -94,7 +93,7 @@ jobs:
                                       "path": filename,
                                       "line": line_number,
                                       "side": "RIGHT",  # Changes are always on the "RIGHT" side in the diff
-                                      "body": f"**AI Code Issue Check:**\n{description}"
+                                      "body": f"**AI Code Review:**\n{description}"
                                   })
 
           # Post inline comments as a single review
@@ -110,26 +109,5 @@ jobs:
               review_response.raise_for_status()
               print("Inline review comments posted successfully.")
           else:
-              print("No critical issues found in the code.")
-
-          # Always post PR summary
-          summary_prompt = f"Summarize the following pull request changes in a concise, technical manner. Include details on which files were changed and a high-level overview of the changes:\n\n{diff_text}"
-          data_summary = {
-              "model": "gpt-4o-mini",
-              "messages": [{"role": "user", "content": summary_prompt}],
-              "temperature": 0.7
-          }
-          summary_response = requests.post("https://api.openai.com/v1/chat/completions", headers=ai_headers, json=data_summary)
-          summary_response.raise_for_status()
-          summary = summary_response.json()['choices'][0]['message']['content'].strip()
-
-          # Post AI Pull Request Summary
-          comment_url = f"https://api.github.com/repos/{repo_full_name}/issues/{pr_number}/comments"
-          summary_comment = {
-              "body": f"**AI Pull Request Summary:**\\n{summary}"
-          }
-          summary_comment_response = requests.post(comment_url, headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}, json=summary_comment)
-          summary_comment_response.raise_for_status()
-
-          print("PR Summary posted successfully.")
+              print("No issues found in the code.")
           EOF
