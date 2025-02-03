@@ -1,4 +1,4 @@
-name: PR Summary and Code Review
+name: PR summary by AI
 
 on:
   pull_request:
@@ -14,47 +14,49 @@ permissions:
 
 jobs:
   pr_summary:
+    name: PR Summary
     runs-on: ubuntu-latest
     steps:
-      # Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up Python for PR summaries
+      - name: Read README.md
+        id: read_readme
+        run: |
+          README_CONTENT=$(cat README.md)
+          echo "::set-output name=README::$README_CONTENT"
+
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # Install Python dependencies
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      # Run AI Analysis (PR Summary Only)
-      - name: Generate PR Summary
+      - name: PR Summary
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
+          README_CONTENT: ${{ steps.read_readme.outputs.README }}
         run: |
           python - <<EOF
           import os
           import requests
           import json
 
-          # Gather GitHub event details
           event_path = os.environ.get('GITHUB_EVENT_PATH')
           with open(event_path, 'r') as f:
               event = json.load(f)
 
-          # Extract PR and repo details
           pr_number = event['pull_request']['number']
           repo_full_name = event['repository']['full_name']
           token = os.environ.get('GITHUB_TOKEN')
           openai_key = os.environ.get('OPENAI_API_KEY')
+          readme_content = os.environ.get('README_CONTENT')
 
-          # Get PR diff
           headers = {
               'Authorization': f'token {token}',
               'Accept': 'application/vnd.github.v3.diff',
@@ -65,11 +67,29 @@ jobs:
           diff_text = ""
           for fdata in pr_files:
               filename = fdata['filename']
-              patch = fdata.get('patch', '')
-              diff_text += f"File: {filename}\\nPatch:\\n{patch}\\n\\n"
+              patch = fdata.get('patch', 'No changes')
+              diff_text += f"File: {filename}\nPatch:\n"
+              for line in patch.split('\n'):
+                  if line.startswith('+'):
+                      diff_text += f"Added: {line[1:]}\n"
+                  elif line.startswith('-'):
+                      diff_text += f"Removed: {line[1:]}\n"
+                  else:
+                      diff_text += f"{line}\n"
 
-          # Generate PR summary using OpenAI
-          summary_prompt = f"Summarize the following pull request changes in a concise, technical manner:\\n\\n{diff_text}"
+          summary_prompt = (
+              f"Based on the following README, provide a comprehensive analysis of the pull request. \n\n"
+              f"**README Content:**\n{readme_content}\n\n"
+              f"**Pull Request Diff:**\n{diff_text}\n\n"
+              f"Please include the following in your summary:\n"
+              f"- Key files and components modified.\n"
+              f"- Main purpose of the changes (e.g., bug fixes, feature additions, optimizations).\n"
+              f"- Specific functionalities introduced, modified, or removed.\n"
+              f"  - Highlight lines added (marked with 'Added:') and lines removed (marked with 'Removed:').\n"
+              f"- Any potential implications or considerations (e.g., performance impacts, breaking changes, dependencies).\n"
+              f"Ensure the summary clearly states which version contains corrections or bug fixes."
+          )
+
           ai_headers = {"Content-Type": "application/json", "Authorization": f"Bearer {openai_key}"}
           data_summary = {
               "model": "gpt-4o-mini",
@@ -80,29 +100,34 @@ jobs:
           summary_response.raise_for_status()
           summary = summary_response.json()['choices'][0]['message']['content'].strip()
 
-          # Post AI Pull Request Summary
           comment_url = f"https://api.github.com/repos/{repo_full_name}/issues/{pr_number}/comments"
           summary_comment = {
-              "body": f"**AI Pull Request Summary:**\\n{summary}"
+              "body": f"**AI Pull Request Summary:**\n{summary}"
           }
-          summary_comment_response = requests.post(comment_url, headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}, json=summary_comment)
-          summary_comment_response.raise_for_status()
+          requests.post(comment_url, headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github.v3+json'}, json=summary_comment)
 
           print("PR Summary posted successfully.")
           EOF
 
   code_review:
+    name: AI Code Review
     runs-on: ubuntu-latest
     steps:
-      # Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Run GPT Code Reviewer (handles all code review tasks)
-      - name: Run GPT Code Reviewer
+      - name: Read README.md
+        id: read_readme_review
+        run: |
+          README_CONTENT=$(cat README.md)
+          echo "::set-output name=README::$README_CONTENT"
+
+      - name: AI Code Review
         uses: PierreGode/GPTcode-reviewer@main
         with:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_API_MODEL: "gpt-4o-mini"
-          exclude: "**/*.json, **/*.md"
+          exclude: "**/*.json,**/*.md"
+          # Assuming the action allows passing additional context, include README
+          additional_context: ${{ steps.read_readme_review.outputs.README }}
