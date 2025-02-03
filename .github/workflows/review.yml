@@ -123,7 +123,7 @@ jobs:
           echo "::set-output name=README::$README_CONTENT"
 
       - name: AI Code Review
-        uses: PierreGode/GPTcode-reviewer@main
+        uses: PierreGode/GPTcode-reviewer@dev
         with:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
