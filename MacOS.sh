@@ -7,7 +7,7 @@ PASS="password"                     # AD admin password (not encrypted, use with
 ADGROUP="whatevergroup"             # AD group to add computer to (e.g. MacAdmins)
 ADCOMPUTER="MACagent01"             # Name of the computer object in Active Directory
 OU="OU=Computers Mac,DC=domain,DC=com" # OU where the computer object will be created
-
+fghsfhj
 # Prompt user for input
 read -p "Enter Active Directory domain name: " DOMAIN
 read -p "Enter AD admin username: " ADMIN
