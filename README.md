@@ -1,4 +1,4 @@
-##### Linux-Active-Directory-join-script By Pierre Gode 2017-2024
+# Linux-Active-Directory-join-script By Pierre Gode 2017-2025
 
 [![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers) [![Commits per Month](https://img.shields.io/github/commit-activity/m/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/commits/main) ![Tech Stack](https://img.shields.io/badge/stack-Bash%20%7C%20Python%20%7C%20Shell-brightgreen) [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://shields.io/) ![GitHub Workflow Status](https://github.com/PierreGode/Linux-Active-Directory-join-script/actions/workflows/review.yml/badge.svg) ![Visitor Count](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/PierreGode/Linux-Active-Directory-join-script&title=Visitors)
 
@@ -64,21 +64,22 @@ Usage:
       [-l (script output to log file)]
       [-s (Discover domain)]
                           
-                          
-
+                        
 Usage of the script:
 
     sudo sh ADconnection.sh or sudo ./ADconnection.sh
 for ./ADconnection.sh do a 
 
      sudo chmod +x ADconnection.sh  
-first.
 
-Complete steps
 
-1. remember to set a hostname on the client or server, the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+# Complete steps
 
-2. At this point you have 2 options. you already have a Group i AD example:"ADMINS" here you have your users with sudo rights. then you need to edit /etc/sudoers.d/sudoers
+#### 1. Config
+remember to set a hostname on the client or server, the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+
+#### 2. Permissions
+At this point you have 2 options. you already have a Group i AD example:"ADMINS" here you have your users with sudo rights. then you need to edit /etc/sudoers.d/sudoers
 and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
 In this script there is a magic word added for groups in AD and it is sudoers, it always adds sudoers after hostname, like linuxcomputersudoers
 administrator will always be added to sudoers as a failsafe for sysadmins.
@@ -87,11 +88,12 @@ and also /etc/ssh/login.allow if you have selected this option for security.
 
 Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers and LINUXCOMPUTER as hostname, they are not related, but Computer object in AD will be created and named after hostname and naming the ADgroup simmilar makes search easier in the future, therefore the script by defaut will add "LINUXCOMPUTERsudoers" as default in sudoers.d/sudoers, in this step you don't need to edit files, the script will allow you to choose if you want users to be sudoers or not and if yes the script will autogenerate "LINUXCOMPUTERsudoers" in sudoers
 .
-3. set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot 
+#### 3. Hostname
+set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot 
 ( in/etc/hosts it should look like 127.0.1.1       LINUXCOMPUTER01       LINUXCOMPUTER01.domain.com also in resolv.conf you should have search domain.com)
 
-4. git clone this script and run
-
+#### 4. git clone 
+git clone this script and run
 Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16,17, 18, 19,20, mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint or Kali
 the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
 If there are issues finding the domain please dubblecheck your dns configuration on the domain controller.
@@ -107,12 +109,12 @@ If you current local user is not in the SSH-ALLOW file it will be BANNED from th
 Updated. :Added the ability to choose if you want to dissable SSH-allow,
 note: if ssh is disabled users in other groups will be able to ssh to the client, but will not have sudo rights if they are not members in the group LINUXCOMPUTERsudoers
 
-Updated. :
+### Updated. :
 also the ability to choose if clients should have sudo rights or not.
 if you seclect no on this option there is no need for an AD group "LINUXCOMPUTERsudoers" in active directory, all domain users
 will have nonsudo access. "notice this option can NOT be combined with the option YES on ssh-allow"
 
-Updates:
+### Updates:
 added join to ubuntu clients with debug mode. 
 debugmode will open 2 terminals and will post information while you run the script.
 (does not work over SSH)
@@ -130,13 +132,13 @@ to test access and permissions of a user execute in terminal from administrator 
 For best security. I restricted ssh to only domainadmins and local administrator, also clients will be allowed to login from assigned group ( "LINUXCOMPUTERsudoers" ) (with option YES on SSH-allow) (with option YES on sudo rights )
 
 
-How do i update my password?
+### How do i update my password?
 ( changed password but Linux is still on old password ) 
 This should read new info from AD when you are on "AD" network
 First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
 If you are having problems with the computer not fetching the new password. On office network.. open a terminal and execute sudo service sssd restart, this will reload information, logout and login with the new password.
 
-##I have issues!
+### I have issues!
 
 1. After reboot I cant login at all. (local or AD)  
 "This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
