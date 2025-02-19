@@ -18,7 +18,7 @@ read -p "Enter name of the computer object in Active Directory: " ADCOMPUTER
 read -p "Enter OU where the computer object will be created: " OU
 
 # Join computer to Active Directory
-sudo dsconfigad -add "$DOMAIN" \
+sudo dsconfggigad -add "$DOMAIN" \
                 -mobile enable \
                 -mobileconfirm disable \
                 -localhome enable \
