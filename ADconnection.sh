@@ -1902,7 +1902,6 @@ exit
 fi
 echo "session required        pam_unix.so" | sudo tee -a /etc/pam.d/common-session
 fi_auth_yum
-exit
 }
 
 ############################### Raspberry Pi ###################################
@@ -1949,8 +1948,7 @@ entry_cache_timeout = 600
 #entry_cache_group_timeout = 5400
 #cache_credentials = TRUE
 entry_cache_nowait_percentage = 75" | sudo tee -a /etc/sssd/sssd.conf
-sudo service sssd restart
-exit
+sudo service sssd restart && exit 0
 }
 
 ############################### Fedora #########################################
@@ -2016,7 +2014,6 @@ echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
 fi_auth_yum
-exit
 }
 
 ############################# Elemntary #####################################
@@ -2085,7 +2082,6 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/40-io.elementary.greeter.conf
 fi
 fi_auth
-exit
 }
 
 ############################# Linux Mint #####################################
@@ -2155,7 +2151,6 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
 fi
 fi_auth
-exit
 }
 
 ############################### Update to Realmd from likewise ##################
@@ -2164,7 +2159,7 @@ clear
 echo ""
 echo "this section has been deprecated, If you are still using likewise please see code"
 echo "leave likewise with sudo domainjoin-cli leave"
-exit
+exit 0
 }
 
 ############################### Fail check ####################################
@@ -2296,7 +2291,7 @@ fi
 fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
-exit
+exit 0
 }
 
 #################################### ldapsearch #####################################################
