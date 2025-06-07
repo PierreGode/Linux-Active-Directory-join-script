@@ -1902,7 +1902,7 @@ exit
 fi
 echo "session required        pam_unix.so" | sudo tee -a /etc/pam.d/common-session
 fi_auth_yum
-exit
+exit 0
 }
 
 ############################### Raspberry Pi ###################################
@@ -2016,7 +2016,7 @@ echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
 fi_auth_yum
-exit
+exit 0
 }
 
 ############################# Elemntary #####################################
@@ -2085,7 +2085,7 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/40-io.elementary.greeter.conf
 fi
 fi_auth
-exit
+exit 0
 }
 
 ############################# Linux Mint #####################################
@@ -2155,7 +2155,7 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
 fi
 fi_auth
-exit
+exit 0
 }
 
 ############################### Update to Realmd from likewise ##################
