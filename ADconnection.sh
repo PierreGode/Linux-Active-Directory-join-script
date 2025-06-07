@@ -2371,6 +2371,7 @@ fi
 Reauthenticate(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
+sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 clear
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
 DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' ) < /dev/null > /dev/null 2>&1
