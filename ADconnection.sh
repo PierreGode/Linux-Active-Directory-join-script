@@ -828,8 +828,9 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo apt install adcli -y
-sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
-if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
+sudo echo "${NUMBER}Installing packages do no abort!.......${END}" 
+
+if ! sudo apt-get -qq install realmd adcli sssd ntp krb5-user curl -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
 exit 1
@@ -1089,7 +1090,7 @@ myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo apt install adcli -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
-if ! sudo apt-get -qq install realmd adcli sssd ntp curl -y && sudo apt-get -qq install -f -y
+if ! sudo apt-get -qq install realmd adcli sssd ntp krb5-user curl -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
 exit 1
@@ -1577,12 +1578,10 @@ sudo apt install adcli -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
 sudo apt-get -qq install adcli -y
-sudo apt-get -qq install realmd adcli sssd -y
+sudo apt-get -qq install realmd adcli krb5-user sssd -y
 sudo apt-get -qq install ntp curl -y
 sudo apt-get -qq install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
-sudo apt-get -qq install realmd adcli sssd -y
-sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f -y
 clear
 if ! sudo dpkg -l | grep realmd
@@ -1737,7 +1736,7 @@ sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt install adcli -y
 sudo apt-get -qq update
 sudo apt-get -qq install libsss-sudo -y
-sudo apt-get -qq install realmd adcli sssd curl -y
+sudo apt-get -qq install realmd adcli krb5-user sssd curl -y
 sudo apt-get -qq install ntp -y
 sudo apt-get -qq install policykit-1 -y
 sudo mkdir -p /var/lib/samba/private
@@ -1815,7 +1814,7 @@ fi_auth
 CentOS(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common heimdal-clients msktutil
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli krb5-user samba-common-tools samba-common heimdal-clients msktutil
 yum -y install adcli=0.8.2-1 -y
 yum -y install ipa-client
 echo "Looking for domains..."
@@ -1910,7 +1909,7 @@ exit
 raspberry(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-sudo aptitude install ntp adcli sssd
+sudo aptitude install ntp adcli sssd krb5-user
 sudo mkdir -p /var/lib/samba/private
 sudo aptitude install libsss-sudo
 sudo systemctl enable sssd
@@ -1958,7 +1957,7 @@ exit
 Fedora_fn(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli samba-common-tools samba-common
+yum -y install realmd sssd oddjob oddjob-mkhomedir adcli krb5-user samba-common-tools samba-common
 DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
 if ! ping -c 1 "$DOMAIN"
 then
