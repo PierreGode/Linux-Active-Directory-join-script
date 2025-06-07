@@ -1,0 +1,27 @@
+name: ADconnection.sh Test Pipeline
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test-adconnection:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Shellcheck lint ADconnection.sh
+        run: shellcheck ./ADconnection.sh
+
+      - name: Bash syntax check ADconnection.sh
+        run: bash -n ./ADconnection.sh
+
+      - name: Run ADconnection.sh --help
+        run: bash ./ADconnection.sh --help
