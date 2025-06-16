@@ -71,6 +71,10 @@ Usage of the script:
 for ./ADconnection.sh do a 
 
      sudo chmod +x ADconnection.sh  
+You can also use the Python version:
+    sudo python3 adconnection_app.py [domain] [--user ADMIN] [--ou OU]
+    sudo python3 adconnection_gui.py
+
 
 
 # Complete steps
