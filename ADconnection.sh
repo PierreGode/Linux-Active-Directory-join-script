@@ -6,7 +6,7 @@
 #      This program is open source; you can redistribute it and/or modify it under the terms of the GNU General Public           #
 #                     This is an normal bash script and can be executed with sh EX: ( sudo sh ADconnection.sh )                  #
 # Generic user setup is: administrator, domain admins, groupnamesudores= groupname=hostname + sudoers on group name in AD groups #
-# Supported OS's: Ubuntu 14-25 + mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint,Elementary OS and Kali ( autodetect function ) #
+# Supported OS's: Ubuntu, Debian, Raspberry Pi OS, Kali, Mint, Zorin, Elementary, Fedora, CentOS/RHEL/Rocky/Alma, openSUSE       #
 #This scrips is a long serie of small updates and not well planned, the script works as expected, but this is not beautiful code #
 #           Maybe someday I re-do the script and make it "good code"  but overall it has minimal shellcheck issues               #
 ##################################################################################################################################
@@ -84,6 +84,144 @@ fi
 }
 # ~~~~~~~~~~  Package helpers (Debian / Kali) ~~~~~~~~~~ #
 
+# ~~~~~~~~~~  Distribution detection ~~~~~~~~~~ #
+# Read /etc/os-release (present on every current distribution), lsb_release only as a fallback.
+# OS_ID is e.g. ubuntu, debian, kali, fedora, rocky; OS_LIKE lists the parents of derivatives.
+detect_os(){
+OS_ID=""
+OS_LIKE=""
+OS_NAME=""
+if [ -r /etc/os-release ]
+then
+OS_ID=$(sed -n 's/^ID=//p' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
+OS_LIKE=$(sed -n 's/^ID_LIKE=//p' /etc/os-release | tr -d '"' | tr '[:upper:]' '[:lower:]')
+OS_NAME=$(sed -n 's/^PRETTY_NAME=//p' /etc/os-release | tr -d '"')
+fi
+if [ -z "$OS_ID" ] && command -v lsb_release > /dev/null 2>&1
+then
+OS_ID=$(lsb_release -si | tr '[:upper:]' '[:lower:]')
+OS_NAME=$(lsb_release -sd | tr -d '"')
+fi
+[ -n "$OS_NAME" ] || OS_NAME="$OS_ID"
+}
+
+# Local accounts that can log in: UID_MIN and up with a real login shell (bash, zsh, fish...).
+# Used to keep local admins in /etc/ssh/login.group.allowed so they are not locked out.
+local_login_users(){
+uid_min=$(awk '/^UID_MIN/ {print $2}' /etc/login.defs 2>/dev/null)
+[ -n "$uid_min" ] || uid_min=1000
+awk -F ':' -v min="$uid_min" '$3 >= min && $3 < 60000 && $7 !~ /(nologin|false)$/ {print $1}' /etc/passwd
+}
+
+# Kerberos needs a synced clock. Keep the time sync service the system already runs,
+# otherwise install one (ntp is gone from newer releases: ntpsec or chrony instead).
+install_time_sync(){
+if timedatectl show -p NTP --value 2>/dev/null | grep -qi yes
+then
+return 0
+fi
+as_root apt-get -qq install ntp -y || as_root apt-get -qq install ntpsec -y || as_root apt-get -qq install chrony -y
+}
+
+# Install rpm packages with dnf (Fedora, RHEL 8+) or yum (older CentOS/RHEL)
+rpm_install(){
+if command -v dnf > /dev/null 2>&1
+then
+as_root dnf -y install "$@"
+else
+as_root yum -y install "$@"
+fi
+}
+
+# ~~~~~~~~~~  Domain discovery ~~~~~~~~~~ #
+# "realm discover" without arguments only finds a domain announced by DHCP. Also try the DNS
+# search/domain names, systemd-resolved and NetworkManager domains and the host's own DNS domain,
+# including their parent domains, and return the first realm that realmd confirms (e.g. GODE.LAN).
+discover_domain(){
+local found candidates tried name
+found=$(realm discover 2>/dev/null | grep -i -m1 'realm-name:' | awk '{print $2}')
+if [ -n "$found" ]
+then
+echo "$found"
+return 0
+fi
+candidates=""
+if [ -f /etc/resolv.conf ]
+then
+candidates="$candidates $(awk '$1 == "search" || $1 == "domain" {for (i = 2; i <= NF; i++) print $i}' /etc/resolv.conf)"
+fi
+if command -v resolvectl > /dev/null 2>&1
+then
+candidates="$candidates $(resolvectl domain 2>/dev/null | cut -d ':' -f2-)"
+fi
+if command -v nmcli > /dev/null 2>&1
+then
+candidates="$candidates $(nmcli -t -f IP4.DOMAIN device show 2>/dev/null | cut -d ':' -f2-)"
+fi
+candidates="$candidates $(hostname -d 2>/dev/null)"
+tried=" "
+for name in $candidates
+do
+name=$(echo "$name" | sed -e 's/^~//' -e 's/\.$//' | tr '[:upper:]' '[:lower:]')
+# clients.corp.example.com -> corp.example.com -> example.com (never a single label)
+while [ -n "$name" ] && [ "$name" != "${name#*.}" ]
+do
+case "$tried" in
+*" $name "*) ;;
+*)
+tried="$tried$name "
+found=$(realm discover "$name" 2>/dev/null | grep -i -m1 'realm-name:' | awk '{print $2}')
+if [ -n "$found" ]
+then
+echo "$found"
+return 0
+fi
+;;
+esac
+name=${name#*.}
+done
+done
+return 1
+}
+
+# OU to create the computer object in, from readfile (e.g. --computer-ou=OU=Clients,DC=domain,DC=com)
+read_ou(){
+OUSPECIFIED=$( grep OUSPECIFIED readfile 2>/dev/null | awk '{print $3}' )
+if [ "$OUSPECIFIED" = "null" ]
+then
+OUSPECIFIED=""
+fi
+}
+
+# Desktop notification, skipped quietly on servers and ssh sessions without a display
+notify_user(){
+if [ -n "$DISPLAY" ] && command -v notify-send > /dev/null 2>&1
+then
+notify-send "$@" 2> /dev/null
+fi
+}
+
+# Ask for the domain when discovery found nothing
+ask_domain_if_empty(){
+if [ -z "$DOMAIN" ]
+then
+echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
+echo "Please enter the domain you wish to join:"
+read -r DOMAIN
+fi
+}
+
+# Domain this machine is joined to (empty if none): realmd first, then sssd.conf
+joined_domain(){
+local name
+name=$(realm list --name-only 2>/dev/null | head -1)
+if [ -z "$name" ] && [ -f /etc/sssd/sssd.conf ]
+then
+name=$(as_root grep -m1 '^[[:space:]]*domains[[:space:]]*=' /etc/sssd/sssd.conf | cut -d '=' -f2 | cut -d ',' -f1 | tr -d ' ')
+fi
+echo "$name"
+}
+
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
@@ -100,7 +238,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+admins=$( local_login_users )
 sshsec=$( sudo grep SSHSECURE readfile | awk '{print $3}' )
 if [ "$sshsec" = "yes" ]
 then
@@ -113,15 +251,13 @@ then
   localadmin=$( sudo grep LOCALADMIN readfile | awk '{print $3}' )
     if [ "$localadmin" = "null" ]
     then
-    localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+    localadmin=$( local_login_users )
     else
     sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
     sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
     sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
     #sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
-    cat /etc/passwd | grep home | while read locaussh
-    do echo $locaussh | grep home | grep bash | cut -d ':' -f1 | sudo tee -a sudo tee -a /etc/ssh/login.group.allowed
-    done
+    local_login_users | sudo tee -a /etc/ssh/login.group.allowed
     echo "enabled SSH-allow"
     fi
   fi
@@ -144,9 +280,7 @@ else
         sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
         sudo echo "root" | sudo tee -a /etc/ssh/login.group.allowed
         #sudo echo "$localadmin"  | sudo tee -a /etc/ssh/login.group.allowed
-        cat /etc/passwd | grep home | while read locaussh
-        do echo $locaussh | grep home | grep bash | cut -d ':' -f1 | sudo tee -a sudo tee -a /etc/ssh/login.group.allowed
-        done
+        local_login_users | sudo tee -a /etc/ssh/login.group.allowed
 	echo "enabled SSH-allow"
         echo ""
         echo ""
@@ -330,13 +464,13 @@ echo "For SASL put you company root-ca.cer in /usr/share/ca-certificates/root/ f
 read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
    case $yn in
     [Yy]* )
-if [ -f "/usr/share/ca-certificates/root/*.cer" ]
+cacer=$( find /usr/share/ca-certificates/root/ -maxdepth 1 -name '*.cer' 2>/dev/null | head -1 )
+if [ -n "$cacer" ]
 then
-cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
 echo "Type in address of your Domaincontroller: ex: dc01.com"
 read -r yourDC
 clear
-sasl=$( echo "ldaps://"$yourDC":636" )
+sasl="ldaps://$yourDC:636"
 echo "DC sssd configuration will be $sasl"
 echo "Found certificate $cacer"
 read -r -p "Is this information correct (y/n)?" yn
@@ -380,7 +514,7 @@ echo "sssd config.. ${RED_TEXT}FAIL${END}"
 else
 echo "sssd config.. ${INTRO_TEXT}OK${END}"
 fi
-if ! realm discover < /dev/null > /dev/null 2>&1
+if ! command -v realm > /dev/null 2>&1
 then
 echo "Realm not installed"
 else
@@ -421,7 +555,7 @@ then
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}' | head -1 )
-if [ $cauth = "allow" ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. ${INTRO_TEXT}OK${END}"
 else
@@ -429,7 +563,7 @@ echo "Checking PAM auth configuration.. ${RED_TEXT}FAIL${END}"
 fi
 fi
 #realm discover $DOMAIN
-if ! realm discover
+if ! realm discover "$DOMAIN"
 then
 echo "realm not found"
 else
@@ -437,11 +571,11 @@ if [ "$therealm" = "no" ]
 then
 echo "${RED_TEXT}Join has Failed${END}"
 else
-lastverify=$( realm discover "$DOMAIN" | grep -m 1 "$DOMAIN" )
+lastverify=$( realm discover "$DOMAIN" | grep -i -m 1 "$DOMAIN" )
 echo ""
 echo "${INTRO_TEXT}joined to $lastverify${END}"
 echo ""
-notify-send ADconnection "Joined $lastverify "
+notify_user ADconnection "Joined $lastverify "
 fi
 fi
 echo "${INTRO_TEXT}Please reboot your machine and wait 3 min for Active Directory to sync before login${INTRO_TEXT}"
@@ -468,7 +602,7 @@ grouPs="null"
 therealm="null"
 cauth="null"
 clear
-admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+admins=$( local_login_users )
 sshsec=$( sudo grep SSHSECURE readfile | awk '{print $3}' )
 if [ "$sshsec" = "yes" ]
 then
@@ -481,7 +615,7 @@ then
   localadmin=$( sudo grep LOCALADMIN readfile | awk '{print $3}' )
     if [ "$localadmin" = "null" ]
     then
-    localadmin=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+    localadmin=$( local_login_users )
     else
     sudo echo "$NetBios\\$myhost""sudoers""" | sudo tee -a /etc/ssh/login.group.allowed
     sudo echo "$NetBios\\domain^admins" | sudo tee -a /etc/ssh/login.group.allowed
@@ -678,13 +812,13 @@ echo "For SASL put you company root-ca.cer in /usr/share/ca-certificates/root/ f
 read -r -p "Do you wish to use SASL (LDAPS) (y/n)?" yn
    case $yn in
     [Yy]* )
-if [ -f "/usr/share/ca-certificates/root/*.cer" ]
+cacer=$( find /usr/share/ca-certificates/root/ -maxdepth 1 -name '*.cer' 2>/dev/null | head -1 )
+if [ -n "$cacer" ]
 then
-cacert=$( ls /usr/share/ca-certificates/root/ | grep .cer | head -1 )
 echo "Type in address of your Domaincontroller: ex: dc01.com"
 read -r yourDC
 clear
-sasl=$( echo "ldaps://"$yourDC":636" )
+sasl="ldaps://$yourDC:636"
 echo "DC sssd configuration will be $sasl"
 echo "Found certificate $cacer"
 read -r -p "Is this information correct (y/n)?" yn
@@ -717,7 +851,7 @@ if ! sudo service sssd restart
 then
 echo "SSSD failed relading, please see journalctl -xe"
 fi
-if ! realm discover
+if ! realm discover "$DOMAIN"
 then
 echo "no realm found"
 else
@@ -758,7 +892,7 @@ then
 echo "Disabled SSH login.group.allowed"
 else
 cauth=$( grep required /etc/pam.d/sshd | grep onerr | grep allow | cut -d '=' -f4 | awk '{print $1}' | head -1 )
-if [ $cauth = "allow" ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration.. OK"
 else
@@ -766,7 +900,7 @@ echo "Checking PAM auth configuration.. FAIL"
 fi
 fi
 #realm discover $DOMAIN
-if ! realm discover
+if ! realm discover "$DOMAIN"
 then
 echo "realm not found"
 else
@@ -774,11 +908,11 @@ if [ "$therealm" = "no" ]
 then
 echo "Join has Failed"
 else
-lastverify=$( realm discover "$DOMAIN" | grep -m 1 "$DOMAIN" )
+lastverify=$( realm discover "$DOMAIN" | grep -i -m 1 "$DOMAIN" )
 echo ""
 echo "joined to $lastverify"
 echo ""
-notify-send ADconnection "Joined $lastverify"
+notify_user ADconnection "Joined $lastverify"
 fi
 fi
 echo "Please reboot your machine and wait 3 min for Active Directory to sync before login"
@@ -800,85 +934,83 @@ linuxclient
 
 ################################## Join for linux clients ##########################################
 linuxclient(){
-TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-MintOS=$( hostnamectl | grep -i Operating | awk '{print $4}' ) < /dev/null > /dev/null 2>&1
-rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-elementary=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-SUSE=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
+detect_os
 clear
-#### OS detection ####
-if [ "$TheOS" = "Zorin" ] < /dev/null > /dev/null 2>&1
-then
-Zorin_os
-else
-if [ "$TheOS" = "Fedora" ] < /dev/null > /dev/null 2>&1
-then
+#### OS detection from /etc/os-release: ID first, ID_LIKE for derivatives ####
+case "$OS_ID" in
+zorin) Zorin_os ;;
+fedora)
 echo "Fedora detected"
 Fedora_fn
-else
-if [ "$TheOS" = "CentOS" ] < /dev/null > /dev/null 2>&1
-then
-echo "Cent OS detected"
+;;
+centos|rhel|rocky|almalinux|ol|eurolinux|cloudlinux|scientific|virtuozzo|circle)
+echo "$OS_NAME detected"
 CentOS
-else
-if [ "$TheOS" = "Debian" ] < /dev/null > /dev/null 2>&1
-then
-echo "Debian detected"
+;;
+# Raspberry Pi OS 32-bit reports raspbian, 64-bit reports debian: both use the Debian client
+debian|raspbian)
+echo "$OS_NAME detected"
 debianclient
-else
-if [ "$TheOS" = "SUSE" ] < /dev/null > /dev/null 2>&1
-then
+;;
+opensuse*|sles|sled|suse)
 echo "SUSE detected"
 SUSEclient
-else
-if [ "$TheOS" = "Ubuntu" ] < /dev/null > /dev/null 2>&1
-then
-echo "Ubuntu detected"
+;;
+ubuntu|pop|neon|kubuntu|xubuntu|lubuntu|ubuntu-budgie|ubuntustudio) ubuntu_family ;;
+kali)
+echo "${INTRO_TEXT}Detecting Kali linux${END}"
+kalijoin
+;;
+elementary)
+echo "${INTRO_TEXT}Detected Elementary${END}"
+sleep 1
+elemntary_fn
+;;
+linuxmint)
+echo "Detecting Linux Mint"
+LinuxMint
+;;
+*)
+case " $OS_LIKE " in
+*" ubuntu "*) ubuntu_family ;;
+*" debian "*)
+echo "$OS_NAME detected (Debian based)"
+debianclient
+;;
+*" rhel "*|*" centos "*)
+echo "$OS_NAME detected (RHEL based)"
+CentOS
+;;
+*" fedora "*)
+echo "$OS_NAME detected (Fedora based)"
+Fedora_fn
+;;
+*" suse "*|*" opensuse "*)
+echo "$OS_NAME detected (SUSE based)"
+SUSEclient
+;;
+*)
+echo "No compatible System found ($OS_NAME)"
+exit
+;;
+esac
+;;
+esac
+}
+
+# Ubuntu and its flavours/derivatives: desktop or server join
+ubuntu_family(){
+echo "$OS_NAME detected"
 echo ""
 echo "Checking if it is a Desktop or server"
-desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' ) < /dev/null > /dev/null 2>&1
-if [ "$desktop" = "desktop" ] < /dev/null > /dev/null 2>&1
+desktop=$( apt list --installed 2>/dev/null | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop | head -1 | awk '{print$1}' )
+if [ "$desktop" = "desktop" ] || [ "$(systemctl get-default 2>/dev/null)" = "graphical.target" ]
 then
 echo "Ubuntu Desktop detected"
 UbuntU
 else
-echo " this seems to be a server, swithching to server mode"
+echo " this seems to be a server, switching to server mode"
 ubuntuserver14
-fi
-else
-if [ "$rasp" = "Raspbian" ] < /dev/null > /dev/null 2>&1
-then
-echo "${INTRO_TEXT}Detecting Raspberry Pi${END}"
-raspberry
-else
-if [ "$kalilinux" = "Kali" ] < /dev/null > /dev/null 2>&1
-then
-echo "${INTRO_TEXT}Detecting Kali linux${END}"
- kalijoin
-else
-if [ "$elementary" = "elementary" ]
-then
-echo "${INTRO_TEXT}Detected Elementary${END}"
-sleep 1
-elemntary_fn
-else
-if [ "$MintOS" = Mint ]
-then
-echo "Detecting Linux Mint"
-LinuxMint
-else
-echo "No compatible System found"
-exit
-fi
-fi
-fi
-fi
-fi
-fi
-fi
-fi
-fi
 fi
 }
 
@@ -890,7 +1022,8 @@ clear
 sudo apt install adcli -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}" 
 
-if ! sudo apt-get -qq install realmd adcli sssd ntp krb5-user curl -y && sudo apt-get -qq install -f -y
+install_time_sync
+if ! sudo apt-get -qq install realmd adcli sssd krb5-user curl -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
 exit 1
@@ -904,18 +1037,14 @@ else
 clear
 sudo echo "${INTRO_TEXT}packages installed${END}"
 fi
-pointtoou=$( sudo grep OUSPECIFIED readfile | awk '{print $3}' )
-    if [ "$pointtoou" = "null" ]
-    then
-    pointtoou=$(echo="" )
-    fi
+read_ou
 echo "hostname is $myhost"
 echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -934,9 +1063,10 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-REALM=$( realm discover | grep domain | awk '{print $2}' )
+REALM=${REALM:-$(discover_domain)}
 echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
@@ -960,7 +1090,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 echo "Admin is $ADMIN"
 fi
 else
@@ -970,7 +1100,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -981,7 +1111,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -994,7 +1124,7 @@ then
     fi
 else
 echo "No readfile"
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1018,7 +1148,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1027,7 +1157,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1038,7 +1168,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1050,7 +1180,7 @@ then
         exit
     fi
 else
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED" --install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1093,7 +1223,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1102,7 +1232,7 @@ fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
 then
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1113,7 +1243,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1125,7 +1255,7 @@ then
         exit
     fi
 else
-   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" "$OUSPECIFIED"--install=/
+   if ! sudo realm join --verbose --user="$ADMIN" "$DOMAIN" ${OUSPECIFIED:+"$OUSPECIFIED"} --install=/
    then
    echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
    exit
@@ -1147,10 +1277,12 @@ fi_auth
 Zorin_os(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
+read_ou
 clear
 sudo apt install adcli -y
 sudo echo "${NUMBER}Installing packages do no abort!.......${END}"
-if ! sudo apt-get -qq install realmd adcli sssd ntp krb5-user curl -y && sudo apt-get -qq install -f -y
+install_time_sync
+if ! sudo apt-get -qq install realmd adcli sssd krb5-user curl -y && sudo apt-get -qq install -f -y
 then
 echo "${RED_TEXT}Failed installing packages, please resolve dpkg and try again ${END}"
 exit 1
@@ -1169,8 +1301,8 @@ echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -1189,9 +1321,10 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-REALM=$( realm discover | grep domain | awk '{print $2}' )
+REALM=${REALM:-$(discover_domain)}
 echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 fi
 NetBios=$(echo "$DOMAIN" | cut -d '.' -f1)
 clear
@@ -1215,7 +1348,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 echo "Admin is $ADMIN"
 fi
 else
@@ -1236,7 +1369,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1273,7 +1406,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1293,7 +1426,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1351,7 +1484,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1371,7 +1504,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
+        if ! echo "$enc" | sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null)
@@ -1409,7 +1542,7 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt install adcli -y
 sudo apt-get -qq install realmd adcli sssd -y
-sudo apt-get -qq install ntp -y
+install_time_sync
 sudo apt-get -qq install -y sssd-tools samba-common krb5-user curl
 sudo apt-get -qq install -f -y
 clear
@@ -1426,8 +1559,8 @@ sleep 1
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover| grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -1447,7 +1580,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
 fi
 else
 echo "Using Domain: $REALM"
-DOMAIN=$(echo "$REALM")
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 fi
 sudo echo "${INTRO_TEXT}Realm= $DOMAIN${END}"
 sudo echo "${NORMAL}${NORMAL}"
@@ -1458,7 +1592,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r DomainADMIN
 else
-DomainADMIN=$( echo $admin )
+DomainADMIN="$admin"
 fi
 encrypt=$( sudo grep ENCRYPTEDPASSWD readfile | awk '{print $3}' )
 if [ "$encrypt" = "null" ] || [ "$encrypt" = "no" ]
@@ -1474,7 +1608,7 @@ then
     if [ -f  private_key.pem ] && [ -f public_key.pem ]
     then
         enc=$(sudo openssl pkeyutl -decrypt -inkey private_key.pem -in encrypted.dat )
-        if ! echo $enc | sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
+        if ! echo "$enc" | sudo realm join -v -U "$DomainADMIN" "$DOMAIN" --install=/
         then
         echo "${RED_TEXT}AD join failed.please check your errors with journalctl -xe${END}"
         enc=$(null) < /dev/null > /dev/null 2>&1
@@ -1517,7 +1651,7 @@ else
 echo "NOTICE! /etc/ssh/login.group.allowed will be created. make sure yor local user is in it you you could be banned from login"
 echo "auth required pam_listfile.so onerr=fail item=group sense=allow file=/etc/ssh/login.group.allowed" | sudo tee -a /etc/pam.d/common-auth
 sudo touch /etc/ssh/login.group.allowed
-admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+admins=$( local_login_users )
 echo ""
 echo ""
 read -r -p "Is your current administrator = $admins ? (y/n)?" yn
@@ -1566,11 +1700,11 @@ fi;;
 echo "session required pam_mkhomedir.so skel=/etc/skel/ umask=0077" | sudo tee -a /etc/pam.d/common-session
 sudo sh -c "echo 'greeter-show-manual-login=true' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
 sudo sh -c "echo 'allow-guest=false' | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf"
-if ! realm discover
+if ! realm discover "$DOMAIN"
 then
 echo "Realm not found"
 else
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
+therealm=$( realm discover "$DOMAIN" | grep -i configured: | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
 echo Realm configured?.. "${NUMBER}NO${END}"
@@ -1599,7 +1733,7 @@ else
 echo "Checking PAM configuration.. ${RED_TEXT}FAIL${END}"
 fi
 cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1 | head -1 )
-if [ $cauth = "allow" ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo "Checking PAM auth configuration..${INTRO_TEXT}OK${END}"
 else
@@ -1632,7 +1766,7 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 export whoami
 whoamis=$( whoami )
-admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+admins=$( local_login_users )
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt install adcli -y
 sudo apt-get -qq update
@@ -1643,8 +1777,8 @@ fix_nsswitch_sudoers
 sudo apt-get -qq install adcli -y
 sudo apt-get -qq install realmd adcli krb5-user sssd -y
 sudo apt-get -qq install curl -y
-# ntp and policykit-1 are gone from current Kali/Debian, use their replacements
-sudo apt-get -qq install ntp -y || sudo apt-get -qq install ntpsec -y
+install_time_sync
+# policykit-1 is gone from current Kali/Debian, use polkitd
 sudo apt-get -qq install policykit-1 -y || sudo apt-get -qq install polkitd -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install -f -y
@@ -1662,8 +1796,8 @@ echo "hostname is $myhost"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -1682,7 +1816,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
@@ -1697,7 +1832,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1728,8 +1863,8 @@ sleep 1
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -1748,7 +1883,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
@@ -1763,7 +1899,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1785,15 +1921,15 @@ fi_auth
 debianclient(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-if ! dkpg -l | grep sudo
+if ! dpkg -l | grep -q sudo
 then
-apt get install sudo -y
+apt-get install sudo -y
 else
 echo ""
 export whoami
 whoamis=$( whoami )
 echo "$whoamis"
-admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
+admins=$( local_login_users )
 echo "$admins ALL=(ALL:ALL) ALL | tee -a /etc/sudoers.d/admin"
 fi
 clear
@@ -1805,12 +1941,11 @@ fix_nsswitch_sudoers
 sudo apt-get -qq install libsss-sudo -y
 fix_nsswitch_sudoers
 sudo apt-get -qq install realmd adcli krb5-user sssd curl -y
-# ntp and policykit-1 are gone from current Debian, use their replacements
-sudo apt-get -qq install ntp -y || sudo apt-get -qq install ntpsec -y
+install_time_sync
+# policykit-1 is gone from current Debian, use polkitd
 sudo apt-get -qq install policykit-1 -y || sudo apt-get -qq install polkitd -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
-sudo apt-get -qq install ntp -y
 sudo apt-get -qq install -f
 clear
 if ! sudo dpkg -l | grep realmd
@@ -1827,8 +1962,8 @@ sleep 1
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -1847,7 +1982,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
@@ -1862,7 +1998,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1883,17 +2019,19 @@ fi_auth
 CentOS(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli krb5-user samba-common-tools samba-common heimdal-clients msktutil
-yum -y install adcli=0.8.2-1 -y
-yum -y install ipa-client
+# Kerberos tools are krb5-workstation on RHEL/Fedora (krb5-user/heimdal-clients are Debian names).
+# dnf aborts the whole install when one package is missing, so optional packages go separately.
+rpm_install realmd sssd oddjob oddjob-mkhomedir adcli krb5-workstation samba-common-tools samba-common
+rpm_install msktutil
+rpm_install ipa-client
 echo "Looking for domains..."
-DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
+DOMAIN=$(discover_domain)
 if [ -n "$DOMAIN" ]
 then
-if ! ping -c 1 "$DOMAIN"
+if ! realm discover "$DOMAIN" > /dev/null 2>&1
 then
 clear
-echo "I searched for an available domain and found $DOMAIN but it is not responding to ping, please type your domain manually below... "
+echo "I searched for an available domain and found $DOMAIN but it is not responding, please type your domain manually below... "
 echo "Please enter the domain you wish to join:"
 read -r DOMAIN
 if [ -f readfile ]
@@ -1905,7 +2043,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1931,7 +2069,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1955,7 +2093,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -1971,21 +2109,22 @@ exit
 fi
 echo "session required        pam_unix.so" | sudo tee -a /etc/pam.d/common-session
 fi_auth_yum
-exit
 }
 
 ############################### Raspberry Pi ###################################
 raspberry(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-sudo aptitude install ntp adcli sssd krb5-user
+sudo apt-get -qq install adcli sssd krb5-user -y
+install_time_sync
 sudo mkdir -p /var/lib/samba/private
 fix_nsswitch_sudoers
-sudo aptitude install libsss-sudo
+sudo apt-get -qq install libsss-sudo -y
 fix_nsswitch_sudoers
 sudo systemctl enable sssd
 clear
-DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
+DOMAIN=$(discover_domain)
+ask_domain_if_empty
 echo ""
 admin=$( sudo grep ADADMIN readfile | awk '{print $3}' )
 if [ "$admin" = "null" ]
@@ -1994,7 +2133,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 if ! sudo realm join -v -U "$ADMIN" "$DOMAIN" --install=/
 then
@@ -2028,9 +2167,9 @@ exit
 Fedora_fn(){
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-yum -y install realmd sssd oddjob oddjob-mkhomedir adcli krb5-user samba-common-tools samba-common
-DOMAIN=$(realm discover | grep -i realm-name | awk '{print $2}')
-if ! ping -c 1 "$DOMAIN"
+rpm_install realmd sssd oddjob oddjob-mkhomedir adcli krb5-workstation samba-common-tools samba-common
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "I searched for an available domain and found nothing, please type your domain manually below... "
@@ -2045,7 +2184,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -2073,7 +2212,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -2087,7 +2226,6 @@ echo "AD join failed.please check your errors with journalctl -xe"
 exit
 fi
 fi_auth_yum
-exit
 }
 
 ############################# Elemntary #####################################
@@ -2101,8 +2239,8 @@ echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "I searched for an available domain and found nothing, please type your domain manually below..."
@@ -2121,7 +2259,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
@@ -2135,7 +2274,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -2156,7 +2295,6 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/40-io.elementary.greeter.conf
 fi
 fi_auth
-exit
 }
 
 ############################# Linux Mint #####################################
@@ -2171,8 +2309,8 @@ echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "I searched for an available domain and found nothing, please type your domain manually below..."
@@ -2191,7 +2329,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi
@@ -2205,7 +2344,7 @@ echo "${INTRO_TEXT}Please log in with domain admin to $DOMAIN to connect${END}"
 echo "${INTRO_TEXT}Please type Admin user:${END}"
 read -r ADMIN
 else
-ADMIN=$( echo $admin )
+ADMIN="$admin"
 fi
 else
 echo "${INTRO_TEXT}Please type Admin user:${END}"
@@ -2226,7 +2365,6 @@ else
 sudo echo "greeter-show-manual-login=true" | sudo tee -a /usr/share/lightdm/lightdm.conf.d/50-disable-guest.conf
 fi
 fi_auth
-exit
 }
 
 ############################### Update to Realmd from likewise ##################
@@ -2253,12 +2391,13 @@ fi
 echo ""
 echo "-------------------------------------------------------------------------------------"
 echo ""
-if ! realm discover < /dev/null > /dev/null 2>&1
+DOMAIN=$(joined_domain)
+if [ -z "$DOMAIN" ]
 then
-echo "Realm not found"
+echo "Realm not found, this machine is not joined to a domain"
 else
 echo ""
-therealm=$( realm discover | grep -i configured | awk '{print $2}')
+therealm=$( realm discover "$DOMAIN" | grep -i configured: | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
 echo Realm configured?.. "${RED_TEXT}NO${END}"
@@ -2286,7 +2425,7 @@ else
 echo Checking PAM configuration.. "${RED_TEXT}FAIL${END}"
 fi
 cauth=$( grep required /etc/pam.d/common-auth | grep onerr | grep allow | cut -d '=' -f4 | cut -d 'f' -f1 | head -1 )
-if [ $cauth = "allow" ] < /dev/null > /dev/null 2>&1
+if [ "$cauth" = "allow" ] < /dev/null > /dev/null 2>&1
 then
 echo Checking PAM auth configuration.. "${INTRO_TEXT}OK${END}"
 else
@@ -2304,7 +2443,7 @@ failcheck_yum(){
 clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
+therealm=$(joined_domain)
 if ! hostname | cut -d '.' -f1 < /dev/null > /dev/null 2>&1
 then
 echo "Sorry I am having issues finding your domain.. please type it"
@@ -2314,12 +2453,12 @@ echo ""
 fi
 echo "-------------------------------------------------------------------------------------"
 echo ""
-if ! realm discover "$therealm"
+if [ -z "$therealm" ] || ! realm discover "$therealm"
 then
 echo "realm not found"
 else
 echo ""
-therealm=$( realm discover | grep -i realm-name | awk '{print $2}')
+therealm=$( realm discover "$therealm" | grep -i configured: | awk '{print $2}')
 if [ "$therealm" = "no" ]
 then
 echo "Realm configured?.. NO"
@@ -2424,7 +2563,7 @@ sudo ldapsearch -x | grep -i "$own"
 exit
 else
 clear
-if ! sudo yum install ldap-utils -y
+if ! rpm_install openldap-clients
 then
 echo "install failed"
 exit
@@ -2444,7 +2583,6 @@ myhost=$( hostname | cut -d '.' -f1 )
 sudo apt-get -qq install -y realmd curl sssd sssd-tools samba-common krb5-user
 clear
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
-DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' ) < /dev/null > /dev/null 2>&1
 if [ -f /etc/sssd/sssd.conf ]
 then
 read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
@@ -2456,29 +2594,28 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
     echo "failed Nothing to leave"
     exit 0
     else
-    LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+    LEFT=$(sudo realm discover "$SSSD" | grep configured: | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "has left $SSSD"
+    notify_user ADconnection "Left $SSSD "
     linuxclient
-    echo ""
-    notify-send ADconnection "Left $SSSD "
     else
     echo "something went wrong, try to leave manually"
     echo ""
     echo "Please type domain you wish to leave"
         read -r DOMAIN
         sudo realm leave "$DOMAIN" --remove
-    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    left=$(sudo realm discover "$DOMAIN" | grep configured: | awk '{print $2}')
     if [ "$left" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     echo ""
-    notify-send ADconnection "Left $SSSD "
+    notify_user ADconnection "Left $SSSD "
     linuxclient
     else
     echo "something went wrong"
@@ -2502,7 +2639,6 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 clear
 SSSD=$( sudo cat /etc/sssd/sssd.conf | grep domain | awk '{print $3}' | head -1 ) < /dev/null > /dev/null 2>&1
-DOMAINlower=$( echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' ) < /dev/null > /dev/null 2>&1
 if [ -f /etc/sssd/sssd.conf ]
 then
 read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
@@ -2514,28 +2650,28 @@ read -r -p "Do you really want to leave the domain: $SSSD (y/n)?" yn
     echo "failed Nothing to leave"
     exit 0
     else
-    LEFT=$(sudo realm discover | grep configured | awk '{print $2}')
+    LEFT=$(sudo realm discover "$SSSD" | grep configured: | awk '{print $2}')
     if [ "$LEFT" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "has left $SSSD"
     echo ""
-    notify-send ADconnection "Left $SSSD "
+    notify_user ADconnection "Left $SSSD "
     else
     echo "something went wrong, try to leave manually"
     echo ""
     echo "Please type domain you wish to leave"
         read -r DOMAIN
         sudo realm leave "$DOMAIN" --remove
-    left=$(sudo realm discover | grep configured | awk '{print $2}')
+    left=$(sudo realm discover "$DOMAIN" | grep configured: | awk '{print $2}')
     if [ "$left" = "no" ]
     then
     echo ""
     sudo echo "" | sudo tee /etc/sssd/sssd.conf
     echo "$DOMAIN has been left"
     echo ""
-    notify-send ADconnection "Left $DOMAIN "
+    notify_user ADconnection "Left $DOMAIN "
     else
     echo "something went wrong"
     fi
@@ -2560,7 +2696,7 @@ encrypt(){
     
     echo "Please type the password to encrypt:"
     stty -echo
-    read pass
+    read -r pass
     stty echo    
     if [ -z "$pass" ]; then
         echo "Password is empty"
@@ -2724,18 +2860,11 @@ done
 PRECHECK_FN(){
 ## curl your private key in this line
 ## Precheck sends yum based OS to an own menu ##
-TheOS=$( hostnamectl | grep -i Operating | awk '{print $3}' ) < /dev/null > /dev/null 2>&1
-if [ "$TheOS" = "Fedora" ]
-then
-YUM_MENU
-else
-if [ "$TheOS" = "CentOS" ]
-then
-YUM_MENU
-else
-MENU_FN
-fi
-fi
+detect_os
+case " $OS_ID $OS_LIKE " in
+*" fedora "*|*" rhel "*|*" centos "*) YUM_MENU ;;
+*) MENU_FN ;;
+esac
 }
 ############################## Flags ###############################
 clear
@@ -2770,7 +2899,7 @@ while test $# -gt 0; do
                         fi
                         ;;
                 -l|--l)
-                        if test $? -gt 0; then
+                        if test $# -gt 0; then
                         DATE=$(date +%H:%M)
                         echo "$DATE"
 			MENU_FN 2>&1 | sudo tee adconnection.log
@@ -2780,12 +2909,8 @@ while test $# -gt 0; do
                         fi
                         ;;
                 -f|--f)
-                        if test $? -gt 0; then
-                        answerfile
-                        else
-                        echo ""
+                        echo "The -f answer file option has been replaced by readfile, see README"
                         exit 1
-                        fi
                         ;;
                 -j|--j)
                         if test $# -gt 0; then
@@ -2802,7 +2927,7 @@ while test $# -gt 0; do
                         ;;
                 -s|--s)
                         if test $# -gt 0; then
-			if ! realm discover < /dev/null > /dev/null 2>&1
+			if ! command -v realm > /dev/null 2>&1
 			then
 			clear
 			echo ""
@@ -2810,7 +2935,13 @@ while test $# -gt 0; do
 			echo ""
 			exit
 			else
-            sudo realm discover
+            DOMAIN=$(discover_domain)
+            if [ -n "$DOMAIN" ]
+            then
+            sudo realm discover "$DOMAIN"
+            else
+            echo "No domain found, check that DNS points to your domain controllers"
+            fi
 		    exit
             fi
 			else
@@ -2823,14 +2954,15 @@ while test $# -gt 0; do
                         clear
 export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}' | tr "[:upper:]" "[:lower:]")
+DOMAIN=$(joined_domain | tr "[:upper:]" "[:lower:]")
 if [ -z "$2" ]
 then
 if [ -d /home/"$DOMAIN" ]
 then
-        ls /home/"$DOMAIN"/ | while read -r user
+        for userdir in /home/"$DOMAIN"/*
         do
-        id "$user"
+        [ -d "$userdir" ] || continue
+        id "$(basename "$userdir")"
         echo "___________________________________________________________________________"
 echo ""
 done
@@ -2848,8 +2980,11 @@ exit
                 -o|--o)
                         if test $# -gt 0; then
 desktop=$( sudo apt list --installed | grep -i desktop | grep -i ubuntu | cut -d '-' -f1 | grep -i desktop )
-rasp=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
-kalilinux=$( lsb_release -a | grep -i Distributor | awk '{print $3}' )
+detect_os
+rasp=""
+kalilinux=""
+[ "$OS_ID" = "raspbian" ] && rasp="Raspbian"
+[ "$OS_ID" = "kali" ] && kalilinux="Kali"
 if [ "$desktop" = "desktop" ]
 then
 if [ "$rasp" = "Raspbian" ]
@@ -2874,7 +3009,7 @@ myhost=$( hostname | cut -d '.' -f1 )
 clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt-get -qq install realmd curl adcli sssd -y
-sudo apt-get -qq install ntp -y
+install_time_sync
 sudo apt install adcli -y
 sudo apt-get install -f -y
 clear
@@ -2892,8 +3027,8 @@ echo "Looking for Realms.. please wait"
 REALM=$( sudo grep DOMAIN readfile | awk '{print $3}' )
 if [ "$REALM" = "null" ]
 then
-DOMAIN=$(realm discover | grep -i realm.name | awk '{print $2}')
-if ! ping -c 2 "$DOMAIN"   < /dev/null > /dev/null 2>&1
+DOMAIN=$(discover_domain)
+if [ -z "$DOMAIN" ]
 then
 clear
 echo "${NUMBER}I searched for an available domain and found nothing, please type your domain manually below... ${END}"
@@ -2912,7 +3047,8 @@ read -r -p "Do you wish to use it (y/n)?" yn
    esac
 fi
 else
-DOMAIN=$( realm discover | grep -i realm.name | awk '{print $2}' )
+DOMAIN=${REALM:-$(discover_domain)}
+ask_domain_if_empty
 echo "Using Domain: $DOMAIN"
 #DOMAIN=$(echo "$REALM")
 fi

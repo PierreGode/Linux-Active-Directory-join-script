@@ -13,17 +13,21 @@ If you like this project please star it, that will also encourage me with update
 New: Added support for readfile for Ubuntu.
 
 
-Supported OS's:<p>
-<li>Ubuntu 14-25 + mate</li>
-<li>Debian 8-12</li>
-<li>Cent OS</li>
-<li>Rasbian</li>
-<li>Fedora</li>
+Supported OS's (detected from /etc/os-release, derivatives are matched by their parent distribution):<p>
+<li>Ubuntu 14-26 + flavours (mate, Kubuntu, Xubuntu...) and Pop!_OS</li>
+<li>Debian 8-13 and Debian testing</li>
+<li>Raspberry Pi OS / Rasbian</li>
+<li>Kali (rolling)</li>
 <li>Linux Mint</li>
-<li>Kali</li>
-<li>Zorin </li>
-<li>Elemantary OS</li>
+<li>Zorin</li>
+<li>Elementary OS</li>
+<li>Fedora</li>
+<li>Cent OS, RHEL, Rocky Linux, AlmaLinux, Oracle Linux</li>
+<li>openSUSE Leap / Tumbleweed, SLES</li>
 <p></p>
+
+Note for Kali rolling and Debian testing: sssd has been dropped from Debian testing, so these have no sssd package.
+The script detects this and offers to add Debian sid as a low priority (pinned) apt source, so only sssd is installed from sid.
 
     
 Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
@@ -45,7 +49,7 @@ and is a result of a lot of small upgrades according as needs has emerged.
 </ul>
 <p>Fortunately, this script simplifies the process by allowing you to easily join a domain with just a few questions. Some key features of the script include:</p>
 <ul>
-<li>Autodetection of seven different Linux distributions</li>
+<li>Autodetection of your Linux distribution (Debian, Ubuntu, RHEL, Fedora and SUSE families)</li>
 <li>Autodetection of your domain</li>
 <li>Generation and editing of necessary files</li>
 <li>Built-in failcheck to ensure success</li>
@@ -94,9 +98,12 @@ set hostname on you computer to "linuxcomputer" (hostname and hosts files) and r
 
 #### 4. git clone 
 git clone this script and run
-Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server, it will also detect if client is running ubuntu 14,16,17, 18, 19,20, mate,Debian ,Cent OS,Rasbian ,Fedora, Linux Mint or Kali
+Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server and which distribution it is running (from /etc/os-release, see Supported OS's)
 the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
-If there are issues finding the domain please dubblecheck your dns configuration on the domain controller.
+Domain discovery first asks realmd (domain announced by DHCP), then tries the DNS search/domain names (/etc/resolv.conf, systemd-resolved, NetworkManager)
+and the host's own DNS domain, including their parent domains, and uses the first one realmd confirms as an Active Directory realm.
+You can also set DOMAIN in readfile to skip discovery.
+If there are issues finding the domain please dubblecheck your dns configuration on the domain controller, and that the client uses the domain controllers as DNS servers.
 
 after that authorise with a admin user.
 make sure to read the questions carefully and also read built in help in the script.
