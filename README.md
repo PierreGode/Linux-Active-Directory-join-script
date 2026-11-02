@@ -29,11 +29,11 @@ The distribution is detected from `/etc/os-release`. Derivatives that are not li
 | Family | Distributions |
 |---|---|
 | Ubuntu | Ubuntu 14-26 and flavours (MATE, Kubuntu, Xubuntu...), Pop!_OS, Linux Mint, Zorin, Elementary OS |
-| Debian | Debian 8-13 and testing, Raspberry Pi OS (32 and 64 bit), Kali rolling |
+| Debian | Debian 8-13, Raspberry Pi OS, Kali |
 | RHEL / Fedora | Fedora, CentOS, RHEL, Rocky Linux, AlmaLinux, Oracle Linux |
 | SUSE | openSUSE Leap / Tumbleweed, SLES |
 
-> **Kali rolling and Debian testing:** sssd has been dropped from Debian testing, so these have no sssd package. The script detects this and offers to add Debian sid as a low priority (pinned) apt source, so only sssd is installed from sid.
+> **Kali:** sssd is currently missing from Kali's repositories. The script detects this and offers to install sssd from Debian's repository instead (only sssd is installed from there).
 
 ## Quick start
 
