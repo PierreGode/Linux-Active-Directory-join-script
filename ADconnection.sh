@@ -24,6 +24,66 @@
     END=$(printf "\033[0m")
 # ~~~~~~~~~~  Environment Setup ~~~~~~~~~~ #
 
+# ~~~~~~~~~~  Package helpers (Debian / Kali) ~~~~~~~~~~ #
+# Run a command as root without depending on sudo when the script already runs as root
+# (sudo itself can break mid-run, see fix_nsswitch_sudoers).
+as_root(){
+if [ "$(id -u)" -eq 0 ]
+then
+"$@"
+else
+sudo "$@"
+fi
+}
+
+# libsss-sudo from newer sssd releases (2.10+, Debian sid / Kali rolling) appends "sss" to the
+# "sudoers:" line in /etc/nsswitch.conf and, when that line is missing (default on Kali and Debian),
+# creates "sudoers: sss". That drops sudo's implicit "files" source, so nobody - root included - can
+# use sudo any more and every following sudo call fails with "root is not in the sudoers file".
+# This script keeps its sudo rules in /etc/sudoers.d, so pin the sudoers source to "files".
+# Call it before and after installing libsss-sudo.
+fix_nsswitch_sudoers(){
+[ -f /etc/nsswitch.conf ] || return 0
+if grep -q '^sudoers:' /etc/nsswitch.conf
+then
+as_root sed -i -e 's/^sudoers:.*/sudoers:        files/' /etc/nsswitch.conf
+else
+echo "sudoers:        files" | as_root tee -a /etc/nsswitch.conf > /dev/null
+fi
+}
+
+# sssd has been dropped from Debian testing, so Kali rolling (and Debian testing) have no sssd package.
+# It is still in Debian sid: offer to add sid as a low priority source (pin 100), which is only used for
+# packages the distribution itself does not provide.
+ensure_sssd_available(){
+if apt-cache policy sssd 2>/dev/null | grep -q 'Candidate: [0-9]'
+then
+return 0
+fi
+echo "${RED_TEXT}sssd is not available from your apt sources (it has been dropped from Debian testing / Kali rolling).${END}"
+echo "It can be installed from Debian sid with a low priority pin, so nothing else is taken from sid."
+read -r -p "Add Debian sid as a pinned apt source for sssd (y/n)?" yn
+case $yn in
+[Yy]* )
+as_root apt-get -qq install debian-archive-keyring -y
+printf '%s\n' "Types: deb" "URIs: http://deb.debian.org/debian" "Suites: sid" "Components: main" \
+"Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg" | as_root tee /etc/apt/sources.list.d/debian-sid-sssd.sources > /dev/null
+printf '%s\n' "Package: *" "Pin: release n=sid" "Pin-Priority: 100" | as_root tee /etc/apt/preferences.d/debian-sid-sssd > /dev/null
+as_root apt-get -qq update
+;;
+* )
+echo "${RED_TEXT}sssd is required to join the domain, exiting.${END}"
+exit 1
+;;
+esac
+if ! apt-cache policy sssd 2>/dev/null | grep -q 'Candidate: [0-9]'
+then
+echo "${RED_TEXT}sssd is still not available, please check your apt sources and try again.${END}"
+exit 1
+fi
+}
+# ~~~~~~~~~~  Package helpers (Debian / Kali) ~~~~~~~~~~ #
+
 ####################### final auth ##################################################################
 #this section will do the last part, configure sssd, ssh, login session sam files and sudoers#
 fi_auth(){
@@ -208,7 +268,7 @@ clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+fix_nsswitch_sudoers
 echo "override_homedir = /home/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo sudo grep -i override /etc/sssd/sssd.conf
 #sudo echo "[nss]
@@ -563,7 +623,7 @@ clear
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+fix_nsswitch_sudoers
 echo "override_homedir = /home/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo sudo grep -i override /etc/sssd/sssd.conf
 #sudo echo "[nss]
@@ -1548,7 +1608,7 @@ fi
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+fix_nsswitch_sudoers
 echo "override_homedir = /home/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo grep -i override /etc/sssd/sssd.conf
 #sudo echo "[nss]
@@ -1576,11 +1636,16 @@ admins=$( grep home /etc/passwd | grep bash | cut -d ':' -f1 )
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt install adcli -y
 sudo apt-get -qq update
+ensure_sssd_available
+fix_nsswitch_sudoers
 sudo apt-get -qq install libsss-sudo -y
+fix_nsswitch_sudoers
 sudo apt-get -qq install adcli -y
 sudo apt-get -qq install realmd adcli krb5-user sssd -y
-sudo apt-get -qq install ntp curl -y
-sudo apt-get -qq install policykit-1 -y
+sudo apt-get -qq install curl -y
+# ntp and policykit-1 are gone from current Kali/Debian, use their replacements
+sudo apt-get -qq install ntp -y || sudo apt-get -qq install ntpsec -y
+sudo apt-get -qq install policykit-1 -y || sudo apt-get -qq install polkitd -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install -f -y
 clear
@@ -1735,10 +1800,14 @@ clear
 sudo echo "${RED_TEXT}Installing packages do no abort!.......${END}"
 sudo apt install adcli -y
 sudo apt-get -qq update
+ensure_sssd_available
+fix_nsswitch_sudoers
 sudo apt-get -qq install libsss-sudo -y
+fix_nsswitch_sudoers
 sudo apt-get -qq install realmd adcli krb5-user sssd curl -y
-sudo apt-get -qq install ntp -y
-sudo apt-get -qq install policykit-1 -y
+# ntp and policykit-1 are gone from current Debian, use their replacements
+sudo apt-get -qq install ntp -y || sudo apt-get -qq install ntpsec -y
+sudo apt-get -qq install policykit-1 -y || sudo apt-get -qq install polkitd -y
 sudo mkdir -p /var/lib/samba/private
 sudo apt-get -qq install realmd adcli sssd -y
 sudo apt-get -qq install ntp -y
@@ -1911,7 +1980,9 @@ export HOSTNAME
 myhost=$( hostname | cut -d '.' -f1 )
 sudo aptitude install ntp adcli sssd krb5-user
 sudo mkdir -p /var/lib/samba/private
+fix_nsswitch_sudoers
 sudo aptitude install libsss-sudo
+fix_nsswitch_sudoers
 sudo systemctl enable sssd
 clear
 DOMAIN=$( realm discover | grep -i realm-name | awk '{print $2}')
@@ -1937,7 +2008,7 @@ sudo echo "%$myhost""sudoers ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.
 sed -i -e 's/fallback_homedir = \/home\/%u@%d/#fallback_homedir = \/home\/%u@%d/g' /etc/sssd/sssd.conf
 sed -i -e 's/use_fully_qualified_names = True/use_fully_qualified_names = False/g' /etc/sssd/sssd.conf
 sed -i -e 's/access_provider = ad/access_provider = simple/g' /etc/sssd/sssd.conf
-sed -i -e 's/sudoers:        files sss/sudoers:        files/g' /etc/nsswitch.conf
+fix_nsswitch_sudoers
 echo "override_homedir = /home/%u" | sudo tee -a /etc/sssd/sssd.conf
 sudo grep -i override /etc/sssd/sssd.conf
 sudo echo "[nss]
