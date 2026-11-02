@@ -1,181 +1,173 @@
-# Linux-Active-Directory-join-script By Pierre Gode 2017-2025
+# Linux-Active-Directory-join-script By Pierre Gode 2017-2026
 
 [![GitHub stars](https://img.shields.io/github/stars/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/stargazers) [![Commits per Month](https://img.shields.io/github/commit-activity/m/PierreGode/Linux-Active-Directory-join-script)](https://github.com/PierreGode/Linux-Active-Directory-join-script/commits/main) ![Tech Stack](https://img.shields.io/badge/stack-Bash%20%7C%20Python%20%7C%20Shell-brightgreen) [![Platform](https://img.shields.io/badge/platform-Linux-blue.svg)](https://shields.io/)
 
-
-
-
-
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J2EARPK)
-<p>
+
 If you like this project please star it, that will also encourage me with updates.
-<p>
-New: Added support for readfile for Ubuntu.
 
+Join a Linux computer or server to Active Directory with **realmd** and **sssd**, and get everything around the join configured as well: sudo rights from an AD group, home folders, short user names, cached logins, an optional SSH allow list and optional LDAPS. Answer a few questions, or run it unattended with a `readfile`.
 
-Supported OS's (detected from /etc/os-release, derivatives are matched by their parent distribution):<p>
-<li>Ubuntu 14-26 + flavours (mate, Kubuntu, Xubuntu...) and Pop!_OS</li>
-<li>Debian 8-13 and Debian testing</li>
-<li>Raspberry Pi OS / Rasbian</li>
-<li>Kali (rolling)</li>
-<li>Linux Mint</li>
-<li>Zorin</li>
-<li>Elementary OS</li>
-<li>Fedora</li>
-<li>Cent OS, RHEL, Rocky Linux, AlmaLinux, Oracle Linux</li>
-<li>openSUSE Leap / Tumbleweed, SLES</li>
-<p></p>
+Also see the [Wiki](https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki).
 
-Note for Kali rolling and Debian testing: sssd has been dropped from Debian testing, so these have no sssd package.
-The script detects this and offers to add Debian sid as a low priority (pinned) apt source, so only sssd is installed from sid.
+## Why a script?
 
-    
-Added support to Perform a SASL (Negotiate/Kerberos/NTLM/Digest) LDAP bind with request signing (integrity verification) on-SSL-encrypted) LDAP connection. see more in wiki.
+Joining a domain can be simple, but getting everything to work properly afterwards is harder:
 
-This is a script for Active Directory join with realmd.
-and is a result of a lot of small upgrades according as needs has emerged.
+- empty login prompts for new AD users
+- sudo permissions for the right AD users
+- cached ("mobile") accounts that can log in away from the office network
+- restricting who can log in over SSH
+- the extra settings sssd.conf needs
 
-<p>Also see<a href="https://github.com/PierreGode/Linux-Active-Directory-join-script/wiki"> Wiki</a></p>
+This script does all of that for you, and has been built up from many small improvements as needs have come up since 2017.
 
-### But why a script?
+## Supported distributions
 
-<p>Joining a domain can be a simple process, but configuring everything to function properly can be quite challenging. This includes tasks such as:</p>
-<ul>
-<li>Resolving issues with empty login prompts for new AD users</li>
-<li>Setting up sudo permissions</li>
-<li>Configuring settings for mobile accounts in SAM</li>
-<li>Strengthening security with SSH login allowances</li>
-<li>Making additional configurations to sssd.conf</li>
-</ul>
-<p>Fortunately, this script simplifies the process by allowing you to easily join a domain with just a few questions. Some key features of the script include:</p>
-<ul>
-<li>Autodetection of your Linux distribution (Debian, Ubuntu, RHEL, Fedora and SUSE families)</li>
-<li>Autodetection of your domain</li>
-<li>Generation and editing of necessary files</li>
-<li>Built-in failcheck to ensure success</li>
-</ul>
-<p>With this script, joining a domain and customizing your settings to meet your needs has never been easier!</p>
+The distribution is detected from `/etc/os-release`. Derivatives that are not listed are matched by their parent distribution (`ID_LIKE`).
 
-<H4>What is the setup then?</H4>
-computer objct = HOSTNAME .
-sudo group = HOSTNAMEsudoers = ADgroup
+| Family | Distributions |
+|---|---|
+| Ubuntu | Ubuntu 14-26 and flavours (MATE, Kubuntu, Xubuntu...), Pop!_OS, Linux Mint, Zorin, Elementary OS |
+| Debian | Debian 8-13 and testing, Raspberry Pi OS (32 and 64 bit), Kali rolling |
+| RHEL / Fedora | Fedora, CentOS, RHEL, Rocky Linux, AlmaLinux, Oracle Linux |
+| SUSE | openSUSE Leap / Tumbleweed, SLES |
 
-update: Added flag options no minimize the menu and add logging: see sudo sh ADconnection.sh --help
-Usage: 
+> **Kali rolling and Debian testing:** sssd has been dropped from Debian testing, so these have no sssd package. The script detects this and offers to add Debian sid as a low priority (pinned) apt source, so only sssd is installed from sid.
 
-    sh ADconnection.sh [--help] [-d (ubuntu debug mode)]
-      [-j admin domain (Simple direct join
-      [-l (script output to log file)]
-      [-s (Discover domain)]
-                          
-                        
-Usage of the script:
+## Quick start
 
-    sudo sh ADconnection.sh or sudo ./ADconnection.sh
-for ./ADconnection.sh do a 
+```bash
+sudo apt-get install git -y        # or: sudo dnf install git / sudo zypper install git
+git clone https://github.com/PierreGode/Linux-Active-Directory-join-script.git
+cd Linux-Active-Directory-join-script
+sudo ./ADconnection.sh             # or: sudo sh ADconnection.sh
+```
 
-     sudo chmod +x ADconnection.sh  
+Pick **1) Join to AD** in the menu and answer the questions. Run the script from the repository folder, because `readfile` is read from the current directory.
 
+To update to the latest version, run `git pull` in the `Linux-Active-Directory-join-script` folder.
 
-# Complete steps
+## Before you start
 
-#### 1. Config
-remember to set a hostname on the client or server, the AD will set computer object itself named after the hostname of the machine = "linuxcomputer" as example
+1. **Hostname.** The computer object in AD is named after the hostname, for example `linuxcomputer`. Set it before joining (`/etc/hostname` and `/etc/hosts`) and reboot. AD computer names are max 15 characters, so a longer hostname is shortened (`kali-raspberrypi` becomes `KALI-RASPBERRYP`).
+2. **DNS.** The client must use your domain controllers as DNS servers, so that `host -t SRV _ldap._tcp.yourdomain.com` answers. Having `search yourdomain.com` in `/etc/resolv.conf` also lets the script find the domain by itself.
+3. **Time.** Kerberos needs the clock within 5 minutes of the domain controllers. The script keeps the time sync service you already run, or installs one.
+4. **Sudo group.** If AD users should get sudo, create an AD group named after the hostname plus `sudoers`, for example `linuxcomputersudoers`, and add the users to it.
+5. **Admin account.** You need an AD account that is allowed to join computers to the domain.
 
-#### 2. Permissions
-At this point you have 2 options. you already have a Group i AD example:"ADMINS" here you have your users with sudo rights. then you need to edit /etc/sudoers.d/sudoers
-and add   %ADMINS ALL(ALL:ALL) ALL if you want to give this group sudo rights.
-In this script there is a magic word added for groups in AD and it is sudoers, it always adds sudoers after hostname, like linuxcomputersudoers
-administrator will always be added to sudoers as a failsafe for sysadmins.
+## How the domain is found
 
-and also /etc/ssh/login.allow if you have selected this option for security.
+1. `realm discover`, which finds a domain announced by DHCP.
+2. The DNS search and domain names from `/etc/resolv.conf`, systemd-resolved and NetworkManager, and the host's own DNS domain (`hostname -d`), including their parent domains (`clients.corp.example.com`, then `corp.example.com`).
+3. The first one that realmd confirms as an Active Directory realm is offered to you, and you can accept it or type another one.
 
-Or if you want to manage sudo users by a new group then create a group name LINUXCOMPUTERsudoers and LINUXCOMPUTER as hostname, they are not related, but Computer object in AD will be created and named after hostname and naming the ADgroup simmilar makes search easier in the future, therefore the script by defaut will add "LINUXCOMPUTERsudoers" as default in sudoers.d/sudoers, in this step you don't need to edit files, the script will allow you to choose if you want users to be sudoers or not and if yes the script will autogenerate "LINUXCOMPUTERsudoers" in sudoers
-.
-#### 3. Hostname
-set hostname on you computer to "linuxcomputer" (hostname and hosts files) and reboot 
-( in/etc/hosts it should look like 127.0.1.1       LINUXCOMPUTER01       LINUXCOMPUTER01.domain.com also in resolv.conf you should have search domain.com)
+If nothing is found you are asked to type the domain. To skip discovery, set `DOMAIN` in `readfile`.
 
-#### 4. git clone 
-git clone this script and run
-Execute the script with sudo sh ADconnection.sh, It will detect if it is a client or a server and which distribution it is running (from /etc/os-release, see Supported OS's)
-the script will find your domain name if existing, and your networkconfig is correct.. if not a promt will let you type the domain name. "domain.com"
-Domain discovery first asks realmd (domain announced by DHCP), then tries the DNS search/domain names (/etc/resolv.conf, systemd-resolved, NetworkManager)
-and the host's own DNS domain, including their parent domains, and uses the first one realmd confirms as an Active Directory realm.
-You can also set DOMAIN in readfile to skip discovery.
-If there are issues finding the domain please dubblecheck your dns configuration on the domain controller, and that the client uses the domain controllers as DNS servers.
+## What the script configures
 
-after that authorise with a admin user.
-make sure to read the questions carefully and also read built in help in the script.
+- **Join:** realmd/adcli join, with the computer object named after the hostname in the default `CN=Computers` container, or in the OU you set with `OUSPECIFIED` in `readfile` or the `-o` option.
+- **Users:** short user names (`user`, not `user@domain.com`), home folders `/home/user` created at first login (`pam_mkhomedir`, umask 0077), and cached credentials so users can log in away from the office network.
+- **Sudo:** `/etc/sudoers.d/sudoers` gets `administrator` and `%HOSTNAMEsudoers` (plus domain admins in `/etc/sudoers.d/domain_admins`), with or without a password prompt, as you choose. Sudo rules are read from files only (`sudoers: files` in `/etc/nsswitch.conf`).
+- **SSH allow list (optional):** only listed groups and users can log in (`pam_listfile` with `/etc/ssh/login.group.allowed`). The script adds `HOSTNAMEsudoers`, domain admins, root and the local login users.
+- **LDAPS / SASL (optional):** sssd can use a signed and encrypted LDAP connection (`ldap_uri` and `ldap_tls_cacert`) to your domain controller. Put your company root CA (`.cer`) in `/usr/share/ca-certificates/root/` first. See the wiki for more.
+- **Ubuntu desktops (LightDM):** the login screen lets you type a user name, and the guest login is turned off.
 
-For security this script creates an ssh allow file so users that are not in the correct AD group can't login,
-this also "blocks" users from creating local accounts ( they can create them if the are sudoers, but will never be able to login)
-NOTICE! if your local user is not administrator you MUST edit and add current local user in the  (/etc/ssh/login.group.allowed) file.
-If you current local user is not in the SSH-ALLOW file it will be BANNED from the computer!
+> **Warning:** with the SSH allow list, any user who is not in the file can no longer log in, locally or over SSH. Check that `/etc/ssh/login.group.allowed` contains your own local user before you reboot.
 
-Updated. :Added the ability to choose if you want to dissable SSH-allow,
-note: if ssh is disabled users in other groups will be able to ssh to the client, but will not have sudo rights if they are not members in the group LINUXCOMPUTERsudoers
+If you choose not to give sudo rights, you don't need the `HOSTNAMEsudoers` group in AD: all domain users can log in, without sudo. This option cannot be combined with **yes** on the SSH allow list.
 
-### Updated. :
-also the ability to choose if clients should have sudo rights or not.
-if you seclect no on this option there is no need for an AD group "LINUXCOMPUTERsudoers" in active directory, all domain users
-will have nonsudo access. "notice this option can NOT be combined with the option YES on ssh-allow"
+## Menu
 
-### Updates:
-added join to ubuntu clients with debug mode. 
-debugmode will open 2 terminals and will post information while you run the script.
-(does not work over SSH)
+| Option | What it does |
+|---|---|
+| 1) Join to AD | Installs the packages, finds the domain, joins and configures the computer |
+| 2) Check for errors | Checks that the realm is configured, the sudoers file and the PAM configuration |
+| 3) Search with ldap | Searches AD with ldapsearch for this computer and for a name you type (set `BASE` and `URI` in `/etc/ldap/ldap.conf` first) |
+| 4) Reauthenticate | Leaves the domain and joins again (a fix for clients that lose users) |
+| 5) Leave Domain | Leaves the domain |
 
-Comming updates: the option to paste a path for a correct OU were the machine will me setup. ( the defoult OU is CN=Computers,DC=domain,DC=com ) (still in progress)
-Comming updates: Option to rejoin ( leave realm and join realm and keep all configuration )
+## Command line options
 
+```text
+sudo ./ADconnection.sh [option]
+```
 
-This will make the cleanest setup possible. no @ in names or in home folder
-home folder will be /home/domain.com/user
-User name will be only set as "user" without /myad/you or you@domain.com... just clean!. this is to prevent complications for developers when building code
-After reboot just login with you AD account "user" and password... again.. no @ or domain.com/user is needed, just "user"
-to test access and permissions of a user execute in terminal from administrator account: id user or id user | grep -i groupname (LINUXCOMPUTERsudoers)
+| Option | What it does |
+|---|---|
+| `--help` | Shows the help text |
+| `-d` | Ubuntu debug mode: opens two terminals that follow the journal while you join (needs a desktop, does not work over SSH) |
+| `-j ADadmin domain` | Simple direct join with `realm join`, without the extra configuration |
+| `-l` | Runs the menu and writes the output to `adconnection.log` |
+| `-s` | Shows the domain the script would discover |
+| `-o "OU=Clients,OU=Computers,DC=domain,DC=com"` | Joins with the computer object in that OU (Ubuntu) |
+| `-u` / `-u user` | Looks up the domain users on this computer, or one user, to check that AD users can be found |
+| `-p` | Creates an encrypted admin password for `readfile` (see below) |
 
-For best security. I restricted ssh to only domainadmins and local administrator, also clients will be allowed to login from assigned group ( "LINUXCOMPUTERsudoers" ) (with option YES on SSH-allow) (with option YES on sudo rights )
+## Unattended join with readfile
 
+Set the values in `readfile` to skip the questions. `null` means the script asks you.
 
-### How do i update my password?
-( changed password but Linux is still on old password ) 
-This should read new info from AD when you are on "AD" network
-First time you login your "user" caches on the computer ( means that you can login beeing disconected to "office network"
-If you are having problems with the computer not fetching the new password. On office network.. open a terminal and execute sudo service sssd restart, this will reload information, logout and login with the new password.
+| Setting | Value |
+|---|---|
+| `DOMAIN` | Domain to join, for example `domain.com` (`null` discovers it) |
+| `OUSPECIFIED` | OU for the computer object, for example `--computer-ou=OU=Clients,OU=Computers,DC=domain,DC=com` (Ubuntu, Zorin) |
+| `ADADMIN` | AD account used for the join |
+| `LOCALADMIN` | Local account to keep in the SSH allow list |
+| `SUDOERS` | `yes` / `no`: give `HOSTNAMEsudoers` sudo rights |
+| `DISSPROMT` | `yes` / `no`: sudo without password prompt |
+| `SSHSECURE` | `yes` / `no`: enable the SSH allow list |
+| `USESASL` | `yes` / `no`: use LDAPS (SASL) |
+| `LDAPS` | Your domain controller, for example `ldaps://dc01.domain.com:636` |
+| `CACERT` | Full path to your root CA, for example `/usr/share/ca-certificates/root/myCA.cer` |
+| `ENCRYPTEDPASSWD` | `yes` / `no`: use the encrypted admin password (Ubuntu, Zorin) |
 
-### I have issues!
+### Encrypted admin password
 
-1. After reboot I cant login at all. (local or AD)  
-"This is problably caused by failed SSH-allow configuration, make sure to have correct users in the configuration or disable SSH-allow when running the script" 
+For those who don't want to use one-time passwords, `sudo ./ADconnection.sh -p` asks for the admin password and creates `private_key.pem`, `public_key.pem` and `encrypted.dat`. Set `ENCRYPTEDPASSWD = yes` in `readfile`. Store the private key in a safe place, and only put the files in the `Linux-Active-Directory-join-script` folder during the join.
 
-2. I rebooted the computer but i still can not login with the AD user!   
-"did you wait 5 min for AD to sync?
-check that the computer object is created in the AD
-Login with your local account and execute in terminal " sudo sssd service restart   and the try to see if you can see the user by executing id yourADusername, if you can see the user and all the groups the user is member of in AD then it works. if you have it set up with an ADgroup then you can execute: 
-id yourADusername | grep -i LINUXCOMPUTERsudoers (the groupname or hostname depending on you setup)
+## After joining
 
-3. Damn i got the wrong hostname and its not created as a computerobject in AD   
-"Login with local admin and change your hostname to this files so it matches groupobject in AD /etc/sudoers.d/sudoes (if configured)    /etc/ssh/login.group.allowed (if configured)   /etc/hostname  and /etc/hosts
-then run sudo realm leave domain.com reboot and rejoin running the script again, the script will not override files if they have been configured before.
-If the computerobject is existing in AD but you wish to replace it, just delete the computerobject and join/rejoin with computer/server with the same hostname as the computerobject.
-reboot and wait 5 min before login
+Reboot and wait a few minutes for AD to sync. Then log in with your AD user name only, for example `user`: no `@domain.com` or `DOMAIN\user` is needed.
 
-If you have issues with slow replies from the domain controller i have added lines to nsswitch an sssd to prevent hangs, slow logins and slow repy from sudo commands in a teminal. this was added 2017/11 so if you have and older "join" than 2017/11 you should do a rejoin.
+To check that it works, from the local admin account:
 
-4. I am a member of sudores but programs require administrator to login..
-you are sudo user if added to sudoes file, but the account is a standard account. to give full administration priviligies
-run in terminal: sudo usermod -a -G sudo user
+```bash
+realm list                                 # shows the joined domain
+id user                                    # the AD user and its groups
+id user | grep -i linuxcomputersudoers     # the user is in the sudo group
+```
 
+You can also run the script again and pick **2) Check for errors**.
 
-<p>Encrypted Password?:</p>
-I have added the option for readfie and also a way to encrypt ADadmin password for those that don´t want to use one-time passwords.
-sudo sh ADconnection.sh -p will promt you for a password that will be encrypted. pubic key, privat.key and a encrypted.dat files will be generated. find a way to store your private key and only place them in Linux-Active-Directory-join-script folder during join.
+## Troubleshooting
 
-<p>
-Note. Make sure dns works so it can properly find ldap server
-If you are using multiple domain servers or have a backup domain server, see example below
+**After reboot I can't log in at all (local or AD).**
+This is most likely the SSH allow list. Make sure the right users are in `/etc/ssh/login.group.allowed`, or run the script again and answer no to the SSH allow list.
+
+**I rebooted but still can't log in with my AD user.**
+Wait 5 minutes for AD to sync, and check that the computer object exists in AD. Log in with your local account and run `sudo systemctl restart sssd`, then `id yourADusername`. If you see the user and its AD groups, it works. If you use an AD group for sudo, check it with `id yourADusername | grep -i linuxcomputersudoers`.
+
+**The script can't find my domain.**
+Check that the client uses the domain controllers as DNS servers and that `host -t SRV _ldap._tcp.yourdomain.com` answers. Adding `search yourdomain.com` to the DNS settings also helps, or set `DOMAIN` in `readfile`.
+
+**I got the wrong hostname, or it was not created as a computer object in AD.**
+Log in with the local admin, change the hostname in `/etc/hostname` and `/etc/hosts`, and update `/etc/sudoers.d/sudoers` and `/etc/ssh/login.group.allowed` (if configured) so they match the AD group. Then run `sudo realm leave domain.com`, reboot and join again with the script; it will not overwrite files that are already configured. If the computer object exists in AD but you want to replace it, delete it and join again with the same hostname. Reboot and wait 5 minutes before logging in.
+
+**I changed my password in AD, but Linux still wants the old one.**
+The new password is read from AD when you are on the office network. Your user is cached at the first login, so you can log in when you are not connected to the office network. If the computer doesn't pick up the new password on the office network, run `sudo systemctl restart sssd`, log out and log in with the new password. To change your AD password from Linux, use the user settings on the desktop (Ubuntu: Settings > Users > Password) or `passwd`.
+
+**I am in the sudoers group, but programs still ask for an administrator.**
+Members of the sudoers group are sudo users, but with a standard account. To give a user full administrator rights, run `sudo usermod -a -G sudo user`.
+
+**Slow logins or slow sudo.**
+The script adds cache settings to sssd to prevent hangs, slow logins and slow replies from sudo with a slow domain controller. These were added in 2017/11, so if your join is older than that, do a rejoin.
+
+### Several domain controllers
+
+Make sure DNS works so that sssd can find the LDAP servers. If you use several domain controllers or have a backup domain controller, see this sssd.conf example:
+
+```ini
 [sssd]
 services = nss, pam
 config_file_version = 2
@@ -196,13 +188,4 @@ dyndns_update_ptr = false
 enumerate = true
 subdomain_enumerate = all
 cache_credentials = true
-
-How to change AD password in linux (ubuntu example): open settings, users click on password field, set new password.
-
-How to git?
-
-On linux client install git = sudo apt-get install git -y (or) sudo yum install git
-
-Clone this repo = sudo git clone https://github.com/PierreGode/Linux-Active-Directory-join-script.git
-
-To update repo to latest version = in the folder Linux-Active-Directory-join-script/    run: sudo git pull
+```
